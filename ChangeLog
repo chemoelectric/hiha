@@ -1,5 +1,15 @@
 @  master
-|  2026-05-08 10:47 +0000
+|  2026-05-08 17:47 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       821b9fe1c819cce65c29f37bd95b11d54be59b22
+|  mercurial: f02f8096a962221415d80928a120e806c9ffa699
+|  revision:  105
+|  parents:   104
+|
+|    Better name mangling, using a UUID.
+|
+|
+o  2026-05-08 10:47 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 |  git:       b261fe99a8f0622e8ee359add6edfd091f598e63
 |  mercurial: 5fe1c653b40a92fe2df8a434b656d915c5a024f2

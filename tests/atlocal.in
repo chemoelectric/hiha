@@ -1,0 +1,7 @@
+# -*- shell-script -*-
+# @configure_input@
+# Configurable variable values for Autoconf test suite.
+
+nested_c_functions="@nested_c_functions@"
+z_execstack="@z_execstack@"
+no_warn_execstack="@no_warn_execstack@"

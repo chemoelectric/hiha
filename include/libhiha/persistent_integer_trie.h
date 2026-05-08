@@ -146,16 +146,6 @@
 #define HIHA_INT_TRIE_INSERT_DEFN(FUNC, NAME, UINTKEY, VALTYPE)         \
                                                                         \
   NAME##_t                                                              \
-  FUNC (NAME##_t _Node, UINTKEY _Key, VALTYPE _Value)                   \
-  {                                                                     \
-    NAME##_t FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2                \
-      (NAME##_t _Node, UINTKEY _Key,                                    \
-       VALTYPE _Value, UINTKEY _Mask);                                  \
-    return (FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2)                \
-      (_Node, _Key, _Value, (UINTKEY) 1);                               \
-  }                                                                     \
-                                                                        \
-  NAME##_t                                                              \
   FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2 (NAME##_t _Node,          \
                                                UINTKEY _Key,            \
                                                VALTYPE _Value,          \
@@ -235,24 +225,17 @@
           }                                                             \
       }                                                                 \
     return _result;                                                     \
+  }                                                                     \
+                                                                        \
+  NAME##_t                                                              \
+  FUNC (NAME##_t _Node, UINTKEY _Key, VALTYPE _Value)                   \
+  {                                                                     \
+    return (FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2)                \
+      (_Node, _Key, _Value, (UINTKEY) 1);                               \
   }
 
 /* Delete a leaf node, nondestructively. */
 #define HIHA_INT_TRIE_DELETE_DEFN(FUNC, NAME, UINTKEY)                  \
-                                                                        \
-  NAME##_t                                                              \
-  FUNC (NAME##_t _Node, UINTKEY _Key)                                   \
-  {                                                                     \
-    NAME##_t FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2                \
-      (NAME##_t _Node, UINTKEY _Key, UINTKEY _Mask);                    \
-    NAME##_t _result = _Node;                                           \
-    NAME##_leaf_t _leaf;                                                \
-    HIHA_INT_TRIE_SEARCH(_leaf, NAME, UINTKEY, _Node, _Key);            \
-    if (_leaf != NULL)                                                  \
-      _result =                                                         \
-        (FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2) (_Node, _Key, 1); \
-    return _result;                                                     \
-  }                                                                     \
                                                                         \
   NAME##_t                                                              \
   FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2 (NAME##_t _Node,          \
@@ -298,6 +281,18 @@
                 (_result, NAME, _Internal->left, _nd);                  \
           }                                                             \
       }                                                                 \
+    return _result;                                                     \
+  }                                                                     \
+                                                                        \
+  NAME##_t                                                              \
+  FUNC (NAME##_t _Node, UINTKEY _Key)                                   \
+  {                                                                     \
+    NAME##_t _result = _Node;                                           \
+    NAME##_leaf_t _leaf;                                                \
+    HIHA_INT_TRIE_SEARCH(_leaf, NAME, UINTKEY, _Node, _Key);            \
+    if (_leaf != NULL)                                                  \
+      _result =                                                         \
+        (FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2) (_Node, _Key, 1); \
     return _result;                                                     \
   }
 

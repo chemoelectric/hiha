@@ -2283,6 +2283,13 @@ HAVE_MERCURIAL_FALSE
 HAVE_MERCURIAL_TRUE
 MERCURIAL
 INDENT
+EXECSTACK_FLAGS
+ALLOW_NESTED_C_FUNCTIONS_FALSE
+ALLOW_NESTED_C_FUNCTIONS_TRUE
+allow_nested_c_functions
+nested_c_functions
+no_warn_execstack
+z_execstack
 VISIBLE_CFLAGS
 ARFLAGS
 CPP
@@ -4706,7 +4713,8 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 ac_config_headers="$ac_config_headers config.h"
 
-#AC_CONFIG_TESTDIR([tests])
+ac_config_commands="$ac_config_commands tests/atconfig"
+
 
 
 
@@ -18967,6 +18975,148 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 VISIBLE_CFLAGS="${_visible_flags}"
 
 
+z_execstack=no
+no_warn_execstack=no
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether the linker accepts -Wl,-z,execstack" >&5
+printf %s "checking whether the linker accepts -Wl,-z,execstack... " >&6; }
+if test ${ax_cv_check_ldflags___Wl__z_execstack+y}
+then :
+  printf %s "(cached) " >&6
+else case e in #(
+  e)
+  ax_check_save_flags=$LDFLAGS
+  LDFLAGS="$LDFLAGS  -Wl,-z,execstack"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main (void)
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"
+then :
+  ax_cv_check_ldflags___Wl__z_execstack=yes
+else case e in #(
+  e) ax_cv_check_ldflags___Wl__z_execstack=no ;;
+esac
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
+  LDFLAGS=$ax_check_save_flags ;;
+esac
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ax_cv_check_ldflags___Wl__z_execstack" >&5
+printf "%s\n" "$ax_cv_check_ldflags___Wl__z_execstack" >&6; }
+if test "x$ax_cv_check_ldflags___Wl__z_execstack" = xyes
+then :
+  z_execstack=yes
+else case e in #(
+  e) : ;;
+esac
+fi
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether the linker accepts -Wl,--no-warn-execstack" >&5
+printf %s "checking whether the linker accepts -Wl,--no-warn-execstack... " >&6; }
+if test ${ax_cv_check_ldflags___Wl___no_warn_execstack+y}
+then :
+  printf %s "(cached) " >&6
+else case e in #(
+  e)
+  ax_check_save_flags=$LDFLAGS
+  LDFLAGS="$LDFLAGS  -Wl,--no-warn-execstack"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main (void)
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"
+then :
+  ax_cv_check_ldflags___Wl___no_warn_execstack=yes
+else case e in #(
+  e) ax_cv_check_ldflags___Wl___no_warn_execstack=no ;;
+esac
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
+  LDFLAGS=$ax_check_save_flags ;;
+esac
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ax_cv_check_ldflags___Wl___no_warn_execstack" >&5
+printf "%s\n" "$ax_cv_check_ldflags___Wl___no_warn_execstack" >&6; }
+if test "x$ax_cv_check_ldflags___Wl___no_warn_execstack" = xyes
+then :
+  no_warn_execstack=yes
+else case e in #(
+  e) : ;;
+esac
+fi
+
+
+
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether the C compiler supports nested functions" >&5
+printf %s "checking whether the C compiler supports nested functions... " >&6; }
+if test ${hiha_cv_c_have_nested_c_functions+y}
+then :
+  printf %s "(cached) " >&6
+else case e in #(
+  e) hiha_cv_c_have_nested_c_functions=no
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+
+int
+main (void)
+{
+void func1 (void) { void func2 (void) { } }
+  ;
+  return 0;
+}
+
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"
+then :
+  hiha_cv_c_have_nested_c_functions=yes
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext ;;
+esac
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $hiha_cv_c_have_nested_c_functions" >&5
+printf "%s\n" "$hiha_cv_c_have_nested_c_functions" >&6; }
+nested_c_functions="${hiha_cv_c_have_nested_c_functions}"
+
+
+if test "${nested_c_functions}" = yes && test "${z_execstack}" = yes; then
+  allow_nested_c_functions=yes
+else
+  allow_nested_c_functions=no
+fi
+
+ if test "${allow_nested_c_functions}" = yes; then
+  ALLOW_NESTED_C_FUNCTIONS_TRUE=
+  ALLOW_NESTED_C_FUNCTIONS_FALSE='#'
+else
+  ALLOW_NESTED_C_FUNCTIONS_TRUE='#'
+  ALLOW_NESTED_C_FUNCTIONS_FALSE=
+fi
+
+EXECSTACK_FLAGS=
+test "${z_execstack}" = yes \
+  && EXECSTACK_FLAGS="${EXECSTACK_FLAGS}${EXECSTACK_FLAGS+ }-Wl,-z,execstack"
+test "${no_warn_execstack}" = yes \
+  && EXECSTACK_FLAGS="${EXECSTACK_FLAGS}${EXECSTACK_FLAGS+ }-Wl,--no-warn-execstack"
+
+
 { :;
 
 # Override the cache if the precious variable INDENT is set.
@@ -25302,8 +25452,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam \
         LIBS="$saved_LIBS"
         test $gl_pthread_api = yes && break
       done
-      echo "$as_me:25305: gl_pthread_api=$gl_pthread_api" >&5
-      echo "$as_me:25306: LIBPTHREAD=$LIBPTHREAD" >&5
+      echo "$as_me:25455: gl_pthread_api=$gl_pthread_api" >&5
+      echo "$as_me:25456: LIBPTHREAD=$LIBPTHREAD" >&5
 
       gl_pthread_in_glibc=no
       # On Linux with glibc >= 2.34, libc contains the fully functional
@@ -25332,7 +25482,7 @@ rm -rf conftest*
   *) :
      ;;
 esac
-      echo "$as_me:25335: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
+      echo "$as_me:25485: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
 
       # Test for libpthread by looking for pthread_kill.
       if test $gl_pthread_api = yes && test -z "$LIBPTHREAD"
@@ -25584,7 +25734,7 @@ fi
 fi
 
 fi
-      echo "$as_me:25587: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
+      echo "$as_me:25737: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
 
 fi
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether POSIX threads API is available" >&5
@@ -29956,8 +30106,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam \
         LIBS="$saved_LIBS"
         test $gl_pthread_api = yes && break
       done
-      echo "$as_me:29959: gl_pthread_api=$gl_pthread_api" >&5
-      echo "$as_me:29960: LIBPTHREAD=$LIBPTHREAD" >&5
+      echo "$as_me:30109: gl_pthread_api=$gl_pthread_api" >&5
+      echo "$as_me:30110: LIBPTHREAD=$LIBPTHREAD" >&5
 
       gl_pthread_in_glibc=no
       # On Linux with glibc >= 2.34, libc contains the fully functional
@@ -29986,7 +30136,7 @@ rm -rf conftest*
   *) :
      ;;
 esac
-      echo "$as_me:29989: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
+      echo "$as_me:30139: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
 
       # Test for libpthread by looking for pthread_kill.
       if test $gl_pthread_api = yes && test -z "$LIBPTHREAD"
@@ -30238,7 +30388,7 @@ fi
 fi
 
 fi
-      echo "$as_me:30241: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
+      echo "$as_me:30391: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
 
 fi
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether POSIX threads API is available" >&5
@@ -30528,8 +30678,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam \
         LIBS="$saved_LIBS"
         test $gl_pthread_api = yes && break
       done
-      echo "$as_me:30531: gl_pthread_api=$gl_pthread_api" >&5
-      echo "$as_me:30532: LIBPTHREAD=$LIBPTHREAD" >&5
+      echo "$as_me:30681: gl_pthread_api=$gl_pthread_api" >&5
+      echo "$as_me:30682: LIBPTHREAD=$LIBPTHREAD" >&5
 
       gl_pthread_in_glibc=no
       # On Linux with glibc >= 2.34, libc contains the fully functional
@@ -30558,7 +30708,7 @@ rm -rf conftest*
   *) :
      ;;
 esac
-      echo "$as_me:30561: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
+      echo "$as_me:30711: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
 
       # Test for libpthread by looking for pthread_kill.
       if test $gl_pthread_api = yes && test -z "$LIBPTHREAD"
@@ -30810,7 +30960,7 @@ fi
 fi
 
 fi
-      echo "$as_me:30813: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
+      echo "$as_me:30963: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
 
 fi
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether POSIX threads API is available" >&5
@@ -49481,7 +49631,31 @@ printf "%s\n" "$as_me: WARNING: Please consider installing and using GNU Make:
    ac_config_files="$ac_config_files lib/GNUmakefile:lib/Makefile.in"
 
 }
-#CHEM_CONFIG_MAKEFILES([tests/Makefile],[tests/GNUmakefile])
+{ :;
+
+   # If no GNU Make is found, recommend it.
+   if test -z "${ax_cv_gnu_make_command}" \
+         -a x"${chem_config_makefiles_consider_gnu_make_printed}" != xyes; then
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Please consider installing and using GNU Make:
+           http://www.gnu.org/software/make/" >&5
+printf "%s\n" "$as_me: WARNING: Please consider installing and using GNU Make:
+           http://www.gnu.org/software/make/" >&2;}
+      chem_config_makefiles_consider_gnu_make_printed=yes
+   fi
+
+   # Create `Makefile' or its substitute. If GNU Make is present,
+   # create `Makefile' (or its substitute) as a wrapper around
+   # `GNUmakefile' (or its substitute). Otherwise create the former in
+   # the usual way.
+   ac_config_files="$ac_config_files tests/Makefile"
+
+
+   # Create `GNUmakefile' or its substitute.
+   ac_config_files="$ac_config_files tests/GNUmakefile:tests/Makefile.in"
+
+}
+ac_config_files="$ac_config_files tests/atlocal"
+
 
 
 printf "%s\n" "#define PCRE2_CODE_UNIT_WIDTH 32" >>confdefs.h
@@ -49662,6 +49836,10 @@ then :
   enableval=$enable_year2038;
 fi
 
+if test -z "${ALLOW_NESTED_C_FUNCTIONS_TRUE}" && test -z "${ALLOW_NESTED_C_FUNCTIONS_FALSE}"; then
+  as_fn_error $? "conditional \"ALLOW_NESTED_C_FUNCTIONS\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
 if test -z "${HAVE_MERCURIAL_TRUE}" && test -z "${HAVE_MERCURIAL_FALSE}"; then
   as_fn_error $? "conditional \"HAVE_MERCURIAL\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
@@ -50328,6 +50506,8 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
 #
 # INIT-COMMANDS
 #
+ac_cv_exeext="$ac_cv_exeext"
+
 AMDEP_TRUE="$AMDEP_TRUE" MAKE="${MAKE-make}"
 
 
@@ -50621,6 +50801,9 @@ fi
       chem_config_makefiles_make_command="${ax_cv_gnu_make_command}"
 
 
+      chem_config_makefiles_make_command="${ax_cv_gnu_make_command}"
+
+
     SED="${SED}"
     CFLAGS="${CFLAGS}"
     GCVERS="${GCVERS}"
@@ -50660,12 +50843,16 @@ for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
+    "tests/atconfig") CONFIG_COMMANDS="$CONFIG_COMMANDS tests/atconfig" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "GNUmakefile") CONFIG_FILES="$CONFIG_FILES GNUmakefile:Makefile.in" ;;
     "lib/Makefile") CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
     "lib/GNUmakefile") CONFIG_FILES="$CONFIG_FILES lib/GNUmakefile:lib/Makefile.in" ;;
+    "tests/Makefile") CONFIG_FILES="$CONFIG_FILES tests/Makefile" ;;
+    "tests/GNUmakefile") CONFIG_FILES="$CONFIG_FILES tests/GNUmakefile:tests/Makefile.in" ;;
+    "tests/atlocal") CONFIG_FILES="$CONFIG_FILES tests/atlocal" ;;
     "configure-gc") CONFIG_COMMANDS="$CONFIG_COMMANDS configure-gc" ;;
 
   *) as_fn_error $? "invalid argument: '$ac_config_target'" "$LINENO" 5;;
@@ -51262,6 +51449,31 @@ printf "%s\n" "$as_me: executing $ac_file commands" >&6;}
 
 
   case $ac_file$ac_mode in
+    "tests/atconfig":C) cat >tests/atconfig <<ATEOF
+# Configurable variable values for building test suites.
+# Generated by $0.
+# Copyright (C) 2023 Free Software Foundation, Inc.
+
+# The test suite will define top_srcdir=$at_top_srcdir/../.. etc.
+at_testdir='tests'
+abs_builddir='$ac_abs_builddir'
+at_srcdir='$ac_srcdir'
+abs_srcdir='$ac_abs_srcdir'
+at_top_srcdir='$ac_top_srcdir'
+abs_top_srcdir='$ac_abs_top_srcdir'
+at_top_build_prefix='$ac_top_build_prefix'
+abs_top_builddir='$ac_abs_top_builddir'
+
+# Backward compatibility with Autotest <= 2.59b:
+at_top_builddir=\$at_top_build_prefix
+
+
+EXEEXT='$ac_cv_exeext'
+AUTOTEST_PATH='tests'
+
+SHELL=\${CONFIG_SHELL-'$SHELL'}
+ATEOF
+ ;;
     "depfiles":C) test x"$AMDEP_TRUE" != x"" || {
   # Older Autoconf quotes --file arguments for eval, but not when files
   # are listed without --file.  Let's play safe and only enable the eval
@@ -51925,6 +52137,20 @@ EOF
       # If GNU make is present, encourage other makes to call it instead.
       if test -n "${chem_config_makefiles_make_command}"; then
          cat > lib/Makefile <<EOF
+# Attempt to have common non-GNU Make programs run GNU Make.
+
+.DEFAULT:
+	${chem_config_makefiles_make_command} \$@
+
+%:
+	${chem_config_makefiles_make_command}
+EOF
+      fi
+    ;;
+    "tests/Makefile":F)
+      # If GNU make is present, encourage other makes to call it instead.
+      if test -n "${chem_config_makefiles_make_command}"; then
+         cat > tests/Makefile <<EOF
 # Attempt to have common non-GNU Make programs run GNU Make.
 
 .DEFAULT:
