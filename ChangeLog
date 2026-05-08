@@ -1,5 +1,15 @@
 @  master
-|  2026-05-06 14:19 +0000
+|  2026-05-08 10:47 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       b261fe99a8f0622e8ee359add6edfd091f598e63
+|  mercurial: 5fe1c653b40a92fe2df8a434b656d915c5a024f2
+|  revision:  104
+|  parents:   103
+|
+|    Added integer radix trees.
+|
+|
+o  2026-05-06 14:19 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 |  git:       ec29b03a2245f6b57c2629fdfd33a59a6137244f
 |  mercurial: 9e959e90e07931f1f678659925b81053b0f7a38a

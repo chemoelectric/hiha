@@ -148,14 +148,18 @@
   NAME##_t                                                              \
   FUNC (NAME##_t _Node, UINTKEY _Key, VALTYPE _Value)                   \
   {                                                                     \
-    NAME##_t _##FUNC##_auxiliary (NAME##_t _Node, UINTKEY _Key,         \
-                                  VALTYPE _Value, UINTKEY _Mask);       \
-    return (_##FUNC##_auxiliary) (_Node, _Key, _Value, (UINTKEY) 1);    \
+    NAME##_t FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2                \
+      (NAME##_t _Node, UINTKEY _Key,                                    \
+       VALTYPE _Value, UINTKEY _Mask);                                  \
+    return (FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2)                \
+      (_Node, _Key, _Value, (UINTKEY) 1);                               \
   }                                                                     \
                                                                         \
   NAME##_t                                                              \
-  _##FUNC##_auxiliary (NAME##_t _Node, UINTKEY _Key, VALTYPE _Value,    \
-                       UINTKEY _Mask)                                   \
+  FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2 (NAME##_t _Node,          \
+                                               UINTKEY _Key,            \
+                                               VALTYPE _Value,          \
+                                               UINTKEY _Mask)           \
   {                                                                     \
     NAME##_t _result;                                                   \
     NAME##_t _nd;                                                       \
@@ -177,8 +181,9 @@
               {                                                         \
                 if (_leaf_is_left)                                      \
                   {                                                     \
-                    _nd = ((_##FUNC##_auxiliary)                        \
-                           (_Node, _Key, _Value, _Mask << 1));          \
+                    _nd =                                               \
+                      ((FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2)    \
+                       (_Node, _Key, _Value, _Mask << 1));              \
                     HIHA_INT_TRIE_MAKE_INTERNAL                         \
                       (_result, NAME, _nd, NULL);                       \
                   }                                                     \
@@ -201,8 +206,9 @@
                   }                                                     \
                 else                                                    \
                   {                                                     \
-                    _nd = ((_##FUNC##_auxiliary)                        \
-                           (_Node, _Key, _Value, _Mask << 1));          \
+                    _nd =                                               \
+                      ((FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2)    \
+                       (_Node, _Key, _Value, _Mask << 1));              \
                     HIHA_INT_TRIE_MAKE_INTERNAL                         \
                       (_result, NAME, NULL, _nd);                       \
                   }                                                     \
@@ -215,14 +221,14 @@
         NAME##_internal_t _Internal = (NAME##_internal_t) _Node;        \
         if ((_Key & _Mask) == 0)                                        \
           {                                                             \
-            _nd = ((_##FUNC##_auxiliary)                                \
+            _nd = ((FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2)        \
                    (_Internal->left, _Key, _Value, _Mask << 1));        \
             HIHA_INT_TRIE_MAKE_INTERNAL                                 \
               (_result, NAME, _nd, _Internal->right);                   \
           }                                                             \
         else                                                            \
           {                                                             \
-            _nd = ((_##FUNC##_auxiliary)                                \
+            _nd = ((FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2)        \
                    (_Internal->right, _Key, _Value, _Mask << 1));       \
             HIHA_INT_TRIE_MAKE_INTERNAL                                 \
               (_result, NAME, _Internal->left, _nd);                    \
@@ -237,18 +243,21 @@
   NAME##_t                                                              \
   FUNC (NAME##_t _Node, UINTKEY _Key)                                   \
   {                                                                     \
-    NAME##_t _##FUNC##_auxiliary (NAME##_t _Node, UINTKEY _Key,         \
-                                  UINTKEY _Mask);                       \
+    NAME##_t FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2                \
+      (NAME##_t _Node, UINTKEY _Key, UINTKEY _Mask);                    \
     NAME##_t _result = _Node;                                           \
     NAME##_leaf_t _leaf;                                                \
     HIHA_INT_TRIE_SEARCH(_leaf, NAME, UINTKEY, _Node, _Key);            \
     if (_leaf != NULL)                                                  \
-      _result = (_##FUNC##_auxiliary) (_Node, _Key, 1);                 \
+      _result =                                                         \
+        (FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2) (_Node, _Key, 1); \
     return _result;                                                     \
   }                                                                     \
                                                                         \
   NAME##_t                                                              \
-  _##FUNC##_auxiliary (NAME##_t _Node, UINTKEY _Key, UINTKEY _Mask)     \
+  FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2 (NAME##_t _Node,          \
+                                               UINTKEY _Key,            \
+                                               UINTKEY _Mask)           \
   {                                                                     \
     assert (_Node != NULL);                                             \
     NAME##_t _nd;                                                       \
@@ -258,7 +267,7 @@
         NAME##_internal_t _Internal = (NAME##_internal_t) _Node;        \
         if ((_Key & _Mask) == 0)                                        \
           {                                                             \
-            _nd = ((_##FUNC##_auxiliary)                                \
+            _nd = ((FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2)        \
                    (_Internal->left, _Key, _Mask << 1));                \
             if (_nd != NULL                                             \
                 && _nd->is_leaf                                         \
@@ -274,7 +283,7 @@
           }                                                             \
         else                                                            \
           {                                                             \
-            _nd = ((_##FUNC##_auxiliary)                                \
+            _nd = ((FUNC##_86732d50_79a7_4c27_90a4_a295bf8822e2)        \
                    (_Internal->right, _Key, _Mask << 1));               \
             if (_nd != NULL                                             \
                 && _nd->is_leaf                                         \
