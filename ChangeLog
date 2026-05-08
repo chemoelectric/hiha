@@ -1,5 +1,15 @@
 @  master
-|  2026-05-02 19:32 +0000
+|  2026-05-06 14:19 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       ec29b03a2245f6b57c2629fdfd33a59a6137244f
+|  mercurial: 9e959e90e07931f1f678659925b81053b0f7a38a
+|  revision:  103
+|  parents:   102
+|
+|    Add an implementation of generic persistent AVL trees. Not used yet.
+|
+|
+o  2026-05-02 19:32 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 |  git:       557399468e47364085b0f9dfd46542c4d89224d5
 |  mercurial: 715034efa6fe11ee85b10ef58713c0e216e910a6

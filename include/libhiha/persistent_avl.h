@@ -19,6 +19,9 @@
 
 */
 
+#ifndef __LIBHAHA__PERSISTENT_AVL_H__INCLUDED__
+#define __LIBHAHA__PERSISTENT_AVL_H__INCLUDED__
+
 #include <stdlib.h>
 #include <assert.h>
 
@@ -425,3 +428,12 @@
       }                                                                 \
     assert (tree == NULL);                                              \
   }
+
+#endif /* __LIBHAHA__PERSISTENT_AVL_H__INCLUDED__ */
+
+/*
+  local variables:
+  mode: c
+  coding: utf-8
+  end:
+*/
