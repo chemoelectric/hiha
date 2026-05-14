@@ -820,6 +820,16 @@ spookyhash_bytes (uint64_t hash1, uint64_t hash2,
   memcpy (&hash_bytes[sizeof (uint64_t)], &hsh2, sizeof hsh2);
 }
 
+SPOOKYHASH_VISIBLE void
+spookyhash_final_bytes (spookyhash_context_t *context,
+                        uint8_t hash_bytes[2 *sizeof (uint64_t)])
+{
+  uint64_t hash1;
+  uint64_t hash2;
+  spookyhash_final (context, &hash1, &hash2);
+  spookyhash_bytes (hash1, hash2, hash_bytes);
+}
+
 /*--------------------------------------------------------------------*/
 /*
   local variables:

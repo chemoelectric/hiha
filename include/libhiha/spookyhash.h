@@ -80,7 +80,15 @@ void spookyhash_final (spookyhash_context_t *context,
   the original message was interpreted.)
 */
 void spookyhash_bytes (uint64_t hash1, uint64_t hash2,
-                       uint8_t hash_bytes[sizeof (uint64_t)]);
+                       uint8_t hash_bytes[2 * sizeof (uint64_t)]);
+
+/*
+  spookyhash_final_bytes:
+
+  Combines spookyhash_final and spookyhash_bytes.
+*/
+void spookyhash_final_bytes (spookyhash_context_t *context,
+                             uint8_t hash_bytes[2 * sizeof (uint64_t)]);
 
 #endif /* __LIBHAHA__SPOOKYHASH_H__INCLUDED__ */
 

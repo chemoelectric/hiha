@@ -56,18 +56,14 @@ test_with_seeds (uint64_t seed1, uint64_t seed2, size_t i_start)
       fill_message (message, length);
 
       spookyhash_context_t context;
-      uint64_t hash1;
-      uint64_t hash2;
-
-      spookyhash_init (&context, seed1, seed2);
-      spookyhash_update (&context, message, length);
-      spookyhash_final (&context, &hash1, &hash2);
-
       uint8_t nominal[2 * sizeof (uint64_t)];
       uint8_t bytes[2 * sizeof (uint64_t)];
 
       memcpy (nominal, &reference[i], 2 * sizeof (uint64_t));
-      spookyhash_bytes (hash1, hash2, bytes);
+
+      spookyhash_init (&context, seed1, seed2);
+      spookyhash_update (&context, message, length);
+      spookyhash_final_bytes (&context, bytes);
 
       for (size_t j = 0; j != 2 * sizeof (uint64_t); j += 1)
         if (bytes[j] != nominal[j])
