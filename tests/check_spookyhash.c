@@ -64,13 +64,13 @@ test_with_seeds (uint64_t seed1, uint64_t seed2, size_t i_start)
       spookyhash_final (&context, &hash1, &hash2);
 
       uint8_t nominal[2 * sizeof (uint64_t)];
-      uint8_t little_endian[2 * sizeof (uint64_t)];
+      uint8_t bytes[2 * sizeof (uint64_t)];
 
       memcpy (nominal, &reference[i], 2 * sizeof (uint64_t));
-      spookyhash_little_endian (hash1, hash2, little_endian);
+      spookyhash_bytes (hash1, hash2, bytes);
 
       for (size_t j = 0; j != 2 * sizeof (uint64_t); j += 1)
-        if (little_endian[j] != nominal[j])
+        if (bytes[j] != nominal[j])
           {
             printf ("failed at length %zu\n", length);
             abort ();

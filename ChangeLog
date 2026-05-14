@@ -1,5 +1,16 @@
 @  master
-|  2026-05-14 11:20 +0000
+|  2026-05-14 16:19 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       2b54ff8405ace69e5acb0a91353477ba13f05fce
+|  mercurial: cf5483f574b09ec5039099ca14692871a33e52d8
+|  revision:  114
+|  parents:   113
+|
+|    Changes that fix whether spookyhash works with length zero and
+|    optimization.
+|
+|
+o  2026-05-14 11:20 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 |  git:       88f5d2836052c74fd92ca94f541535863f404878
 |  mercurial: 5b1e6faec3a89ebddf313410478a8a2595ee337e

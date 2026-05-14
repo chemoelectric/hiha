@@ -494,8 +494,7 @@ spookyhash_short_end (uint64_t abcd[4])
 
 SPOOKYHASH_INLINE void
 spookyhash_short_last_bytes (uint64_t abcd[4],
-                             const void *data,
-                             uint8_t num_bytes)
+                             const void *data, uint8_t num_bytes)
 {
   uint64_t a = abcd[0];
   uint64_t b = abcd[1];
@@ -812,8 +811,8 @@ spookyhash_final (spookyhash_context_t *context,
 }
 
 SPOOKYHASH_VISIBLE void
-spookyhash_little_endian (uint64_t hash1, uint64_t hash2,
-                          uint8_t hash_bytes[2 * sizeof (uint64_t)])
+spookyhash_bytes (uint64_t hash1, uint64_t hash2,
+                  uint8_t hash_bytes[2 *sizeof (uint64_t)])
 {
   const uint64_t hsh1 = spookyhash_fix_byte_order_64 (hash1);
   const uint64_t hsh2 = spookyhash_fix_byte_order_64 (hash2);
