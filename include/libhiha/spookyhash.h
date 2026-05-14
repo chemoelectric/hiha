@@ -45,7 +45,7 @@ typedef struct
   Any 64-bit value, including zero, will work as a seed. Different
   seeds produce hashes independent of each other.
 */
-void spookyhash_init (spookyhash_context_t * context,
+void spookyhash_init (spookyhash_context_t *context,
                       uint64_t seed1, uint64_t seed2);
 
 /*
@@ -53,7 +53,7 @@ void spookyhash_init (spookyhash_context_t * context,
 
   Add a message fragment to a SpookyHash context.
 */
-void spookyhash_update (spookyhash_context_t * context,
+void spookyhash_update (spookyhash_context_t *context,
                         const void *message, size_t length);
 
 /*
@@ -69,8 +69,30 @@ void spookyhash_update (spookyhash_context_t * context,
   You can continue updating the context, even after
   you have used spookyhash_final.
 */
-void spookyhash_final (spookyhash_context_t * context,
-                       uint64_t * hash1, uint64_t * hash2);
+void spookyhash_final (spookyhash_context_t *context,
+                       uint64_t *hash1, uint64_t *hash2);
+
+/*
+  spookyhash_little_endian:
+
+  Fills hash_bytes with bits of the (native byte order) hash value, in
+  little-endian order.
+
+  (This is actually a general uint64_t to little-endian converter.)
+*/
+void spookyhash_little_endian (uint64_t hash,
+                               uint8_t hash_bytes[sizeof (uint64_t)]);
+
+/*
+  spookyhash_big_endian:
+
+  Fills hash_bytes with bits of the (native byte order) hash value, in
+  big-endian order.
+
+  (This is actually a general uint64_t to big-endian converter.)
+*/
+void spookyhash_big_endian (uint64_t hash,
+                            uint8_t hash_bytes[sizeof (uint64_t)]);
 
 #endif /* __LIBHAHA__SPOOKYHASH_H__INCLUDED__ */
 

@@ -810,6 +810,22 @@ spookyhash_final (spookyhash_context_t *context,
     }
 }
 
+SPOOKYHASH_VISIBLE void
+spookyhash_little_endian (uint64_t hash,
+                          uint8_t hash_bytes[sizeof (uint64_t)])
+{
+  const uint64_t hsh = spookyhash_fix_byte_order_64 (hash);
+  memcpy (hash_bytes, &hsh, sizeof hsh);
+}
+
+SPOOKYHASH_VISIBLE void
+spookyhash_big_endian (uint64_t hash,
+                       uint8_t hash_bytes[sizeof (uint64_t)])
+{
+  const uint64_t hsh = spookyhash_fix_byte_order_64 (bswap_64 (hash));
+  memcpy (hash_bytes, &hsh, sizeof hsh);
+}
+
 /*--------------------------------------------------------------------*/
 /*
   local variables:

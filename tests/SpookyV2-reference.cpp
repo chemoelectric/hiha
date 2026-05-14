@@ -115,10 +115,28 @@ main (int argc, char *argv[])
   for (size_t length = 0; length != length_max; length += 1)
     {
       fill_message (message, length, 0);
+
       uint64_t hash1 = seed1;
       uint64_t hash2 = seed2;
+
       SpookyHash::Hash128(message, length, &hash1, &hash2);
-      printf ("%016" PRIX64 " %016" PRIX64 "\n", hash1, hash2);
+
+      const char *separator = "";
+
+      for (size_t i = 0; i != 8; i += 1)
+        {
+          printf ("%s%02x", separator, hash1 % 256);
+          separator = " ";
+          hash1 /= 256;
+        }
+
+      for (size_t i = 0; i != 8; i += 1)
+        {
+          printf ("%s%02x", separator, hash2 % 256);
+          hash2 /= 256;
+        }
+
+      printf("\n");
     }
 
   return 0;

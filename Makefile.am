@@ -262,7 +262,16 @@ libhiha_la_SOURCES += src/libhiha/load_plugin.c
 .PHONY: indent
 indent:
 	$(INDENT) -l72 --no-tabs \
+		-Tint8_t \
+		-Tint16_t \
+		-Tint32_t \
+		-Tint64_t \
+		-Tuint8_t \
+		-Tuint16_t \
+		-Tuint32_t \
+		-Tuint64_t \
 		-TFILE \
+		-Tspookyhash_context_t \
 		-Tspinlock_t \
 		-Tpratt_tables_t \
 		-Tpratt_binding_power_t \
