@@ -51,6 +51,26 @@ This mechanism already is working.
 
 ***
 
+Regarding how branching probably will work—
+
+Almost no one makes branching nondeterministic. Programmers these days
+do not even know what it means for branching to be nondeterministic.
+How long has it been since Edsger W. Dijkstra’s _A Discipline of
+Programming_ has been in print? We intend to make branching in hiha
+nondeterministic. There will, most likely, be two constructs, *do* and
+*while*. The *do* construct will not be written “*do*..*od*” but
+“(*do*..)” and the *while* construct “(*while*..)”, because hiha seeks
+to make things simpler than anyone before has imagined.
+
+What is the advantage of nondeterminism? I had to scan through my
+wife’s copy of _A Discipline of Programming_ to remind myself what it
+was.footnote:[I read _A Discipline of Programming_ circa 1981 from the
+copy in my county college library. From 1981 to now is a long time.]
+Nondeterminism lets you apply the _weakest_ precondition when proving
+a snippet of code.
+
+***
+
 At a later time I will fill in details about how I intend to implement
 a variation of threaded code, and thus attain proper tail calls
 efficiently in C _without_ either trampolines or Cheney-on-the-MTA.
