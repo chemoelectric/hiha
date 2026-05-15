@@ -67,6 +67,28 @@ an ATS programmer, I am not a big fan of loose typechecking.
 
 ***
 
-I am not a young man. Should I drop dead, feel free to take over the
-project. Or not. I might take over such a thing from someone, but that
-does not mean someone else would.
+I am not a young person—not ancient, but old enough to be “old.”
+Should I drop dead, feel free to take over the project. Or not. I
+might take over such a thing from someone, but that does not mean
+someone else would.
+
+Please try to understand why I am strict about structured programming
+in C. It is related to why my C functions tend to be very small.
+People who are not strict about structured programming in a language
+like C soon find themselves losing track of how the program actually
+works. You have to actually use structured programming to see what I
+mean.
+
+Do not bother arguing with detractors. They are being unscientific,
+arguing without first making observations. I am asking you to observe.
+
+You may program however you wish, in a project you have taken over.
+When I took over ANT and made kompostilo typesetter from it, I
+converted from Revised Syntax for OCaml to standard syntax, simply so
+I could use Emacs Tuareg mode. But I recommend using my style. You may
+like it, should you actually try it. C is a difficult language to be
+disciplined in. OpenBSD tries to be displined in it by using only a
+restricted set of functions, and by flinging insults at everyone else.
+I approach the problem differently. I try to be disciplined in C by
+using “ancient” methods of disciplined programming—and by keeping the
+cyclometric complexity not only to a minimum, but visually obvious.
