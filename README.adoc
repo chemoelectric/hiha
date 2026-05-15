@@ -56,11 +56,12 @@ Regarding how branching probably will work—
 Almost no one makes branching nondeterministic. Programmers these days
 do not even know what it means for branching to be nondeterministic.
 How long has it been since Edsger W. Dijkstra’s _A Discipline of
-Programming_ has been in print? We intend to make branching in hiha
-nondeterministic. There will, most likely, be two constructs, *do* and
-*while*. The *do* construct will not be written “*do*..*od*” but
-“(*do*..)” and the *while* construct “(*while*..)”, because hiha seeks
-to make things simpler than anyone before has imagined.
+Programming_, with its nondeterministic constructs, has been in print?
+We intend to make branching in hiha nondeterministic. There will, most
+likely, be two constructs, *do* and *while*. The *do* construct will
+not be written “*do*...*od*” but “(*do*...)” and the *while* construct
+“(*while*...)”, because hiha seeks to make things simpler than anyone
+before has imagined.
 
 What is the advantage of nondeterminism? I had to scan through my
 wife’s copy of _A Discipline of Programming_ to remind myself what it
