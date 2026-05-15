@@ -22,9 +22,10 @@ canonicalized, and thus you can use superscripts, subscripts, and so
 forth, to convey meaning. But they _are_ normalized, which likely is
 more than a lot of compilers and interpreters do. Thus you can rely on
 “e” followed by a joining acute accent being treated exactly the same
-as “é”.footnote:[Ligatures, serving as esthetic rather than linguistic
-entities, are not treated similarly. The sequence “f” “i” is not
-converted to the “fi” ligature.]
+as “é”.footnote:[Ligatures, serving as esthetic or readability
+entities, rather than as linguistic entities, are not treated
+similarly. The sequence “f” “i” is not converted to the “fi”
+ligature.]
 
 Then the Unicode code points of the files are individually made into
 lexical tokens, and each end of file is also made into a lexical
