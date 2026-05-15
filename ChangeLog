@@ -1,5 +1,26 @@
 @  master
-|  2026-05-14 16:25 +0000
+|  2026-05-15 13:33 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       fec2db002eb491d01adad647fe0e5cbd4f27b46f
+|  mercurial: 29e7e8253dfb8c5b8f7eeaa505e8fb92018351d3
+|  revision:  117
+|  parents:   116
+|
+|    A few changes to get rid of confusing abuses of arrays.
+|
+|
+o  2026-05-14 17:01 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       091eef2b964351c73eb61ea9b9dbdec20e4e6c1e
+|  mercurial: 70bc8cf818fc75889d9b7b912317e5ff011bac91
+|  revision:  116
+|  parents:   115
+|
+|    Array redeclared with correct size in spookyhash.h. Added
+|    spookyhash_final_bytes().
+|
+|
+o  2026-05-14 16:25 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 |  git:       bb273f47060f04c1c5a3bd2fbb8c62d96e59fe9c
 |  mercurial: 44b6eea2386ee816b6144bf2c6e5614065ca9b77
