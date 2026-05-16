@@ -169,7 +169,7 @@ language. Instead we give the language a general syntax of
 juxtaposition! You can juxtapose things, and what the juxtaposition
 means depends on what is juxtaposed to what.
 
-Thus one might write “+1.0 + 3.0 e₁ e₂+”, and the juxtaposition of
+Thus one might write “+1.0 + 3.0(e₁ e₂)+”, and the juxtaposition of
 +e₁+ and +e₂+ represents the geometric product we previously wrote as
 a precomputed bivector +e₁e₂+. Or we might write
 
