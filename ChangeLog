@@ -1,7 +1,130 @@
 @  master
-|  2026-05-15 20:25 +0000
+|  2026-05-16 02:00 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
-|  git:
+|  git:       f663293c19dd14ab98b037821201a6d15eb8d86f
+|  mercurial: a7e6da03185bfc9e10fa6f45e9c21e3fecc00d7d
+|  revision:  136
+|  parents:   135
+|
+|    Hashes for tokens.
+|
+|
+o  2026-05-15 22:36 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       15fb9483eda910d3b109aa953a2fb0011f3f127f
+|  mercurial: 2cce795f5d84c61562ca3d9c66497c6134486eab
+|  revision:  135
+|  parents:   134
+|
+|    Remove some ‘ULL’.
+|
+|
+o  2026-05-15 21:09 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       1013553f2cd773b58c654fc60582789b37aef6fe
+|  mercurial: e73915e9718bf15b0d9599b6ba1af536de294dda
+|  revision:  134
+|  parents:   133
+|
+|    Mention the TRS-80
+|
+|
+o  2026-05-15 21:05 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       2b66b60e5025067ae083e351b5ddc94e9163a778
+|  mercurial: c9ab06ebc7512964a95a3802c34293996e6691ca
+|  revision:  133
+|  parents:   132
+|
+|    Mention I studied EE.
+|
+|
+o  2026-05-15 21:01 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       c3e1a1513b8a3c6a013f576805cbbc1fdf76e620
+|  mercurial: 208e9c8dc0279b13fda7e4f0fa39fe60f2f11d9e
+|  revision:  132
+|  parents:   131
+|
+|    Typo fix.
+|
+|
+o  2026-05-15 21:00 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       7f32a36f5089a0698f3f6a700f1fac1cfd6ee371
+|  mercurial: 0e691e337573b3c6317ed4aafab6f23196bec1f0
+|  revision:  131
+|  parents:   130
+|
+|    Be less prejudiced about ligatures, should anyone complain.:
+|
+|    (I am a font person. I know how font people can be. Okay, usually
+|    they are not THAT nasty. :) )
+|
+|
+o  2026-05-15 20:54 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       b51ff0c76a1718b40e996ffbca08eb3b048e6e9d
+|  mercurial: 72838d8e086e4c14c52ee57e6134f998845b8a08
+|  revision:  130
+|  parents:   129
+|
+|    Clarificications.
+|
+|
+o  2026-05-15 20:52 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       fcf3a174a911c7dbd97f4caa074cb4088ff6e016
+|  mercurial: e734b2f384e94cb3b041d0dcc6cf186fd827d633
+|  revision:  129
+|  parents:   128
+|
+|    About nondeterminism.
+|
+|
+o  2026-05-15 20:37 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       c75c8ab0b76e467d3fd708a04fe7b261daf63032
+|  mercurial: 8dd6f805d6a5162fdc600d2ad5b8b8dd76377982
+|  revision:  128
+|  parents:   127
+|
+|    Make this clearer.
+|
+|
+o  2026-05-15 20:35 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       25df60353490eb65d6f00b705937d61855778a6c
+|  mercurial: d59e93a20a539b1cff00982ac3efd24a67c6ac58
+|  revision:  127
+|  parents:   126
+|
+|    Add a note about ATS proofs.
+|
+|
+o  2026-05-15 20:28 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       e88d50b34dc0476326a05ed08bfa8a52091d9021
+|  mercurial: 3bc6f456a659aee938040fbe00b3e391299256e9
+|  revision:  126
+|  parents:   125
+|
+|    Spelling error.
+|
+|
+o  2026-05-15 20:27 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       5878c52cf77d90a4c43b219b53702b7d7f0b4570
+|  mercurial: fb30e8ccc804b6f8ff01e8faf892ffbf2b928527
+|  revision:  125
+|  parents:   124
+|
+|    Make sure make distcheck still works. Update ChangeLog and README.
+|
+|
+o  2026-05-15 20:25 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       2feba204e3d68a4f0d2afb8145f19ee79a619946
 |  mercurial: a9fd9058f838a71661b28070eb9d53dec51eea2f
 |  revision:  124
 |  parents:   123

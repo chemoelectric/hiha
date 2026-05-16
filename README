@@ -47,6 +47,24 @@
 
    ══════════════════════════════════════════════════════════════════════════
 
+   Regarding how branching probably will work—
+
+   Almost no one makes branching nondeterministic. Programmers these days do
+   not even know what it means for branching to be nondeterministic. How long
+   has it been since Edsger W. Dijkstra’s A Discipline of Programming, with
+   its nondeterministic constructs, has been in print? We intend to make
+   branching in hiha nondeterministic. There will, most likely, be two
+   constructs, do and while. The do construct will not be written “do…​od”
+   but “(do…​)” and the while construct “(while…​)”, because hiha seeks to
+   make things simpler than anyone before has imagined.
+
+   What is the advantage of nondeterminism? I had to scan through my wife’s
+   copy of A Discipline of Programming to remind myself what it was.^[2]
+   Nondeterminism lets you apply the weakest precondition when proving a
+   snippet of code.
+
+   ══════════════════════════════════════════════════════════════════════════
+
    At a later time I will fill in details about how I intend to implement a
    variation of threaded code, and thus attain proper tail calls efficiently
    in C without either trampolines or Cheney-on-the-MTA.
@@ -81,15 +99,21 @@
    Revised Syntax for OCaml to standard syntax, simply so I could use Emacs
    Tuareg mode. But I recommend using my style. You may like it, should you
    actually try it. C is a difficult language to be disciplined in. OpenBSD
-   tries to be displined in it by using only a restricted set of functions,
+   tries to be disciplined in it by using only a restricted set of functions,
    and by flinging insults at everyone else. They write good code but theirs
    is not my approach. I try to be disciplined in C by using “ancient”
    methods of disciplined programming—and by keeping the cyclometric
-   complexity not only to a minimum, but visually obvious.
+   complexity not only to a minimum, but visually obvious.^[3]
 
    ══════════════════════════════════════════════════════════════════════════
 
-   1. Ligatures, serving as esthetic rather than linguistic entities, are not
-   treated similarly. The sequence “f” “i” is not converted to the “fi”
-   ligature.
-   Last updated 2026-05-15 15:25:46 -0500
+   1. Ligatures, serving as esthetic or readability entities, rather than as
+   linguistic entities, are not treated similarly. The sequence “f” “i” is
+   not converted to the “fi” ligature.
+   2. I read A Discipline of Programming circa 1981 from the copy in my
+   county college library. From 1981 to now is a long time. By the way I
+   studied electrical engineering, not computer science. There is not the
+   least regret. My TRS-80 was a soldering iron project.
+   3. Also, one must admit, there is the experience of writing memcpy calls
+   that satisfied proofs in ATS code.
+   Last updated 2026-05-15 16:09:17 -0500

@@ -32,7 +32,7 @@ EXTRA_PROGRAMS =
 BUILT_SOURCES =
 CLEANFILES =
 DISTCLEANFILES =
-CPPFLAGS =
+AM_CPPFLAGS =
 
 check_PROGRAMS =
 check_SCRIPTS =
@@ -134,7 +134,7 @@ BASICCFLAGS += -I $(abs_top_srcdir)
 BASICCFLAGS += -I $(abs_top_srcdir)/include
 BASICCFLAGS += -I $(abs_top_srcdir)/lib
 BASICCFLAGS += -I $(abs_top_srcdir)/$(GCVERS)/include
-CPPFLAGS += $(BASICCFLAGS)
+AM_CPPFLAGS += $(BASICCFLAGS)
 
 #-----------------------------------------------------------------------
 
