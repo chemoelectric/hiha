@@ -75,11 +75,21 @@ a snippet of code.
 
 ***
 
-At a later time I will fill in details about how I intend to implement
-a variation of threaded code, and thus attain proper tail calls
-efficiently in C _without_ either trampolines or Cheney-on-the-MTA.
+I intend to generate C code that has proper tail calls. I will do this
+without trampolines and without Cheney-on-the-MTA.
 
-I will also describe how I intend to allocate memory in blocks and
+Here is how.
+
+The code will be threaded. Each subroutine is passed the entire
+program state, by reference. It is called from an interpreter that is
+merely a very tight loop. The subroutine returns the address of the
+next subroutine to call. The interpreter then repeats the process with
+_that_ subroutine. This process goes on from beginning to end of the
+program.
+
+***
+
+I will later describe how I intend to allocate memory in blocks and
 then have variables that are entirely local and by reference. Variable
 _names_ will then be managed in a way that substitutes for linear
 _types_. Thus _syntax_ takes the place of a typechecker.
@@ -94,7 +104,7 @@ an ATS programmer, I am not a big fan of loose typechecking.
 I am not a young person—not ancient, but old enough to be “old.”
 Should I drop dead, feel free to take over the project. Or not. I
 might take over such a thing from someone, but that does not mean
-someone else would.
+someone else would. (And I probably would lose interest quickly.)
 
 Please try to understand why I am strict about structured programming
 in C. It is related to why my C functions tend to be very small.
