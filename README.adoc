@@ -129,3 +129,56 @@ programming—and by keeping the cyclometric complexity not only to a
 minimum, but visually obvious.footnote:[Also, one must admit, there is
 the experience of writing *memcpy* calls that satisfied proofs in ATS
 code.]
+
+***
+
+Now that that bit of hubris is over with, let me say the core notion
+to hiha is to do by simple means what others do by complicated means.
+
+If Algol 68 requires a formal report too complex for Wirth, Dijkstra,
+and Hoare to read it, then hiha requires only a reference
+implementation of two sets of Pratt parser rules. One set handles
+lexical analysis and the other syntactic analysis.
+
+If Algol 68 supposedly can handle with syntax what other languages
+must do via semantics, and ATS must use a separate sublanguage of
+proofs to make reference variables safe via a typechecking pass, then
+hiha will make reference variables safe by doing in syntax roughly
+what ATS does in proofs. The safety will happen naturally via the
+language’s syntax, which in turn is defined by Pratt parser
+rules.footnote:[There is thus likely to be no need for a garbage
+collector, but it also may be that sometimes we mark either blocks of
+memory or the variables that reference them as “free to leak.”]
+
+If others use trampolines or Cheney-on-the-MTA to obtain proper tail
+calls despite compiling to C, hiha instead goes very simple and uses
+threaded code. This likely requires conversion of the program to
+continuation-passing style, but we may have wanted this anyway (for
+reasons not worth exploring now). Conversion to continuation-passing
+style can be done as a syntactic operation.
+
+Other matters start by seeming complicated, but then a path to
+simplicity becomes apparent.
+
+For example, Scheme lets one write “1.0+3.0i” for a complex number,
+but we want to generalize that. A person should be able to write
+“1.0+3.0e₁e₂” to mean roughly the same thing, but as geometric
+algebra. So at first we think of adding a syntax of vector components,
+but to do so would be the usual way in which people complicate a
+language. Instead we give the language a general syntax of
+juxtaposition! You can juxtapose things, and what the juxtaposition
+means depends on what is juxtaposed to what.
+
+Thus one might write “1.0 + 3.0 e₁ e₂”, and the juxtaposition of e₁
+and e₂ represents the geometric product we previously wrote as a
+precomputed bivector e₁e₂. Or we might write
+
+[source]
+----
+    "this" " is " " a " "string"
+----
+
+and this will represent the concatenation of the string literals, much
+as a similar notation does in C.
+
+And so on.
