@@ -26,6 +26,19 @@
 HIHA_VISIBLE const char version_etc_copyright[] =
   "Copyright %s %d Barry Schwartz";
 
+static bool
+_string_t_equals (const string_t *key, const string_t *stored)
+{
+  return (string_t_cmp (*key, *stored) == 0);
+}
+
+HIHA_HASH_MAP_DECL (string_t_hash_map, string_t);
+HIHA_HASH_MAP_TRIE_DEFN (string_t_hash_map);
+HIHA_HASH_MAP_SEARCH_DEFN(string_t_hash_map_search,
+                          string_t_hash_map, string_t,
+                          string_t_hash_init, string_t_hash,
+                          _string_t_equals);
+
 int
 main (void)
 {

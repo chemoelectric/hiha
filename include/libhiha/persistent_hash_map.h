@@ -38,17 +38,78 @@
 
 #define HIHA_HASH_MAP_DECL(NAME, VALTYPE)                       \
                                                                 \
-  HIHA_INT_TRIE_NODES_DECL (NAME##_node, uint64_t, VALTYPE);    \
+  struct NAME##_node;                                           \
+                                                                \
+  union NAME##_node_union                                       \
+  {                                                             \
+    VALTYPE value;                                              \
+    struct NAME##_node *trie;                                   \
+  };                                                            \
+                                                                \
+  struct NAME##_node_contents                                   \
+  {                                                             \
+    union NAME##_node_union u;                                  \
+    bool is_trie;                                               \
+  };                                                            \
+                                                                \
+  HIHA_INT_TRIE_NODES_DECL (NAME##_node, uint64_t,              \
+                            struct NAME##_node_contents);       \
                                                                 \
   typedef struct NAME                                           \
   {                                                             \
+    struct NAME##_node *trie;                                   \
     size_t size;                                                \
-    uint64_t hash_function (void *hash_context,                 \
-                            unsigned int hash_bits_index);      \
-    bool equality_test (const VALTYPE *key_object,              \
-                        const VALTYPE *stored_object);          \
-    NAME##_node_t trie;                                         \
   } *NAME##_t
+
+#define HIHA_HASH_MAP_TRIE_DEFN(NAME)                                   \
+  HIHA_INT_TRIE_INSERT_DEFN (NAME##_node_insert, NAME##_node,           \
+                             uint64_t, struct NAME##_node_contents);    \
+  HIHA_INT_TRIE_SEARCH_DEFN (NAME##_node_search, NAME##_node,           \
+                             uint64_t);                                 \
+  HIHA_INT_TRIE_DELETE_DEFN (NAME##_node_delete, NAME##_node,           \
+                             uint64_t);                                 \
+  HIHA_INT_TRIE_WALK_DEFN (NAME##_node_walk, NAME##_node)
+
+#define HIHA_HASH_MAP_SIZE_DEFN(FUNC, NAME)     \
+  size_t                                        \
+  FUNC (NAME##_t hmap)                          \
+  {                                             \
+    return (hmap == NULL) ? 0 : hmap->size;     \
+  }
+
+#define HIHA_HASH_MAP_SEARCH_DEFN(FUNC, NAME, VALTYPE,                  \
+                                  HASHINIT, HASHFUNC, EQUALS)           \
+                                                                        \
+  const VALTYPE *                                                       \
+  FUNC##_9c336bbf_7aba_427b_a598_1b0686a45eb3                           \
+  (NAME##_node_t trie, const VALTYPE *key,                              \
+   void *context, unsigned int index)                                   \
+  {                                                                     \
+    const VALTYPE *result = NULL;                                       \
+                                                                        \
+    uint64_t hash = (HASHFUNC) (context, index);                        \
+    NAME##_node_leaf_t leaf = (NAME##_node_search) (trie, hash);        \
+    if (leaf != NULL)                                                   \
+      {                                                                 \
+        if (leaf->value.is_trie)                                        \
+          (FUNC##_9c336bbf_7aba_427b_a598_1b0686a45eb3)                 \
+            (leaf->value.u.trie, key, context, index + 1);              \
+        else if ((EQUALS) (key, &leaf->value.u.value))                  \
+          result = &leaf->value.u.value;                                \
+      }                                                                 \
+                                                                        \
+    return result;                                                      \
+  }                                                                     \
+                                                                        \
+  const VALTYPE *                                                       \
+  FUNC (NAME##_t hmap, const VALTYPE *key)                              \
+  {                                                                     \
+    const VALTYPE *result = NULL;                                       \
+    if (hmap != NULL)                                                   \
+      result = ((FUNC##_9c336bbf_7aba_427b_a598_1b0686a45eb3)           \
+                (hmap->trie, key, ((HASHINIT) ((string_t) key)), 0));   \
+    return result;                                                      \
+  }
 
 #endif /* __LIBHAHA__PERSISTENT_HASH_MAP_H__INCLUDED__ */
 
