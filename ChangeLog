@@ -1,5 +1,55 @@
 @  master
-|  2026-05-16 02:00 +0000
+|  2026-05-16 19:31 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       e063758b076e3f43e2b4d7e9787e4702df4bc8ba
+|  mercurial: b6032788a9c9cc6b66f20e05905371e4779cf25c
+|  revision:  141
+|  parents:   140
+|
+|    Correction.
+|
+|
+o  2026-05-16 19:28 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       bd656d8802e393c862dd4bf84d72fb7ab737a072
+|  mercurial: 4ed8c6cdcb7300d6c16284dce3b1c94a5dfccdd5
+|  revision:  140
+|  parents:   139
+|
+|    Repair some Asciidoc.
+|
+|
+o  2026-05-16 19:25 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       12a886e6561366665870413e2d4a38a22d00b056
+|  mercurial: 138b3bd2e6af75ff8db257ba14b797b1296b6fd8
+|  revision:  139
+|  parents:   138
+|
+|    More README.
+|
+|
+o  2026-05-16 16:15 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       5482e850289d931ed342f1a52b901a00690984b6
+|  mercurial: f3f908501e9ababcd2cd2f0368c667ab7fdd3a21
+|  revision:  138
+|  parents:   137
+|
+|    Describe the interpreter.
+|
+|
+o  2026-05-16 02:17 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       939f06d95f9978406bffca3bf9f4245176cbe790
+|  mercurial: c04d2e1e21f3a98ea25419674632426dfd0e0b23
+|  revision:  137
+|  parents:   136
+|
+|    I forgot what the latest changes I made were.
+|
+|
+o  2026-05-16 02:00 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 |  git:       f663293c19dd14ab98b037821201a6d15eb8d86f
 |  mercurial: a7e6da03185bfc9e10fa6f45e9c21e3fecc00d7d

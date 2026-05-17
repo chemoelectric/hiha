@@ -155,5 +155,9 @@ main (void)
         abort ();
     }
 
+  for (size_t i = 100; i != 0; i -= 1)
+    if (string_t_hash (context, i - 1) != nominal[i - 1])
+      abort ();
+
   return 0;
 }

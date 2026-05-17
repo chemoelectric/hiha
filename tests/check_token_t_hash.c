@@ -147,7 +147,9 @@ main (void)
 {
   GC_INIT ();
 
-  const token_t tok = make_token_t (make_string_t (kind_str), make_string_t (proverb_str), NULL);
+  const token_t tok =
+    make_token_t (make_string_t (kind_str), make_string_t (proverb_str),
+                  NULL);
 
   token_t_hash_context_t context = token_t_hash_init (tok);
   for (size_t i = 0; i != 100; i += 1)
@@ -156,6 +158,10 @@ main (void)
       if (token_t_hash (context, i) != nominal[i])
         abort ();
     }
+
+  for (size_t i = 100; i != 0; i -= 1)
+    if (token_t_hash (context, i - 1) != nominal[i - 1])
+      abort ();
 
   return 0;
 }
