@@ -100,8 +100,8 @@
       while (_SOUGHT_ND__ != NULL && !_SOUGHT_ND__->is_leaf)            \
         {                                                               \
           _SOUGHT_ND__ =                                                \
-            (((_KEY__ & _MASK__) == 0) ?                                \
-             ((NAME##_internal_t) _SOUGHT_ND__)->left                   \
+            (((_KEY__ & _MASK__) == 0)                                  \
+             ? ((NAME##_internal_t) _SOUGHT_ND__)->left                 \
              : ((NAME##_internal_t) _SOUGHT_ND__)->right);              \
           _MASK__ = (_MASK__ << 1);                                     \
         }                                                               \
