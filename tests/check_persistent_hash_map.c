@@ -26,18 +26,40 @@
 HIHA_VISIBLE const char version_etc_copyright[] =
   "Copyright %s %d Barry Schwartz";
 
-static bool
-_string_t_equals (const string_t *key, const string_t *stored)
+struct string2int
 {
-  return (string_t_cmp (*key, *stored) == 0);
+  string_t str;
+  int i;
+};
+
+static bool
+string2int_equals (const struct string2int *key,
+                   const struct string2int *stored)
+{
+  return (string_t_cmp (key->str, stored->str) == 0);
 }
 
-HIHA_HASH_MAP_DECL (string_t_hash_map, string_t);
-HIHA_HASH_MAP_TRIE_DEFN (string_t_hash_map);
-HIHA_HASH_MAP_SEARCH_DEFN(string_t_hash_map_search,
-                          string_t_hash_map, string_t,
-                          string_t_hash_init, string_t_hash,
-                          _string_t_equals);
+string_t_hash_context_t
+string2int_hash_init (const struct string2int *element)
+{
+  return string_t_hash_init (element->str);
+}
+
+static bool
+string2int_hash_bit (string_t_hash_context_t context, unsigned int i)
+{
+  const unsigned int j = i / 64;
+  const unsigned int k = i % 64;
+  const uint64_t hash = string_t_hash (context, j);
+  const uint64_t mask = ((uint64_t) 1) << k;
+  return ((hash & mask) != 0);
+}
+
+HIHA_HASH_MAP_NODES_DECL (string2int_hash_map, struct string2int);
+HIHA_HASH_MAP_SEARCH_DEFN (string2int_hash_map_search,
+                           string2int_hash_map, struct string2int,
+                           string2int_hash_init, string2int_hash_bit,
+                           string2int_equals);
 
 int
 main (void)

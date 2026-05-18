@@ -28,87 +28,104 @@
 
 */
 
+#include <stdlib.h>
 #include <stdint.h>
-#include <libhiha/persistent_integer_trie.h>
+#include <assert.h>
 
 #ifndef HIHA_HASH_MAP_ALLOC
 #include <xalloc.h>
 #define HIHA_HASH_MAP_ALLOC(T) XMALLOC (T)
 #endif
 
-#define HIHA_HASH_MAP_DECL(NAME, VALTYPE)                       \
-                                                                \
-  struct NAME##_node;                                           \
-                                                                \
-  union NAME##_node_union                                       \
-  {                                                             \
-    VALTYPE value;                                              \
-    struct NAME##_node *trie;                                   \
-  };                                                            \
-                                                                \
-  struct NAME##_node_contents                                   \
-  {                                                             \
-    union NAME##_node_union u;                                  \
-    bool is_trie;                                               \
-  };                                                            \
-                                                                \
-  HIHA_INT_TRIE_NODES_DECL (NAME##_node, uint64_t,              \
-                            struct NAME##_node_contents);       \
-                                                                \
-  typedef struct NAME                                           \
-  {                                                             \
-    struct NAME##_node *trie;                                   \
-    size_t size;                                                \
+#define HIHA_HASH_MAP_NODE_DECL(NAME)           \
+  typedef struct NAME                           \
+  {                                             \
+    bool is_leaf;                               \
   } *NAME##_t
 
-#define HIHA_HASH_MAP_TRIE_DEFN(NAME)                                   \
-  HIHA_INT_TRIE_INSERT_DEFN (NAME##_node_insert, NAME##_node,           \
-                             uint64_t, struct NAME##_node_contents);    \
-  HIHA_INT_TRIE_SEARCH_DEFN (NAME##_node_search, NAME##_node,           \
-                             uint64_t);                                 \
-  HIHA_INT_TRIE_DELETE_DEFN (NAME##_node_delete, NAME##_node,           \
-                             uint64_t);                                 \
-  HIHA_INT_TRIE_WALK_DEFN (NAME##_node_walk, NAME##_node)
-
-#define HIHA_HASH_MAP_SIZE_DEFN(FUNC, NAME)     \
-  size_t                                        \
-  FUNC (NAME##_t hmap)                          \
+#define HIHA_HASH_MAP_INTERNAL_DECL(NAME)       \
+  typedef struct NAME##_internal                \
   {                                             \
-    return (hmap == NULL) ? 0 : hmap->size;     \
-  }
+    bool is_leaf;                               \
+    struct NAME *left;                          \
+    struct NAME *right;                         \
+  } *NAME##_internal_t
 
-#define HIHA_HASH_MAP_SEARCH_DEFN(FUNC, NAME, VALTYPE,                  \
-                                  HASHINIT, HASHFUNC, EQUALS)           \
-                                                                        \
-  const VALTYPE *                                                       \
-  FUNC##_9c336bbf_7aba_427b_a598_1b0686a45eb3                           \
-  (NAME##_node_t trie, const VALTYPE *key,                              \
-   void *context, unsigned int index)                                   \
-  {                                                                     \
-    const VALTYPE *result = NULL;                                       \
-                                                                        \
-    uint64_t hash = (HASHFUNC) (context, index);                        \
-    NAME##_node_leaf_t leaf = (NAME##_node_search) (trie, hash);        \
-    if (leaf != NULL)                                                   \
-      {                                                                 \
-        if (leaf->value.is_trie)                                        \
-          (FUNC##_9c336bbf_7aba_427b_a598_1b0686a45eb3)                 \
-            (leaf->value.u.trie, key, context, index + 1);              \
-        else if ((EQUALS) (key, &leaf->value.u.value))                  \
-          result = &leaf->value.u.value;                                \
-      }                                                                 \
-                                                                        \
-    return result;                                                      \
-  }                                                                     \
-                                                                        \
-  const VALTYPE *                                                       \
-  FUNC (NAME##_t hmap, const VALTYPE *key)                              \
-  {                                                                     \
-    const VALTYPE *result = NULL;                                       \
-    if (hmap != NULL)                                                   \
-      result = ((FUNC##_9c336bbf_7aba_427b_a598_1b0686a45eb3)           \
-                (hmap->trie, key, ((HASHINIT) ((string_t) key)), 0));   \
-    return result;                                                      \
+#define HIHA_HASH_MAP_LEAF_DECL(NAME, ELEMTYPE) \
+  typedef struct NAME##_leaf                    \
+  {                                             \
+    bool is_leaf;                               \
+    ELEMTYPE element;                           \
+  } *NAME##_leaf_t
+
+#define HIHA_HASH_MAP_NODES_DECL(NAME, ELEMTYPE)        \
+  HIHA_HASH_MAP_NODE_DECL (NAME);                       \
+  HIHA_HASH_MAP_INTERNAL_DECL (NAME);                   \
+  HIHA_HASH_MAP_LEAF_DECL (NAME, ELEMTYPE)
+
+#define HIHA_HASH_MAP_MAKE_INTERNAL(NEW_NODE, NAME, LEFT, RIGHT)        \
+  do                                                                    \
+    {                                                                   \
+      struct NAME##_internal *_NEW_ND__ =                               \
+        HIHA_HASH_MAP_ALLOC (struct NAME##_internal);                   \
+      _NEW_ND__->is_leaf = false;                                       \
+      _NEW_ND__->left = (LEFT);                                         \
+      _NEW_ND__->right = (RIGHT);                                       \
+      NEW_NODE = (NAME##_t) _NEW_ND__;                                  \
+    }                                                                   \
+  while (0)
+
+#define HIHA_HASH_MAP_MAKE_LEAF(NEW_NODE, NAME, ELEMENT)        \
+  do                                                            \
+    {                                                           \
+      struct NAME##_leaf *_NEW_ND__ =                           \
+        HIHA_HASH_MAP_ALLOC (struct NAME##_leaf);               \
+      _NEW_ND__->is_leaf = true;                                \
+      _NEW_ND__->element = (ELEMENT);                           \
+      NEW_NODE = (NAME##_t) _NEW_ND__;                          \
+    }                                                           \
+  while (0)
+
+#define HIHA_HASH_MAP_SEARCH(SOUGHT_NODE, NAME, ELEMTYPE,       \
+                             NODE, KEY, CONTEXT, HASHBIT,       \
+                             EQUALS)                            \
+  do                                                            \
+    {                                                           \
+      NAME##_t _SOUGHT_ND__ = (NODE);                           \
+      const ELEMTYPE *_KEY__ = (KEY);                           \
+      uint64_t _BIT_NUMBER__ = 0;                               \
+      while (_SOUGHT_ND__ != NULL && !_SOUGHT_ND__->is_leaf)    \
+        {                                                       \
+          _SOUGHT_ND__ =                                        \
+            (((HASHBIT) (CONTEXT, _BIT_NUMBER__))               \
+             ? ((NAME##_internal_t) _SOUGHT_ND__)->left         \
+             : ((NAME##_internal_t) _SOUGHT_ND__)->right);      \
+          _BIT_NUMBER__ += 1;                                   \
+        }                                                       \
+      if (_SOUGHT_ND__ != NULL)                                 \
+        if (!((EQUALS)                                          \
+              (_KEY__,                                          \
+               &((NAME##_leaf_t) _SOUGHT_ND__)->element)))      \
+          _SOUGHT_ND__ = NULL;                                  \
+      SOUGHT_NODE = (NAME##_leaf_t) _SOUGHT_ND__;               \
+    }                                                           \
+  while (0)
+
+/* Search for a matching element. Return a pointer to it if found,
+   NULL if not found. */
+#define HIHA_HASH_MAP_SEARCH_DEFN(FUNC, NAME, ELEMTYPE,         \
+                                  HASHINIT, HASHBIT, EQUALS)    \
+  const ELEMTYPE *                                              \
+  FUNC (NAME##_t _Node, const ELEMTYPE *_Key)                   \
+  {                                                             \
+    void *__context_ = (HASHINIT) (_Key);                       \
+    NAME##_leaf_t __sought_node_;                               \
+    HIHA_HASH_MAP_SEARCH (__sought_node_, NAME, ELEMTYPE,       \
+                          _Node, _Key, __context_,              \
+                          (HASHBIT), (EQUALS));                 \
+    return ((__sought_node_ == NULL)                            \
+            ? NULL                                              \
+            : &__sought_node_->element);                        \
   }
 
 #endif /* __LIBHAHA__PERSISTENT_HASH_MAP_H__INCLUDED__ */

@@ -272,6 +272,7 @@ indent:
 		-Tuint32_t \
 		-Tuint64_t \
 		-TFILE \
+		-Thiha_hash_map_mode_t \
 		-Tspookyhash_context_t \
 		-Tspinlock_t \
 		-Tpratt_tables_t \
