@@ -37,7 +37,8 @@
 #define HIHA_HASH_MAP_ALLOC(T) XMALLOC (T)
 #endif
 
-typedef enum {
+typedef enum
+{
   hiha_hash_map_insert_or_replace = 0,
   hiha_hash_map_insert_only = 1,
   hiha_hash_map_replace_only = 2
