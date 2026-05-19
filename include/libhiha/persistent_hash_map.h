@@ -260,9 +260,15 @@ typedef enum
     NAME##_leaf_t _leaf;                                                \
     ssize_t _sz_change;                                                 \
     void *_key_context = (HASHINIT) (_Element);                         \
-    HIHA_HASH_MAP_SEARCH (_leaf, NAME, ELEMTYPE,                        \
-                          _Node, _Element, _key_context,                \
-                          (HASHBIT), (EQUALS));                         \
+    if (_Mode == hiha_hash_map_insert_or_replace                        \
+        && _Size_change == NULL)                                        \
+      /* The _sz_change value will not be used. Avoid  */               \
+      /* doing a search that will not be needed.       */               \
+      _leaf = NULL;                                                     \
+    else                                                                \
+      HIHA_HASH_MAP_SEARCH (_leaf, NAME, ELEMTYPE,                      \
+                            _Node, _Element, _key_context,              \
+                            (HASHBIT), (EQUALS));                       \
     bool _do_insertion;                                                 \
     switch (_Mode)                                                      \
       {                                                                 \
