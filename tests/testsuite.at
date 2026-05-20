@@ -54,6 +54,11 @@ AT_KEYWORDS([persistent hash map hashmap])
 AT_CHECK_UNQUOTED([check_persistent_hash_map])
 AT_CLEANUP
 
+AT_SETUP([indexed deque])
+AT_KEYWORDS([indexed deque queue stack])
+AT_CHECK_UNQUOTED([check_indexed_deque])
+AT_CLEANUP
+
 # local variables:
 # mode: autoconf
 # coding: utf-8

@@ -1109,6 +1109,9 @@
 /* Define to 1 if you have the '__xpg_strerror_r' function. */
 #undef HAVE___XPG_STRERROR_R
 
+/* Define as a C attribute for marking a function non-returning. */
+#undef HIHA_NORETURN
+
 /* Define as a C attribute for marking a function pure. */
 #undef HIHA_PURE
 

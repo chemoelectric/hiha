@@ -55075,6 +55075,9 @@ printf "%s\n" "#define HIHA_VISIBLE [[gnu::visibility (\"default\")]]" >>confdef
 printf "%s\n" "#define HIHA_PURE [[gnu::pure]]" >>confdefs.h
 
 
+printf "%s\n" "#define HIHA_NORETURN [[noreturn]]" >>confdefs.h
+
+
 
 
 cat >confcache <<\_ACEOF

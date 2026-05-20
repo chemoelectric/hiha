@@ -387,6 +387,7 @@ am_libhiha_la_OBJECTS = $(am__objects_1) \
 	src/libhiha/libhiha_la-spookyhash.lo \
 	src/libhiha/libhiha_la-workspaces.lo \
 	src/libhiha/libhiha_la-spinlock.lo \
+	src/libhiha/libhiha_la-indexed_deque.lo \
 	src/libhiha/libhiha_la-string_t.lo \
 	src/libhiha/libhiha_la-string_t_hash.lo \
 	src/libhiha/libhiha_la-string_t_map.lo \
@@ -440,6 +441,7 @@ am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = src/hiha-tokens-print/$(DEPDIR)/hiha_tokens_print-hiha-tokens-print.Po \
 	src/hiha/$(DEPDIR)/hiha-hiha.Po \
 	src/libhiha/$(DEPDIR)/libhiha_la-gensym.Plo \
+	src/libhiha/$(DEPDIR)/libhiha_la-indexed_deque.Plo \
 	src/libhiha/$(DEPDIR)/libhiha_la-lexical.Plo \
 	src/libhiha/$(DEPDIR)/libhiha_la-load_plugin.Plo \
 	src/libhiha/$(DEPDIR)/libhiha_la-pratt.Plo \
@@ -2434,17 +2436,19 @@ libhiha_la_CFLAGS = $(BASICCFLAGS) $(CFLAGS)
 EXTRA_libhiha_la_DEPENDENCIES = 
 libhiha_la_SOURCES = $(libhiha_HDRS) src/libhiha/spookyhash.c \
 	src/libhiha/workspaces.c src/libhiha/spinlock.c \
-	src/libhiha/string_t.c src/libhiha/string_t_hash.c \
-	src/libhiha/string_t_map.c src/libhiha/token_t.c \
-	src/libhiha/token_t_hash.c src/libhiha/pratt.c \
-	src/libhiha/lexical.c src/libhiha/string_literal.c \
-	src/libhiha/gensym.c src/libhiha/load_plugin.c
+	src/libhiha/indexed_deque.c src/libhiha/string_t.c \
+	src/libhiha/string_t_hash.c src/libhiha/string_t_map.c \
+	src/libhiha/token_t.c src/libhiha/token_t_hash.c \
+	src/libhiha/pratt.c src/libhiha/lexical.c \
+	src/libhiha/string_literal.c src/libhiha/gensym.c \
+	src/libhiha/load_plugin.c
 libhiha_HDRS = include/libhiha/libhiha.h include/libhiha/spookyhash.h \
 	include/libhiha/persistent_avl.h \
 	include/libhiha/persistent_integer_trie.h \
 	include/libhiha/persistent_hash_map.h \
 	include/libhiha/workspaces.h include/libhiha/spinlock.h \
-	include/libhiha/initialize_once.h include/libhiha/string_t.h \
+	include/libhiha/initialize_once.h \
+	include/libhiha/indexed_deque.h include/libhiha/string_t.h \
 	include/libhiha/token_t.h include/libhiha/pratt.h \
 	include/libhiha/lexical.h include/libhiha/string_literal.h \
 	include/libhiha/gensym.h include/libhiha/load_plugin.h
@@ -2722,6 +2726,8 @@ src/libhiha/libhiha_la-workspaces.lo: src/libhiha/$(am__dirstamp) \
 	src/libhiha/$(DEPDIR)/$(am__dirstamp)
 src/libhiha/libhiha_la-spinlock.lo: src/libhiha/$(am__dirstamp) \
 	src/libhiha/$(DEPDIR)/$(am__dirstamp)
+src/libhiha/libhiha_la-indexed_deque.lo: src/libhiha/$(am__dirstamp) \
+	src/libhiha/$(DEPDIR)/$(am__dirstamp)
 src/libhiha/libhiha_la-string_t.lo: src/libhiha/$(am__dirstamp) \
 	src/libhiha/$(DEPDIR)/$(am__dirstamp)
 src/libhiha/libhiha_la-string_t_hash.lo: src/libhiha/$(am__dirstamp) \
@@ -2786,6 +2792,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/hiha-tokens-print/$(DEPDIR)/hiha_tokens_print-hiha-tokens-print.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/hiha/$(DEPDIR)/hiha-hiha.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/libhiha/$(DEPDIR)/libhiha_la-gensym.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@src/libhiha/$(DEPDIR)/libhiha_la-indexed_deque.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/libhiha/$(DEPDIR)/libhiha_la-lexical.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/libhiha/$(DEPDIR)/libhiha_la-load_plugin.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/libhiha/$(DEPDIR)/libhiha_la-pratt.Plo@am__quote@ # am--include-marker
@@ -2969,6 +2976,13 @@ src/libhiha/libhiha_la-spinlock.lo: src/libhiha/spinlock.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/libhiha/spinlock.c' object='src/libhiha/libhiha_la-spinlock.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhiha_la_CFLAGS) $(CFLAGS) -c -o src/libhiha/libhiha_la-spinlock.lo `test -f 'src/libhiha/spinlock.c' || echo '$(srcdir)/'`src/libhiha/spinlock.c
+
+src/libhiha/libhiha_la-indexed_deque.lo: src/libhiha/indexed_deque.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhiha_la_CFLAGS) $(CFLAGS) -MT src/libhiha/libhiha_la-indexed_deque.lo -MD -MP -MF src/libhiha/$(DEPDIR)/libhiha_la-indexed_deque.Tpo -c -o src/libhiha/libhiha_la-indexed_deque.lo `test -f 'src/libhiha/indexed_deque.c' || echo '$(srcdir)/'`src/libhiha/indexed_deque.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/libhiha/$(DEPDIR)/libhiha_la-indexed_deque.Tpo src/libhiha/$(DEPDIR)/libhiha_la-indexed_deque.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/libhiha/indexed_deque.c' object='src/libhiha/libhiha_la-indexed_deque.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhiha_la_CFLAGS) $(CFLAGS) -c -o src/libhiha/libhiha_la-indexed_deque.lo `test -f 'src/libhiha/indexed_deque.c' || echo '$(srcdir)/'`src/libhiha/indexed_deque.c
 
 src/libhiha/libhiha_la-string_t.lo: src/libhiha/string_t.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhiha_la_CFLAGS) $(CFLAGS) -MT src/libhiha/libhiha_la-string_t.lo -MD -MP -MF src/libhiha/$(DEPDIR)/libhiha_la-string_t.Tpo -c -o src/libhiha/libhiha_la-string_t.lo `test -f 'src/libhiha/string_t.c' || echo '$(srcdir)/'`src/libhiha/string_t.c
@@ -3519,6 +3533,7 @@ distclean: distclean-recursive
 	-rm -f src/hiha-tokens-print/$(DEPDIR)/hiha_tokens_print-hiha-tokens-print.Po
 	-rm -f src/hiha/$(DEPDIR)/hiha-hiha.Po
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-gensym.Plo
+	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-indexed_deque.Plo
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-lexical.Plo
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-load_plugin.Plo
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-pratt.Plo
@@ -3599,6 +3614,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f src/hiha-tokens-print/$(DEPDIR)/hiha_tokens_print-hiha-tokens-print.Po
 	-rm -f src/hiha/$(DEPDIR)/hiha-hiha.Po
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-gensym.Plo
+	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-indexed_deque.Plo
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-lexical.Plo
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-load_plugin.Plo
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-pratt.Plo

@@ -26,6 +26,7 @@
 #include <libhiha/persistent_avl.h>
 #include <libhiha/persistent_integer_trie.h>
 #include <libhiha/persistent_hash_map.h>
+#include <libhiha/indexed_deque.h>
 #include <libhiha/workspaces.h>
 #include <libhiha/spinlock.h>
 #include <libhiha/initialize_once.h>

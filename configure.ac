@@ -239,6 +239,8 @@ AC_DEFINE([HIHA_VISIBLE],[[[[gnu::visibility ("default")]]]],
   [Define as a C attribute for making a symbol visible.])
 AC_DEFINE([HIHA_PURE],[[[[gnu::pure]]]],
   [Define as a C attribute for marking a function pure.])
+AC_DEFINE([HIHA_NORETURN],[[[[noreturn]]]],
+  [Define as a C attribute for marking a function non-returning.])
 
 AH_BOTTOM([
 
