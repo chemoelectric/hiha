@@ -1,5 +1,25 @@
 @  master
-|  2026-05-19 18:21 +0000
+|  2026-05-20 15:19 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       722a81b00ec0ca12d8fb36d3ac9436daf8a6dd47
+|  mercurial: 9381a58142b88df4e0fbc724965076d3cdd99832
+|  revision:  161
+|  parents:   160
+|
+|    I had forgotten to implement the maps as persistent.
+|
+|
+o  2026-05-20 14:10 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       3bbeb6f35a1bf435c3593fcf07883f1350929aee
+|  mercurial: 0d25956442bf855f44fe859e234e41fd85bdbee6
+|  revision:  160
+|  parents:   159
+|
+|    Start of string_t maps.
+|
+|
+o  2026-05-19 18:21 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 |  git:       294f42e01c42f70f1f5461b0b0f80d96bb67f0b0
 |  mercurial: d8a6377da6c388c715feb432cbf658ae63630fd5
