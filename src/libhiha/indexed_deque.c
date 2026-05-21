@@ -31,6 +31,8 @@
 HIHA_INT_TRIE_NODES_DECL (indexed_deque_node, size_t, const void *);
 HIHA_INT_TRIE_INSERT_DEFN (indexed_deque_node_insert,
                            indexed_deque_node, size_t, const void *);
+HIHA_INT_TRIE_DELETE_DEFN (indexed_deque_node_delete,
+                           indexed_deque_node, size_t);
 HIHA_INT_TRIE_SEARCH_DEFN (indexed_deque_node_search,
                            indexed_deque_node, size_t);
 
@@ -124,6 +126,17 @@ indexed_deque_put_after_last (indexed_deque_t dq, const void *element)
   return make_deque (trie, i1, i2);
 }
 
+HIHA_VISIBLE indexed_deque_t
+indexed_deque_put (indexed_deque_t dq, size_t i, const void *element)
+{
+  indexed_deque_node_t trie = deque_trie (dq);
+  size_t i1 = deque_i1 (dq);
+  size_t i2 = deque_i2 (dq);
+  const size_t j = deque_index (dq, i);
+  trie = indexed_deque_node_insert (trie, j, element);
+  return make_deque (trie, i1, i2);
+}
+
 HIHA_VISIBLE const void *
 indexed_deque_get (indexed_deque_t dq, size_t i)
 {
@@ -145,6 +158,28 @@ indexed_deque_get_last (indexed_deque_t dq)
   return ((deque_size (dq) == 0)
           ? NULL
           : indexed_deque_node_search (dq->_trie, dq->_i2 - 1)->value);
+}
+
+HIHA_VISIBLE indexed_deque_t
+indexed_deque_delete_first (indexed_deque_t dq)
+{
+  indexed_deque_node_t trie = deque_trie (dq);
+  size_t i1 = deque_i1 (dq);
+  size_t i2 = deque_i2 (dq);
+  trie = indexed_deque_node_delete (trie, i1);
+  i1 += 1;
+  return make_deque (trie, i1, i2);
+}
+
+HIHA_VISIBLE indexed_deque_t
+indexed_deque_delete_last (indexed_deque_t dq)
+{
+  indexed_deque_node_t trie = deque_trie (dq);
+  size_t i1 = deque_i1 (dq);
+  size_t i2 = deque_i2 (dq);
+  i2 -= 1;
+  trie = indexed_deque_node_delete (trie, i2);
+  return make_deque (trie, i1, i2);
 }
 
 /*

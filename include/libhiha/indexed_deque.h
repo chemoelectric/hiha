@@ -39,12 +39,17 @@ indexed_deque_t indexed_deque_put_before_first (indexed_deque_t dq,
 indexed_deque_t indexed_deque_put_after_last (indexed_deque_t dq,
                                               const void *element);
 
+indexed_deque_t indexed_deque_put (indexed_deque_t dq, size_t i,
+                                   const void *element);
 const void *indexed_deque_get (indexed_deque_t dq, size_t i);
 
 /* The next two return NULL rather than treat it as an error, if there
    is no such entry. */
 const void *indexed_deque_get_first (indexed_deque_t dq);
 const void *indexed_deque_get_last (indexed_deque_t dq);
+
+indexed_deque_t indexed_deque_delete_first (indexed_deque_t dq);
+indexed_deque_t indexed_deque_delete_last (indexed_deque_t dq);
 
 #endif /* __LIBHAHA__INDEXED_DEQUE_H__INCLUDED__ */
 
