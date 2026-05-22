@@ -34,19 +34,13 @@
 
 #define _(msgid) HIHA_GETTEXT (msgid)
 
-//
-// It might be prudent to be prepared to copy strings, if this code
-// ever becomes converted somehow to linear types instead of garbage
-// collection.
-//
-#define NEW_STRING
-//#define NEW_STRING copy_string_t
-
 struct serialized_strings
 {
-  gl_list_t filenames;
-  gl_list_t token_kinds;
-  gl_list_t token_values;
+  voidp_vector_t filenames;
+  voidp_vector_t token_kinds;
+  voidp_vector_t token_values;
+  string_t_map_t token_kind_to_index;
+  string_t_map_t token_value_to_index;
 };
 typedef struct serialized_strings *serialized_strings_t;
 
@@ -128,8 +122,7 @@ _make_token_t_eof_eof (const char *filename, size_t line_no,
 HIHA_VISIBLE token_t
 make_token_t_eof_eof (text_location_t loc)
 {
-  return make_token_t (NEW_STRING (string_t_EOF ()),
-                       NEW_STRING (string_t_EOF ()), loc);
+  return make_token_t (string_t_EOF (), string_t_EOF (), loc);
 }
 
 HIHA_VISIBLE bool
@@ -203,7 +196,7 @@ get_token_from_source_file (token_getter_t getter, token_t *tok,
       str->s[0] = g->sbuf->s[g->i_code_point];
       str->n = 1;
       *tok =
-        _make_token_t (NEW_STRING (string_t_CP ()), str, g->filename,
+        _make_token_t (string_t_CP (), str, g->filename,
                        g->line_no, g->i_code_point + 1);
       g->i_code_point += 1;
     }
@@ -236,20 +229,42 @@ make_serialized_strings_t (void)
 {
   serialized_strings_t p = XMALLOC (struct serialized_strings);
 
-  p->filenames =
-    gl_list_create_empty (GL_AVLTREE_LIST, str_equal, NULL, NULL,
-                          false);
-  p->token_kinds =
-    gl_list_create_empty (GL_AVLTREE_LIST, str_equal, NULL, NULL,
-                          false);
-  p->token_values =
-    gl_list_create_empty (GL_AVLTREE_LIST, str_equal, NULL, NULL,
-                          false);
+  p->filenames = NULL;
+  p->token_kinds = NULL;
+  p->token_values = NULL;
+
+  p->token_kind_to_index = NULL;
+  p->token_value_to_index = NULL;
 
   /* The NULL filename will be represented by the index 0. */
-  gl_list_add_last (p->filenames, NULL);
+  p->filenames = voidp_vector_push (p->filenames, NULL);
 
   return p;
+}
+
+static size_t
+filename_to_index (voidp_vector_t filenames, const char *fn)
+{
+  size_t n = voidp_vector_length (filenames);
+  size_t i = 0;
+  while (i != n && !str_equal (voidp_vector_ref (filenames, i), fn))
+    i += 1;
+  return (i != n) ? i : ((size_t) -1);
+}
+
+static string_t_map_t
+insert_index (string_t_map_t map, string_t str, size_t i)
+{
+  size_t *box = XMALLOC (size_t);
+  *box = i;
+  return string_t_map_insert_only (map, str, box);
+}
+
+static size_t
+retrieve_index (string_t_map_t map, string_t str)
+{
+  const void *p = string_t_map_search (map, str);
+  return (p != NULL) ? *((const size_t *) p) : ((size_t) -1);
 }
 
 HIHA_VISIBLE void
@@ -259,12 +274,12 @@ serialize_token_t (const token_t tok, serialized_strings_t strings,
   /* The serialization done here is NOT interchangeable between
      machines. */
 
-  gl_list_t fnames = strings->filenames;
-  size_t i = gl_list_indexof (fnames, tok->loc->filename);
+  size_t i = filename_to_index (strings->filenames, tok->loc->filename);
   if (i == (size_t) (-1))
     {
-      gl_list_add_last (fnames, tok->loc->filename);
-      i = gl_list_size (fnames) - 1;
+      strings->filenames =
+        voidp_vector_push (strings->filenames, tok->loc->filename);
+      i = voidp_vector_length (strings->filenames) - 1;
 
       /* Write the filename in BASE64-encoding of the locale-encoded
          string, after a number that will be used to represent the
@@ -278,47 +293,53 @@ serialize_token_t (const token_t tok, serialized_strings_t strings,
       free (buf);
     }
 
-  size_t inlen1 = tok->token_kind->n * sizeof (uint32_t);
-  size_t outlen1 = BASE64_LENGTH (inlen1) + 1;
-  char *buf1 = XNMALLOC (outlen1, char);
-  base64_encode ((const char *) tok->token_kind->s, inlen1, buf1,
-                 outlen1);
-  gl_list_t tokkinds = strings->token_kinds;
-  size_t j = gl_list_indexof (tokkinds, buf1);
+  size_t j =
+    retrieve_index (strings->token_kind_to_index, tok->token_kind);
   if (j == (size_t) (-1))
     {
-      gl_list_add_last (tokkinds, xstrdup (buf1));
-      j = gl_list_size (tokkinds) - 1;
+      size_t inlen1 = tok->token_kind->n * sizeof (uint32_t);
+      size_t outlen1 = BASE64_LENGTH (inlen1) + 1;
+      char *buf1 = XNMALLOC (outlen1, char);
+      base64_encode ((const char *) tok->token_kind->s, inlen1, buf1,
+                     outlen1);
+      strings->token_kinds =
+        voidp_vector_push (strings->token_kinds, xstrdup (buf1));
+      j = voidp_vector_length (strings->token_kinds) - 1;
+      strings->token_kind_to_index =
+        insert_index (strings->token_kind_to_index, tok->token_kind, j);
 
       /* Write the token_kind in BASE64-encoding of the UTF32-encoded
          string, in native byte order, after a number that will be
          used in place of the string. */
       fprintf (f, "K %zu %zu %s\n", j, tok->token_kind->n, buf1);
+      free (buf1);
     }
 
-  size_t inlen2 = tok->token_value->n * sizeof (uint32_t);
-  size_t outlen2 = BASE64_LENGTH (inlen2) + 1;
-  char *buf2 = XNMALLOC (outlen2, char);
-  base64_encode ((const char *) tok->token_value->s, inlen2, buf2,
-                 outlen2);
-  gl_list_t tokvals = strings->token_values;
-  size_t k = gl_list_indexof (tokvals, buf2);
+  size_t k =
+    retrieve_index (strings->token_value_to_index, tok->token_value);
   if (k == (size_t) (-1))
     {
-      gl_list_add_last (tokvals, xstrdup (buf2));
-      k = gl_list_size (tokvals) - 1;
+      size_t inlen2 = tok->token_value->n * sizeof (uint32_t);
+      size_t outlen2 = BASE64_LENGTH (inlen2) + 1;
+      char *buf2 = XNMALLOC (outlen2, char);
+      base64_encode ((const char *) tok->token_value->s, inlen2, buf2,
+                     outlen2);
+      strings->token_values =
+        voidp_vector_push (strings->token_values, xstrdup (buf2));
+      k = voidp_vector_length (strings->token_values) - 1;
+      strings->token_value_to_index =
+        insert_index (strings->token_value_to_index, tok->token_value,
+                      k);
 
       /* Write the token_value in BASE64-encoding of the UTF32-encoded
          string, in native byte order, after a number that will be
          used in place of the string. */
       fprintf (f, "V %zu %zu %s\n", k, tok->token_value->n, buf2);
+      free (buf2);
     }
 
   fprintf (f, "T %zu %zu %zu %zu %zu\n", i, tok->loc->line_no,
            tok->loc->code_point_no, j, k);
-
-  free (buf1);
-  free (buf2);
 }
 
 HIHA_VISIBLE token_getter_t
@@ -355,7 +376,7 @@ deserialize_filename (token_getter_from_serialized_tokens_t g,
     sscanf (g->buf, "%c %zu %zu %ms", &F, &index, &string_size, &b64);
   idx_t nb64 = BASE64_LENGTH (string_size);
   if (retval != 4 || F != 'F'
-      || index != gl_list_size (g->strings->filenames)
+      || index != voidp_vector_length (g->strings->filenames)
       || nb64 != strlen (b64))
     *nread = -101;
   else
@@ -364,7 +385,8 @@ deserialize_filename (token_getter_from_serialized_tokens_t g,
       idx_t outlen = string_size;
       base64_decode (b64, nb64, s, &outlen);
       free (b64);
-      gl_list_add_last (g->strings->filenames, s);
+      g->strings->filenames =
+        voidp_vector_push (g->strings->filenames, s);
     }
 }
 
@@ -380,7 +402,7 @@ deserialize_token_kind (token_getter_from_serialized_tokens_t g,
     sscanf (g->buf, "%c %zu %zu %ms", &K, &index, &string_size, &b64);
   idx_t nb64 = BASE64_LENGTH (string_size * sizeof (uint32_t));
   if (retval != 4 || K != 'K'
-      || index != gl_list_size (g->strings->token_kinds)
+      || index != voidp_vector_length (g->strings->token_kinds)
       || nb64 != strlen (b64))
     *nread = -102;
   else
@@ -391,7 +413,8 @@ deserialize_token_kind (token_getter_from_serialized_tokens_t g,
       idx_t outlen = s->n * sizeof (uint32_t);
       base64_decode (b64, nb64, (char *) s->s, &outlen);
       free (b64);
-      gl_list_add_last (g->strings->token_kinds, s);
+      g->strings->token_kinds =
+        voidp_vector_push (g->strings->token_kinds, s);
     }
 }
 
@@ -407,7 +430,7 @@ deserialize_token_value (token_getter_from_serialized_tokens_t g,
     sscanf (g->buf, "%c %zu %zu %ms", &V, &index, &string_size, &b64);
   idx_t nb64 = BASE64_LENGTH (string_size * sizeof (uint32_t));
   if (retval != 4 || V != 'V'
-      || index != gl_list_size (g->strings->token_values)
+      || index != voidp_vector_length (g->strings->token_values)
       || nb64 != strlen (b64))
     *nread = -103;
   else
@@ -418,7 +441,8 @@ deserialize_token_value (token_getter_from_serialized_tokens_t g,
       idx_t outlen = s->n * sizeof (uint32_t);
       base64_decode (b64, nb64, (char *) s->s, &outlen);
       free (b64);
-      gl_list_add_last (g->strings->token_values, s);
+      g->strings->token_values =
+        voidp_vector_push (g->strings->token_values, s);
     }
 }
 
@@ -437,20 +461,19 @@ deserialize_token (token_getter_from_serialized_tokens_t g,
     sscanf (g->buf, "%c %zu %zu %zu %zu %zu", &T, &i_filename, &line_no,
             &code_point_no, &i_token_kind, &i_token_value);
   if (retval != 6 || T != 'T'
-      || gl_list_size (g->strings->filenames) <= i_filename
-      || gl_list_size (g->strings->token_kinds) <= i_token_kind
-      || gl_list_size (g->strings->token_values) <= i_token_value)
+      || voidp_vector_length (g->strings->filenames) <= i_filename
+      || voidp_vector_length (g->strings->token_kinds) <= i_token_kind
+      || voidp_vector_length (g->strings->token_values) <=
+      i_token_value)
     *nread = -104;
   else
     {
       const char *filename =
-        gl_list_get_at (g->strings->filenames, i_filename);
+        voidp_vector_ref (g->strings->filenames, i_filename);
       string_t tokkind =
-        NEW_STRING ((string_t) gl_list_get_at (g->strings->token_kinds,
-                                               i_token_kind));
+        voidp_vector_ref (g->strings->token_kinds, i_token_kind);
       string_t tokvalue =
-        NEW_STRING ((string_t) gl_list_get_at (g->strings->token_values,
-                                               i_token_value));
+        voidp_vector_ref (g->strings->token_values, i_token_value);
       *tok =
         _make_token_t (tokkind, tokvalue, filename, line_no,
                        code_point_no);
@@ -645,9 +668,8 @@ get_token_from_multiple_files_getter (token_getter_t getter,
                   // There is at least one more file to go through.
                   // Replace the EOF token with a formfeed.
                   *tok =
-                    make_token_t (NEW_STRING (string_t_CP ()),
-                                  NEW_STRING (string_t_formfeed ()),
-                                  (*tok)->loc);
+                    make_token_t ((string_t_CP ()),
+                                  (string_t_formfeed ()), (*tok)->loc);
 
                   open_one_of_multiple_files (g);
                 }
