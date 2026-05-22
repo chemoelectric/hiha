@@ -46,8 +46,6 @@
 #include <exitfail.h>
 #include <unictype.h>
 #include <xalloc.h>
-#include <gl_xlist.h>
-#include <gl_avltree_list.h>
 #include <libhiha/libhiha.h>
 
 #define _(msgid) HIHA_GETTEXT (msgid)
@@ -141,11 +139,10 @@ scan_identifier (void *state, buffered_token_getter_t getter,
 {
   *lhs = NULL;
 
-  gl_list_t characters =
-    gl_list_create_empty (GL_AVLTREE_LIST, NULL, NULL, NULL, true);
+  voidp_vector_t characters = NULL;
   uint32_t *c = XMALLOC (uint32_t);
   *c = tok->token_value->s[0];
-  gl_list_add_last (characters, c);
+  characters = voidp_vector_push (characters, c);
 
   uint32_t separator;
   uint32_t next_character;
@@ -158,12 +155,12 @@ scan_identifier (void *state, buffered_token_getter_t getter,
         {
           c = XMALLOC (uint32_t);
           *c = separator;
-          gl_list_add_last (characters, c);
+          characters = voidp_vector_push (characters, c);
         }
 
       c = XMALLOC (uint32_t);
       *c = next_character;
-      gl_list_add_last (characters, c);
+      characters = voidp_vector_push (characters, c);
 
       if (*error_message == NULL)
         get_next_character (getter, &separator, &next_character,
@@ -173,11 +170,11 @@ scan_identifier (void *state, buffered_token_getter_t getter,
   if (*error_message == NULL)
     {
       struct string *str = XMALLOC (struct string);
-      str->n = gl_list_size (characters);
+      str->n = voidp_vector_length (characters);
       str->s = XNMALLOC (str->n, uint32_t);
       for (size_t i = 0; i != str->n; i += 1)
         str->s[i] =
-          *((const uint32_t *) gl_list_get_at (characters, i));
+          *((const uint32_t *) voidp_vector_ref (characters, i));
 
       *lhs =
         (void *) make_token_t (make_string_t ("ID"), str, tok->loc);
