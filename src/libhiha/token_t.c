@@ -28,9 +28,8 @@
 #include <xalloc.h>
 #include <exitfail.h>
 #include <base64.h>
-#include <gl_avltree_list.h>
-#include <gl_xlist.h>
 #include <libhiha/token_t.h>
+#include <libhiha/indexed_deque.h>
 
 #define _(msgid) HIHA_GETTEXT (msgid)
 
@@ -544,7 +543,7 @@ struct _buffered_token_getter
   void (*look_at_token) (buffered_token_getter_t this_struct, size_t,
                          token_t *tok, const char **error_message);
   token_getter_t getter;
-  gl_list_t buffer;
+  indexed_deque_t buffer;
 };
 typedef struct _buffered_token_getter *_buffered_token_getter_t;
 
@@ -556,10 +555,10 @@ get_token_from_buffered_getter (buffered_token_getter_t getter,
   _buffered_token_getter_t g = (_buffered_token_getter_t) getter;
   *error_message = NULL;
 
-  if (gl_list_size (g->buffer) != 0)
+  if (indexed_deque_size (g->buffer) != 0)
     {
-      *tok = (token_t) gl_list_get_first (g->buffer);
-      gl_list_remove_first (g->buffer);
+      *tok = (token_t) indexed_deque_get_first (g->buffer);
+      g->buffer = indexed_deque_delete_first (g->buffer);
     }
   else
     g->getter->get_token (g->getter, tok, error_message);
@@ -573,15 +572,15 @@ look_at_buffered_token (buffered_token_getter_t getter, size_t i,
   *tok = NULL;
   *error_message = NULL;
 
-  while (*error_message == NULL && gl_list_size (g->buffer) <= i)
+  while (*error_message == NULL && indexed_deque_size (g->buffer) <= i)
     {
       token_t t;
       g->getter->get_token (g->getter, &t, error_message);
       if (*error_message == NULL)
-        gl_list_add_last (g->buffer, t);
+        g->buffer = indexed_deque_put_after_last (g->buffer, t);
     }
   if (*error_message == NULL)
-    *tok = (token_t) gl_list_get_at (g->buffer, i);
+    *tok = (token_t) indexed_deque_get (g->buffer, i);
 }
 
 HIHA_VISIBLE buffered_token_getter_t
@@ -589,8 +588,7 @@ make_buffered_token_getter_t (token_getter_t unbuffered_getter)
 {
   _buffered_token_getter_t g = XMALLOC (struct _buffered_token_getter);
   g->getter = unbuffered_getter;
-  g->buffer =
-    gl_list_create_empty (GL_AVLTREE_LIST, NULL, NULL, NULL, true);
+  g->buffer = NULL;
   g->get_token = &get_token_from_buffered_getter;
   g->look_at_token = &look_at_buffered_token;
   return (buffered_token_getter_t) g;
@@ -763,7 +761,7 @@ struct _getter_with_mismatch_check
                          token_t *tok, const char **error_message);
 
   buffered_token_getter_t getter;
-  gl_list_t queue;
+  indexed_deque_t queue;
   bool mismatch_detected;
 };
 typedef struct _getter_with_mismatch_check
@@ -777,7 +775,7 @@ get_for_mismatch_check (buffered_token_getter_t this_struct,
     (_getter_with_mismatch_check_t) this_struct;
   g->getter->get_token (g->getter, tok, error_message);
   if (!g->mismatch_detected)
-    gl_list_add_last (g->queue, *tok);
+    g->queue = indexed_deque_put_after_last (g->queue, *tok);
 }
 
 static void
@@ -797,14 +795,14 @@ mismatch_check (buffered_token_getter_t output_getter, token_t tok)
     (_getter_with_mismatch_check_t) output_getter;
   if (tok != NULL && !g->mismatch_detected)
     {
-      g->mismatch_detected = (gl_list_size (g->queue) == 0);
+      g->mismatch_detected = (indexed_deque_size (g->queue) == 0);
       if (!g->mismatch_detected)
         {
-          token_t t = (token_t) gl_list_get_first (g->queue);
+          token_t t = (token_t) indexed_deque_get_first (g->queue);
           g->mismatch_detected =
             (string_t_cmp (t->token_kind, tok->token_kind) != 0
              || string_t_cmp (t->token_value, tok->token_value) != 0);
-          gl_list_remove_first (g->queue);
+          g->queue = indexed_deque_delete_first (g->queue);
         }
     }
   return g->mismatch_detected;
@@ -821,8 +819,7 @@ MAKE_TOKEN_GETTER__ (buffered_token_getter_t input_getter,
     XMALLOC (struct _getter_with_mismatch_check);
 
   p->getter = input_getter;
-  p->queue =
-    gl_list_create_empty (GL_AVLTREE_LIST, NULL, NULL, NULL, true);
+  p->queue = NULL;
   p->mismatch_detected = false;
 
   p->get_token = &get_for_mismatch_check;
