@@ -26,8 +26,6 @@
 #include <xalloc.h>
 #include <error.h>
 #include <exitfail.h>
-#include <gl_avltree_list.h>
-#include <gl_xlist.h>
 #include <libhiha/initialize_once.h>
 #include <libhiha/pratt.h>
 #include <libhiha/load_plugin.h>
