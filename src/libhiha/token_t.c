@@ -95,7 +95,7 @@ HIHA_VISIBLE token_t
 make_token_t (string_t token_kind, string_t token_value,
               text_location_t loc)
 {
-  token_t tok = XMALLOC (struct token);
+  struct token *tok = XMALLOC (struct token);
   tok->token_kind = token_kind;
   tok->token_value = token_value;
   tok->loc = loc;
@@ -107,7 +107,7 @@ _make_token_t (string_t token_kind, string_t token_value,
                const char *filename, size_t line_no,
                size_t code_point_no)
 {
-  text_location_t loc = XMALLOC (struct text_location);
+  struct text_location *loc = XMALLOC (struct text_location);
   loc->filename = filename;
   loc->line_no = line_no;
   loc->code_point_no = code_point_no;
@@ -118,7 +118,7 @@ static token_t
 _make_token_t_eof_eof (const char *filename, size_t line_no,
                        size_t code_point_no)
 {
-  text_location_t loc = XMALLOC (struct text_location);
+  struct text_location *loc = XMALLOC (struct text_location);
   loc->filename = filename;
   loc->line_no = line_no;
   loc->code_point_no = code_point_no;
@@ -175,7 +175,7 @@ fill_line_if_necessary (token_getter_from_source_file_t g)
       if (!g->eof_reached)
         {
           g->n = nread;
-          text_location_t loc = XMALLOC (struct text_location);
+          struct text_location *loc = XMALLOC (struct text_location);
           loc->filename = g->filename;
           loc->line_no = g->line_no + 1;
           loc->code_point_no = 0;
@@ -198,7 +198,7 @@ get_token_from_source_file (token_getter_t getter, token_t *tok,
   fill_line_if_necessary (g);
   if (!g->eof_reached)
     {
-      string_t str = XMALLOC (struct string);
+      struct string *str = XMALLOC (struct string);
       str->s = XNMALLOC (1, uint32_t);
       str->s[0] = g->sbuf->s[g->i_code_point];
       str->n = 1;
@@ -385,7 +385,7 @@ deserialize_token_kind (token_getter_from_serialized_tokens_t g,
     *nread = -102;
   else
     {
-      string_t s = XMALLOC (struct string);
+      struct string *s = XMALLOC (struct string);
       s->n = string_size;
       s->s = XNMALLOC (s->n, uint32_t);
       idx_t outlen = s->n * sizeof (uint32_t);
@@ -412,7 +412,7 @@ deserialize_token_value (token_getter_from_serialized_tokens_t g,
     *nread = -103;
   else
     {
-      string_t s = XMALLOC (struct string);
+      struct string *s = XMALLOC (struct string);
       s->n = string_size;
       s->s = XNMALLOC (s->n, uint32_t);
       idx_t outlen = s->n * sizeof (uint32_t);

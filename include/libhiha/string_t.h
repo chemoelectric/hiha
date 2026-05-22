@@ -40,7 +40,7 @@ struct string
   uint32_t *s;
   size_t n;
 };
-typedef struct string *string_t;
+typedef const struct string *string_t;
 
 struct text_location
 {
@@ -51,7 +51,7 @@ struct text_location
   size_t line_no;               /* Starting at 1. */
   size_t code_point_no;         /* Starting at 1, after canonicalization. */
 };
-typedef struct text_location *text_location_t;
+typedef const struct text_location *text_location_t;
 
 /* Some string constants. */
 HIHA_PURE const string_t string_t_EOF (void);   /* “EOF” */
@@ -103,10 +103,10 @@ uint64_t string_t_hash (string_t_hash_context_t context,
                         unsigned int i);
 
 /*--------------------------------------------------------------------*/
-/* Persistent maps. */
+/* Persistent unordered maps. */
 
 struct string_t_map;
-typedef struct string_t_map *string_t_map_t;
+typedef const struct string_t_map *string_t_map_t;
 
 size_t string_t_map_size (string_t_map_t map);
 

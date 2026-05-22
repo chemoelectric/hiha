@@ -86,7 +86,7 @@ make_string_t (const char *src)
 HIHA_VISIBLE string_t
 copy_string_t (const string_t str)
 {
-  string_t s = XMALLOC (struct string);
+  struct string *s = XMALLOC (struct string);
   s->n = str->n;
   s->s = XNMALLOC (s->n, uint32_t);
   memcpy (s->s, ((const struct string *) str)->s,
@@ -112,7 +112,7 @@ concat_string_t (...)
       str = va_arg (args, string_t);
     }
 
-  string_t result = XMALLOC (struct string);
+  struct string *result = XMALLOC (struct string);
 
   result->n = 0;
   for (i = 0; i != gl_list_size (lst); i += 1)
@@ -166,7 +166,7 @@ string_t_from_str_len (const char *src, size_t srclen,
          abort(3) is actually never reached. */
       abort ();
     }
-  string_t result = XMALLOC (struct string);
+  struct string *result = XMALLOC (struct string);
   result->s = u32;
   result->n = n;
   return result;
@@ -185,7 +185,7 @@ string_t_canonicalize (const string_t src, text_location_t loc)
       error (exit_failure, err_number, "%s", locstr);
       abort ();
     }
-  string_t result = XMALLOC (struct string);
+  struct string *result = XMALLOC (struct string);
   result->s = u32;
   result->n = n;
   return result;

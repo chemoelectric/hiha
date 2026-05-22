@@ -154,7 +154,7 @@ scan_decimal_integer (void *state, buffered_token_getter_t getter,
 
   if (*error_message == NULL)
     {
-      string_t str = XMALLOC (struct string);
+      struct string *str = XMALLOC (struct string);
       str->n = gl_list_size (digits);
       str->s = XNMALLOC (str->n, uint32_t);
       for (size_t i = 0; i != str->n; i += 1)

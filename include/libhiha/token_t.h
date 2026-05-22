@@ -33,7 +33,7 @@ struct token
   string_t token_value;
   text_location_t loc;
 };
-typedef struct token *token_t;
+typedef const struct token *token_t;
 
 struct serialized_strings;
 typedef struct serialized_strings *serialized_strings_t;

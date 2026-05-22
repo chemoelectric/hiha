@@ -102,7 +102,7 @@ static string_t_map_t
 string_t_map_insert (string_t_map_t map, string_t key,
                      const void *value, hiha_hash_map_mode_t mode)
 {
-  string_t_map_t result = XZALLOC (struct string_t_map);
+  struct string_t_map *result = XZALLOC (struct string_t_map);
   if (map != NULL)
     {
       result->_trie = map->_trie;
@@ -149,7 +149,7 @@ string_t_map_replace_only (string_t_map_t map, string_t key,
 HIHA_VISIBLE string_t_map_t
 string_t_map_delete (string_t_map_t map, string_t key)
 {
-  string_t_map_t result = NULL;
+  struct string_t_map *result = NULL;
   if (map != NULL)
     {
       assert (map->_size != 0);

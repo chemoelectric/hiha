@@ -67,7 +67,7 @@ deque_index (indexed_deque_t dq, size_t i)
 static indexed_deque_t
 allocate_deque (indexed_deque_node_t trie, size_t i1, size_t i2)
 {
-  indexed_deque_t result = XMALLOC (struct indexed_deque);
+  struct indexed_deque *result = XMALLOC (struct indexed_deque);
   result->_trie = trie;
   result->_i1 = i1;
   result->_i2 = i2;

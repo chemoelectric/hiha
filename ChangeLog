@@ -1,5 +1,17 @@
 @  master
-|  2026-05-21 13:20 +0000
+|  2026-05-21 20:21 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       178ac1a9d85d297d3fad13c16e56db1b4d18eb13
+|  mercurial: 46a9d75149273869fe7d7102602765a92d8d58b8
+|  revision:  165
+|  parents:   164
+|
+|    Added more string map functionality, along with persistent vectors
+|    copied from Sorts Mill Core Library (used to do the string map
+|    functionality).
+|
+|
+o  2026-05-21 13:20 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 |  git:       26b7a5cec9cfd218bdb456ea9e3ee0af9fa56be5
 |  mercurial: 41780bfe6523b588344b0ee801511a9f434a11a2

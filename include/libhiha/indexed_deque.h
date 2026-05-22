@@ -30,7 +30,7 @@
 #include <stddef.h>
 
 struct indexed_deque;
-typedef struct indexed_deque *indexed_deque_t;
+typedef const struct indexed_deque *indexed_deque_t;
 
 size_t indexed_deque_size (indexed_deque_t dq);
 
