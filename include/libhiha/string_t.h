@@ -157,10 +157,14 @@ string_t_omap_t string_t_omap_replace_only (string_t_omap_t omap,
 string_t_omap_t string_t_omap_delete (string_t_omap_t omap,
                                       string_t key);
 
-string_t_vector_t string_t_omap_keys (string_t_omap_t omap);
-voidp_vector_t string_t_omap_values (string_t_omap_t omap);
+/* direction = 1 forwards, -1 backwards */
+string_t_vector_t string_t_omap_keys (string_t_omap_t omap,
+                                      int direction);
+voidp_vector_t string_t_omap_values (string_t_omap_t omap,
+                                     int direction);
 string_t_keyval_vector_t string_t_omap_associations (string_t_omap_t
-                                                     omap);
+                                                     omap,
+                                                     int direction);
 
 /*--------------------------------------------------------------------*/
 

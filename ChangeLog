@@ -1,5 +1,15 @@
 @  master
-|  2026-05-22 14:36 +0000
+|  2026-05-22 17:34 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       7f1b9a7e785b852097f3225318ace1d7d1143142
+|  mercurial: fa17d5876ac079c8071dede30b05599596637da6
+|  revision:  167
+|  parents:   166
+|
+|    Part of the implementation of ordered string_t maps.
+|
+|
+o  2026-05-22 14:36 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 |  git:       fb45bbebcbd94e137338ecfb22f4729f66cb9847
 |  mercurial: 43d947117d6ac32f167146ab16d8897ac202ee8e

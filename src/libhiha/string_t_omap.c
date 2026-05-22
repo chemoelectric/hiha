@@ -33,6 +33,9 @@ HIHA_AVL_SEARCH_DEFN (string_t_omap_node_search, string_t_omap_node,
                       struct string_t_keyval);
 HIHA_AVL_INSERT_DEFN (string_t_omap_node_insert, string_t_omap_node,
                       struct string_t_keyval);
+HIHA_AVL_DELETE_DEFN (string_t_omap_node_delete, string_t_omap_node,
+                      struct string_t_keyval);
+HIHA_AVL_INORDER_DEFN (string_t_omap_node_inorder, string_t_omap_node);
 
 struct string_t_omap
 {
@@ -115,7 +118,7 @@ string_t_omap_insert_or_replace (string_t_omap_t omap,
     .key = key,
     .value = value
   };
-  const void *p =
+  string_t_omap_node_t p =
     string_t_omap_node_search (om->_tree, kv, om->_compare);
   ssize_t size_change = (p == NULL) ? 1 : 0;
   struct string_t_omap *result = XMALLOC (struct string_t_omap);
@@ -135,7 +138,7 @@ string_t_omap_insert_only (string_t_omap_t omap,
     .key = key,
     .value = value
   };
-  const void *p =
+  string_t_omap_node_t p =
     string_t_omap_node_search (om->_tree, kv, om->_compare);
   string_t_omap_t retval;
   if (p != NULL)
@@ -165,7 +168,7 @@ string_t_omap_replace_only (string_t_omap_t omap,
         .key = key,
         .value = value
       };
-      const void *p =
+      string_t_omap_node_t p =
         string_t_omap_node_search (omap->_tree, kv, omap->_compare);
       if (p == NULL)
         retval = omap;
@@ -180,6 +183,95 @@ string_t_omap_replace_only (string_t_omap_t omap,
         }
     }
   return retval;
+}
+
+HIHA_VISIBLE string_t_omap_t
+string_t_omap_delete (string_t_omap_t omap, string_t key)
+{
+  string_t_omap_t retval;
+  if (omap == NULL || omap->_size == 0)
+    retval = omap;
+  else
+    {
+      struct string_t_keyval kv = {
+        .key = key,
+        .value = NULL
+      };
+      string_t_omap_node_t p =
+        string_t_omap_node_search (omap->_tree, kv, omap->_compare);
+      if (p == NULL)
+        retval = omap;
+      else if (omap->_size != 1)
+        {
+          struct string_t_omap *result = XMALLOC (struct string_t_omap);
+          result->_tree =
+            string_t_omap_node_delete (omap->_tree, kv, omap->_compare);
+          result->_size = omap->_size - 1;
+          result->_compare = omap->_compare;
+          retval = result;
+        }
+      else if (omap->_compare == &default_compare)
+        retval = NULL;
+      else
+        retval = string_t_omap_init (omap->_compare);
+    }
+  return retval;
+}
+
+static void
+list_another_key (string_t_omap_node_t node, void *data)
+{
+  string_t_vector_t vec = *((string_t_vector_t *) data);
+  *((string_t_vector_t *) data) =
+    string_t_vector_push (vec, node->data.key);
+}
+
+static void
+list_another_value (string_t_omap_node_t node, void *data)
+{
+  voidp_vector_t vec = *((voidp_vector_t *) data);
+  *((voidp_vector_t *) data) =
+    voidp_vector_push (vec, node->data.value);
+}
+
+static void
+list_another_association (string_t_omap_node_t node, void *data)
+{
+  string_t_keyval_vector_t vec = *((string_t_keyval_vector_t *) data);
+  struct string_t_keyval *kv = XMALLOC (struct string_t_keyval);
+  *kv = node->data;
+  *((string_t_keyval_vector_t *) data) =
+    string_t_keyval_vector_push (vec, kv);
+}
+
+HIHA_VISIBLE string_t_vector_t
+string_t_omap_keys (string_t_omap_t omap, int direction)
+{
+  string_t_vector_t result = NULL;
+  if (omap != NULL)
+    string_t_omap_node_inorder (omap->_tree, direction,
+                                list_another_key, &result);
+  return result;
+}
+
+HIHA_VISIBLE voidp_vector_t
+string_t_omap_values (string_t_omap_t omap, int direction)
+{
+  voidp_vector_t result = NULL;
+  if (omap != NULL)
+    string_t_omap_node_inorder (omap->_tree, direction,
+                                list_another_value, &result);
+  return result;
+}
+
+HIHA_VISIBLE string_t_keyval_vector_t
+string_t_omap_associations (string_t_omap_t omap, int direction)
+{
+  string_t_keyval_vector_t result = NULL;
+  if (omap != NULL)
+    string_t_omap_node_inorder (omap->_tree, direction,
+                                list_another_association, &result);
+  return result;
 }
 
 /*
