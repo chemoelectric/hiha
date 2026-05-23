@@ -24,7 +24,19 @@
 
 /* NUL-terminated strings of char. */
 
+#include <string.h>
 #include <libhiha/persistent_vector.h>
+
+/*--------------------------------------------------------------------*/
+
+inline bool
+str_nul_equal (const char *a, const char *b)
+{
+  const bool a_is_null = (a == NULL);
+  const bool b_is_null = (b == NULL);
+  return ((a_is_null && b_is_null)
+          || (!a_is_null && !b_is_null && strcmp (a, b) == 0));
+}
 
 /*--------------------------------------------------------------------*/
 

@@ -29,17 +29,18 @@
 #include <exitfail.h>
 #include <base64.h>
 #include <libhiha/token_t.h>
+#include <libhiha/str_nul.h>
 #include <libhiha/indexed_deque.h>
 
 #define _(msgid) HIHA_GETTEXT (msgid)
 
 struct serialized_strings
 {
-  voidp_vector_t filenames;
-  voidp_vector_t token_kinds;
-  voidp_vector_t token_values;
+  size_t filenames_index;
   size_t token_kinds_index;
   size_t token_values_index;
+
+  str_nul_map_t filename_to_index;
   string_t_map_t token_kind_to_index;
   string_t_map_t token_value_to_index;
 };
@@ -67,6 +68,24 @@ typedef struct token_getter_from_source_file
 static void get_token_from_source_file (token_getter_t, token_t *,
                                         const char **);
 
+struct deserialized_strings
+{
+  voidp_vector_t filenames;
+  voidp_vector_t token_kinds;
+  voidp_vector_t token_values;
+};
+typedef struct deserialized_strings *deserialized_strings_t;
+
+static deserialized_strings_t
+make_deserialized_strings_t (void)
+{
+  deserialized_strings_t result = XMALLOC (struct deserialized_strings);
+  result->filenames = NULL;
+  result->token_kinds = NULL;
+  result->token_values = NULL;
+  return result;
+}
+
 struct token_getter_from_serialized_tokens
 {
   /* This struct must be castable to a struct token_getter. */
@@ -78,7 +97,7 @@ struct token_getter_from_serialized_tokens
   FILE *f;
   char *buf;
   size_t nbuf;                  /* The size of the buf. */
-  serialized_strings_t strings;
+  deserialized_strings_t strings;
   bool eof_reached;
 };
 typedef struct token_getter_from_serialized_tokens
@@ -209,55 +228,46 @@ get_token_from_source_file (token_getter_t getter, token_t *tok,
                              g->i_code_point + 1);
 }
 
-static bool
-str_equal (const void *s1, const void *s2)
-{
-  /* A string equality test that allows for NULL as a value. We want
-     this because NULL is a possible ‘filename’. */
-
-  bool b = false;
-  if (s1 == NULL)
-    b = (s2 == NULL);
-  else if (s2 == NULL)
-    b = false;
-  else
-    b = (0 == strcmp ((const char *) s1, (const char *) s2));
-  return b;
-}
+static str_nul_map_t str_nul_insert_index (str_nul_map_t map,
+                                           const char *str, size_t i);
 
 static serialized_strings_t
 make_serialized_strings_t (void)
 {
   serialized_strings_t p = XMALLOC (struct serialized_strings);
 
-  p->filenames = NULL;
-  p->token_kinds = NULL;
-  p->token_values = NULL;
-
+  p->filenames_index = 0;
   p->token_kinds_index = 0;
   p->token_values_index = 0;
 
+  p->filename_to_index = NULL;
   p->token_kind_to_index = NULL;
   p->token_value_to_index = NULL;
 
   /* The NULL filename will be represented by the index 0. */
-  p->filenames = voidp_vector_push (p->filenames, NULL);
+  p->filename_to_index =
+    str_nul_insert_index (p->filename_to_index, NULL, 0);
 
   return p;
 }
 
-static size_t
-filename_to_index (voidp_vector_t filenames, const char *fn)
+static str_nul_map_t
+str_nul_insert_index (str_nul_map_t map, const char *str, size_t i)
 {
-  size_t n = voidp_vector_length (filenames);
-  size_t i = 0;
-  while (i != n && !str_equal (voidp_vector_ref (filenames, i), fn))
-    i += 1;
-  return (i != n) ? i : ((size_t) -1);
+  size_t *box = XMALLOC (size_t);
+  *box = i;
+  return str_nul_map_insert_only (map, str, box);
+}
+
+static size_t
+str_nul_retrieve_index (str_nul_map_t map, const char *str)
+{
+  const void *p = str_nul_map_search (map, str);
+  return (p != NULL) ? *((const size_t *) p) : ((size_t) -1);
 }
 
 static string_t_map_t
-insert_index (string_t_map_t map, string_t str, size_t i)
+string_t_insert_index (string_t_map_t map, string_t str, size_t i)
 {
   size_t *box = XMALLOC (size_t);
   *box = i;
@@ -265,7 +275,7 @@ insert_index (string_t_map_t map, string_t str, size_t i)
 }
 
 static size_t
-retrieve_index (string_t_map_t map, string_t str)
+string_t_retrieve_index (string_t_map_t map, string_t str)
 {
   const void *p = string_t_map_search (map, str);
   return (p != NULL) ? *((const size_t *) p) : ((size_t) -1);
@@ -278,12 +288,19 @@ serialize_token_t (const token_t tok, serialized_strings_t strings,
   /* The serialization done here is NOT interchangeable between
      machines. */
 
-  size_t i = filename_to_index (strings->filenames, tok->loc->filename);
+  size_t i = str_nul_retrieve_index (strings->filename_to_index,
+                                     tok->loc->filename);
+  //  size_t i = filename_to_index (strings->filenames, tok->loc->filename);
   if (i == (size_t) (-1))
     {
-      strings->filenames =
-        voidp_vector_push (strings->filenames, tok->loc->filename);
-      i = voidp_vector_length (strings->filenames) - 1;
+      i = strings->filenames_index;
+      strings->filenames_index += 1;
+      strings->filename_to_index =
+        str_nul_insert_index (strings->filename_to_index,
+                              xstrdup (tok->loc->filename), i);
+      //      strings->filenames =
+      //        voidp_vector_push (strings->filenames, tok->loc->filename);
+      //      i = voidp_vector_length (strings->filenames) - 1;
 
       /* Write the filename in BASE64-encoding of the locale-encoded
          string, after a number that will be used to represent the
@@ -297,45 +314,46 @@ serialize_token_t (const token_t tok, serialized_strings_t strings,
       free (buf);
     }
 
-  size_t j =
-    retrieve_index (strings->token_kind_to_index, tok->token_kind);
+  size_t j = string_t_retrieve_index (strings->token_kind_to_index,
+                                      tok->token_kind);
   if (j == (size_t) (-1))
     {
+      j = strings->token_kinds_index;
+      strings->token_kinds_index += 1;
+      strings->token_kind_to_index =
+        string_t_insert_index (strings->token_kind_to_index,
+                               tok->token_kind, j);
+
+      /* Write the token_kind in BASE64-encoding of the UTF32-encoded
+         string, in native byte order, after a number that will be
+         used in place of the string. */
       size_t inlen1 = tok->token_kind->n * sizeof (uint32_t);
       size_t outlen1 = BASE64_LENGTH (inlen1) + 1;
       char *buf1 = XNMALLOC (outlen1, char);
       base64_encode ((const char *) tok->token_kind->s, inlen1, buf1,
                      outlen1);
-      j = strings->token_kinds_index;
-      strings->token_kinds_index += 1;
-      strings->token_kind_to_index =
-        insert_index (strings->token_kind_to_index, tok->token_kind, j);
-
-      /* Write the token_kind in BASE64-encoding of the UTF32-encoded
-         string, in native byte order, after a number that will be
-         used in place of the string. */
       fprintf (f, "K %zu %zu %s\n", j, tok->token_kind->n, buf1);
       free (buf1);
     }
 
-  size_t k =
-    retrieve_index (strings->token_value_to_index, tok->token_value);
+  size_t k = string_t_retrieve_index (strings->token_value_to_index,
+                                      tok->token_value);
   if (k == (size_t) (-1))
     {
+      k = strings->token_values_index;
+      strings->token_values_index += 1;
+      strings->token_value_to_index =
+        string_t_insert_index (strings->token_value_to_index,
+                               tok->token_value, k);
+
+      /* Write the token_value in BASE64-encoding of the UTF32-encoded
+         string, in native byte order, after a number that will be
+         used in place of the string. */
       size_t inlen2 = tok->token_value->n * sizeof (uint32_t);
       size_t outlen2 = BASE64_LENGTH (inlen2) + 1;
       char *buf2 = XNMALLOC (outlen2, char);
       base64_encode ((const char *) tok->token_value->s, inlen2, buf2,
                      outlen2);
-      k = strings->token_values_index;
-      strings->token_values_index += 1;
-      strings->token_value_to_index =
-        insert_index (strings->token_value_to_index, tok->token_value,
-                      k);
-
-      /* Write the token_value in BASE64-encoding of the UTF32-encoded
-         string, in native byte order, after a number that will be
-         used in place of the string. */
       fprintf (f, "V %zu %zu %s\n", k, tok->token_value->n, buf2);
       free (buf2);
     }
@@ -359,7 +377,7 @@ make_token_getter_from_serialized_tokens_t (const char *filename,
   getter->nbuf = 1000;
   getter->buf = XNMALLOC (getter->nbuf, char);
 
-  getter->strings = make_serialized_strings_t ();
+  getter->strings = make_deserialized_strings_t ();
 
   getter->eof_reached = false;
 

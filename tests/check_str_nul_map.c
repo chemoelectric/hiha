@@ -244,8 +244,7 @@ main (void)
   assert (vec4v == NULL);
 
   str_nul_keyval_vector_t vec4kv = str_nul_map_associations (map4);
-  for (size_t i = 0; i != str_nul_keyval_vector_length (vec4kv);
-       i += 1)
+  for (size_t i = 0; i != str_nul_keyval_vector_length (vec4kv); i += 1)
     {
       const char *key = str_nul_keyval_vector_ref (vec4kv, i)->key;
       const void *value = str_nul_keyval_vector_ref (vec4kv, i)->value;

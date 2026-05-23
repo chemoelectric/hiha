@@ -262,6 +262,7 @@ libhiha_la_SOURCES += src/libhiha/string_t_omap.c
 libhiha_la_SOURCES += src/libhiha/string_t_vector.c
 libhiha_la_SOURCES += src/libhiha/token_t.c
 libhiha_la_SOURCES += src/libhiha/token_t_hash.c
+libhiha_la_SOURCES += src/libhiha/str_nul.c
 libhiha_la_SOURCES += src/libhiha/str_nul_hash.c
 libhiha_la_SOURCES += src/libhiha/str_nul_vector.c
 libhiha_la_SOURCES += src/libhiha/pratt.c
@@ -272,7 +273,8 @@ libhiha_la_SOURCES += src/libhiha/load_plugin.c
 nodist_libhiha_la_SOURCES += src/libhiha/string_t_map.c
 nodist_libhiha_la_SOURCES += src/libhiha/str_nul_map.c
 
-CLEANFILES += src/libhiha/string_t_map.c
+BUILT_SOURCES += src/libhiha/string_t_map.c
+DISTCLEANFILES += src/libhiha/string_t_map.c
 src/libhiha/string_t_map.c: src/libhiha/typed_map.c.in Makefile.am
 	$(call v,GEN)mkdir -p $(@D) && \
 	$(SED) -e 's|@INCLUDES@|#include <libhiha/string_t.h>|g' \
@@ -281,13 +283,14 @@ src/libhiha/string_t_map.c: src/libhiha/typed_map.c.in Makefile.am
            -e 's|@EQUALS@|do { return (string_t_cmp (key->key, stored->key) == 0); } while (0)|' \
            $(<) > $(@).tmp && mv $(@){.tmp,}
 
-CLEANFILES += src/libhiha/str_nul_map.c
+BUILT_SOURCES += src/libhiha/str_nul_map.c
+DISTCLEANFILES += src/libhiha/str_nul_map.c
 src/libhiha/str_nul_map.c: src/libhiha/typed_map.c.in Makefile.am
 	$(call v,GEN)mkdir -p $(@D) && \
 	$(SED) -e 's|@INCLUDES@|#include <libhiha/str_nul.h>|g' \
            -e 's|@TYPENAME@|str_nul|g' \
            -e 's|@TYPE@|const char *|g' \
-           -e 's|@EQUALS@|do { return (strcmp (key->key, stored->key) == 0); } while (0)|' \
+           -e 's|@EQUALS@|do { return str_nul_equal (key->key, stored->key); } while (0)|' \
            $(<) > $(@).tmp && mv $(@){.tmp,}
 
 EXTRA_DIST += src/libhiha/typed_map.c.in

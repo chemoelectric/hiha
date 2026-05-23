@@ -395,6 +395,7 @@ am_libhiha_la_OBJECTS = $(am__objects_1) \
 	src/libhiha/libhiha_la-string_t_vector.lo \
 	src/libhiha/libhiha_la-token_t.lo \
 	src/libhiha/libhiha_la-token_t_hash.lo \
+	src/libhiha/libhiha_la-str_nul.lo \
 	src/libhiha/libhiha_la-str_nul_hash.lo \
 	src/libhiha/libhiha_la-str_nul_vector.lo \
 	src/libhiha/libhiha_la-pratt.lo \
@@ -455,6 +456,7 @@ am__depfiles_remade = src/hiha-tokens-print/$(DEPDIR)/hiha_tokens_print-hiha-tok
 	src/libhiha/$(DEPDIR)/libhiha_la-pratt.Plo \
 	src/libhiha/$(DEPDIR)/libhiha_la-spinlock.Plo \
 	src/libhiha/$(DEPDIR)/libhiha_la-spookyhash.Plo \
+	src/libhiha/$(DEPDIR)/libhiha_la-str_nul.Plo \
 	src/libhiha/$(DEPDIR)/libhiha_la-str_nul_hash.Plo \
 	src/libhiha/$(DEPDIR)/libhiha_la-str_nul_map.Plo \
 	src/libhiha/$(DEPDIR)/libhiha_la-str_nul_vector.Plo \
@@ -2204,9 +2206,9 @@ pkg_gc_include_HEADERS = $(top_srcdir)/$(GCVERS)/include/cord.h \
 	$(top_srcdir)/$(GCVERS)/include/javaxfc.h \
 	$(top_srcdir)/$(GCVERS)/include/leak_detector.h
 pkg_libhiha_include_HEADERS = $(libhiha_HDRS)
-CLEANFILES = include/gc.h src/libhiha/string_t_map.c \
-	src/libhiha/str_nul_map.c
-DISTCLEANFILES = Makefile GNUmakefile lib/Makefile lib/GNUmakefile
+CLEANFILES = include/gc.h
+DISTCLEANFILES = Makefile GNUmakefile lib/Makefile lib/GNUmakefile \
+	src/libhiha/string_t_map.c src/libhiha/str_nul_map.c
 EXTRA_DIST = m4/gnulib-cache.m4 silent-rules.mk COPYING README.adoc \
 	INSTALL AUTHORS gc-8.2.12/doc/README.rs6000 \
 	gc-8.2.12/doc/gcinterface.md gc-8.2.12/doc/README.hp \
@@ -2323,7 +2325,8 @@ EXTRA_DIST = m4/gnulib-cache.m4 silent-rules.mk COPYING README.adoc \
 EXTRA_SCRIPTS = 
 
 #---------------------------------------------------------------------
-BUILT_SOURCES = config.h $(GCVERS)/libhiha-gc.la
+BUILT_SOURCES = config.h $(GCVERS)/libhiha-gc.la \
+	src/libhiha/string_t_map.c src/libhiha/str_nul_map.c
 AM_CPPFLAGS = 
 AM_CFLAGS = 
 AM_LIBRS = $(CLOCK_TIME_LIB) $(GETRANDOM_LIB) $(HARD_LOCALE_LIB) \
@@ -2457,10 +2460,10 @@ libhiha_la_SOURCES = $(libhiha_HDRS) src/libhiha/spookyhash.c \
 	src/libhiha/string_t.c src/libhiha/string_t_hash.c \
 	src/libhiha/string_t_omap.c src/libhiha/string_t_vector.c \
 	src/libhiha/token_t.c src/libhiha/token_t_hash.c \
-	src/libhiha/str_nul_hash.c src/libhiha/str_nul_vector.c \
-	src/libhiha/pratt.c src/libhiha/lexical.c \
-	src/libhiha/string_literal.c src/libhiha/gensym.c \
-	src/libhiha/load_plugin.c
+	src/libhiha/str_nul.c src/libhiha/str_nul_hash.c \
+	src/libhiha/str_nul_vector.c src/libhiha/pratt.c \
+	src/libhiha/lexical.c src/libhiha/string_literal.c \
+	src/libhiha/gensym.c src/libhiha/load_plugin.c
 nodist_libhiha_la_SOURCES = src/libhiha/string_t_map.c \
 	src/libhiha/str_nul_map.c
 libhiha_HDRS = include/libhiha/libhiha.h include/libhiha/spookyhash.h \
@@ -2767,6 +2770,8 @@ src/libhiha/libhiha_la-token_t.lo: src/libhiha/$(am__dirstamp) \
 	src/libhiha/$(DEPDIR)/$(am__dirstamp)
 src/libhiha/libhiha_la-token_t_hash.lo: src/libhiha/$(am__dirstamp) \
 	src/libhiha/$(DEPDIR)/$(am__dirstamp)
+src/libhiha/libhiha_la-str_nul.lo: src/libhiha/$(am__dirstamp) \
+	src/libhiha/$(DEPDIR)/$(am__dirstamp)
 src/libhiha/libhiha_la-str_nul_hash.lo: src/libhiha/$(am__dirstamp) \
 	src/libhiha/$(DEPDIR)/$(am__dirstamp)
 src/libhiha/libhiha_la-str_nul_vector.lo: src/libhiha/$(am__dirstamp) \
@@ -2836,6 +2841,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/libhiha/$(DEPDIR)/libhiha_la-pratt.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/libhiha/$(DEPDIR)/libhiha_la-spinlock.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/libhiha/$(DEPDIR)/libhiha_la-spookyhash.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@src/libhiha/$(DEPDIR)/libhiha_la-str_nul.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/libhiha/$(DEPDIR)/libhiha_la-str_nul_hash.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/libhiha/$(DEPDIR)/libhiha_la-str_nul_map.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/libhiha/$(DEPDIR)/libhiha_la-str_nul_vector.Plo@am__quote@ # am--include-marker
@@ -3075,6 +3081,13 @@ src/libhiha/libhiha_la-token_t_hash.lo: src/libhiha/token_t_hash.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/libhiha/token_t_hash.c' object='src/libhiha/libhiha_la-token_t_hash.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhiha_la_CFLAGS) $(CFLAGS) -c -o src/libhiha/libhiha_la-token_t_hash.lo `test -f 'src/libhiha/token_t_hash.c' || echo '$(srcdir)/'`src/libhiha/token_t_hash.c
+
+src/libhiha/libhiha_la-str_nul.lo: src/libhiha/str_nul.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhiha_la_CFLAGS) $(CFLAGS) -MT src/libhiha/libhiha_la-str_nul.lo -MD -MP -MF src/libhiha/$(DEPDIR)/libhiha_la-str_nul.Tpo -c -o src/libhiha/libhiha_la-str_nul.lo `test -f 'src/libhiha/str_nul.c' || echo '$(srcdir)/'`src/libhiha/str_nul.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/libhiha/$(DEPDIR)/libhiha_la-str_nul.Tpo src/libhiha/$(DEPDIR)/libhiha_la-str_nul.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/libhiha/str_nul.c' object='src/libhiha/libhiha_la-str_nul.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhiha_la_CFLAGS) $(CFLAGS) -c -o src/libhiha/libhiha_la-str_nul.lo `test -f 'src/libhiha/str_nul.c' || echo '$(srcdir)/'`src/libhiha/str_nul.c
 
 src/libhiha/libhiha_la-str_nul_hash.lo: src/libhiha/str_nul_hash.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhiha_la_CFLAGS) $(CFLAGS) -MT src/libhiha/libhiha_la-str_nul_hash.lo -MD -MP -MF src/libhiha/$(DEPDIR)/libhiha_la-str_nul_hash.Tpo -c -o src/libhiha/libhiha_la-str_nul_hash.lo `test -f 'src/libhiha/str_nul_hash.c' || echo '$(srcdir)/'`src/libhiha/str_nul_hash.c
@@ -3625,6 +3638,7 @@ distclean: distclean-recursive
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-pratt.Plo
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-spinlock.Plo
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-spookyhash.Plo
+	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-str_nul.Plo
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-str_nul_hash.Plo
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-str_nul_map.Plo
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-str_nul_vector.Plo
@@ -3712,6 +3726,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-pratt.Plo
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-spinlock.Plo
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-spookyhash.Plo
+	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-str_nul.Plo
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-str_nul_hash.Plo
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-str_nul_map.Plo
 	-rm -f src/libhiha/$(DEPDIR)/libhiha_la-str_nul_vector.Plo
@@ -3841,7 +3856,7 @@ src/libhiha/str_nul_map.c: src/libhiha/typed_map.c.in Makefile.am
 	$(SED) -e 's|@INCLUDES@|#include <libhiha/str_nul.h>|g' \
            -e 's|@TYPENAME@|str_nul|g' \
            -e 's|@TYPE@|const char *|g' \
-           -e 's|@EQUALS@|do { return (strcmp (key->key, stored->key) == 0); } while (0)|' \
+           -e 's|@EQUALS@|do { return str_nul_equal (key->key, stored->key); } while (0)|' \
            $(<) > $(@).tmp && mv $(@){.tmp,}
 
 #---------------------------------------------------------------------

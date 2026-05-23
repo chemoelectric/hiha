@@ -1,5 +1,16 @@
 @  master
-|  2026-05-23 11:22 +0000
+|  2026-05-23 15:16 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:
+|  mercurial: fd5a8955b93af238d8c435c732652fcfc261a26e
+|  revision:  179
+|  parents:   178
+|
+|    Generalizing unordered map code. Adding nul-terminated string
+|    support.
+|
+|
+o  2026-05-23 11:22 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 |  git:       5b192dcd07528a2992e5a893dcf6e525a70b2fde
 |  mercurial: df87d64c8d3e4634dd39927c95ec3f79ca3f78e9
