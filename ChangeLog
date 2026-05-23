@@ -1,5 +1,16 @@
 @  master
-|  2026-05-22 23:51 +0000
+|  2026-05-23 00:23 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       f4954475c98aa2d6f21ddb27b2f53cfaaa5e66fa
+|  mercurial: 7fcfc8bc3882b082439ec14487857a69d9eb8f40
+|  revision:  177
+|  parents:   176
+|
+|    Replaced Gnulib avltree omap with string_t_map_t (which uses my
+|    SpookyHash).
+|
+|
+o  2026-05-22 23:51 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 |  git:       425985ac7963ba5beaa1d5c9816df462dac2f3aa
 |  mercurial: cd4c12ff8f98eeb86a314e8e862ad8cec2ac738c

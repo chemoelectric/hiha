@@ -38,6 +38,8 @@ struct serialized_strings
   voidp_vector_t filenames;
   voidp_vector_t token_kinds;
   voidp_vector_t token_values;
+  size_t token_kinds_index;
+  size_t token_values_index;
   string_t_map_t token_kind_to_index;
   string_t_map_t token_value_to_index;
 };
@@ -232,6 +234,9 @@ make_serialized_strings_t (void)
   p->token_kinds = NULL;
   p->token_values = NULL;
 
+  p->token_kinds_index = 0;
+  p->token_values_index = 0;
+
   p->token_kind_to_index = NULL;
   p->token_value_to_index = NULL;
 
@@ -301,9 +306,8 @@ serialize_token_t (const token_t tok, serialized_strings_t strings,
       char *buf1 = XNMALLOC (outlen1, char);
       base64_encode ((const char *) tok->token_kind->s, inlen1, buf1,
                      outlen1);
-      strings->token_kinds =
-        voidp_vector_push (strings->token_kinds, xstrdup (buf1));
-      j = voidp_vector_length (strings->token_kinds) - 1;
+      j = strings->token_kinds_index;
+      strings->token_kinds_index += 1;
       strings->token_kind_to_index =
         insert_index (strings->token_kind_to_index, tok->token_kind, j);
 
@@ -323,9 +327,8 @@ serialize_token_t (const token_t tok, serialized_strings_t strings,
       char *buf2 = XNMALLOC (outlen2, char);
       base64_encode ((const char *) tok->token_value->s, inlen2, buf2,
                      outlen2);
-      strings->token_values =
-        voidp_vector_push (strings->token_values, xstrdup (buf2));
-      k = voidp_vector_length (strings->token_values) - 1;
+      k = strings->token_values_index;
+      strings->token_values_index += 1;
       strings->token_value_to_index =
         insert_index (strings->token_value_to_index, tok->token_value,
                       k);
