@@ -36,8 +36,6 @@
 #include <config.h>
 #include <math.h>
 #include <inttypes.h>
-#include <gl_avltree_omap.h>
-#include <gl_xomap.h>
 #include <libhiha/string_t.h>
 #include <libhiha/load_plugin.h>
 #include <libhiha/pratt.h>
@@ -48,9 +46,9 @@
 
 struct pratt_tables
 {
-  gl_omap_t nud;
-  gl_omap_t led;
-  gl_omap_t lbp;
+  string_t_map_t nud;
+  string_t_map_t led;
+  string_t_map_t lbp;
 };
 typedef struct pratt_tables *pratt_tables_t;
 
@@ -83,24 +81,13 @@ binding_powers_lt (double a, double b)
   return (a < b);
 }
 
-static int
-compare_strings (const void *s1, const void *s2)
-{
-  const string_t str1 = (const string_t) s1;
-  const string_t str2 = (const string_t) s2;
-  return string_t_cmp (str1, str2);
-}
-
 HIHA_VISIBLE pratt_tables_t
 make_pratt_tables_t (void)
 {
   pratt_tables_t data = XMALLOC (struct pratt_tables);
-  data->nud =
-    gl_omap_create_empty (GL_AVLTREE_OMAP, compare_strings, NULL, NULL);
-  data->led =
-    gl_omap_create_empty (GL_AVLTREE_OMAP, compare_strings, NULL, NULL);
-  data->lbp =
-    gl_omap_create_empty (GL_AVLTREE_OMAP, compare_strings, NULL, NULL);
+  data->nud = NULL;
+  data->led = NULL;
+  data->lbp = NULL;
   return data;
 }
 
@@ -108,14 +95,16 @@ HIHA_VISIBLE void
 pratt_nud_put (pratt_tables_t data, string_t token_kind,
                nud_handler_t handler)
 {
-  gl_omap_put (data->nud, token_kind, handler);
+  data->nud =
+    string_t_map_insert_or_replace (data->nud, token_kind, handler);
 }
 
 HIHA_VISIBLE void
 pratt_led_put (pratt_tables_t data, string_t token_kind,
                led_handler_t handler)
 {
-  gl_omap_put (data->led, token_kind, handler);
+  data->led =
+    string_t_map_insert_or_replace (data->led, token_kind, handler);
 }
 
 HIHA_VISIBLE void
@@ -124,25 +113,26 @@ pratt_lbp_put (pratt_tables_t data, string_t token_kind,
 {
   double *bp = XMALLOC (double);
   *bp = binding_power;
-  gl_omap_put (data->lbp, token_kind, bp);
+  data->lbp =
+    string_t_map_insert_or_replace (data->lbp, token_kind, bp);
 }
 
 HIHA_VISIBLE nud_handler_t
 pratt_nud_get (pratt_tables_t data, string_t token_kind)
 {
-  return (nud_handler_t) gl_omap_get (data->nud, token_kind);
+  return (nud_handler_t) string_t_map_search (data->nud, token_kind);
 }
 
 HIHA_VISIBLE led_handler_t
 pratt_led_get (pratt_tables_t data, string_t token_kind)
 {
-  return (led_handler_t) gl_omap_get (data->nud, token_kind);
+  return (led_handler_t) string_t_map_search (data->nud, token_kind);
 }
 
 HIHA_VISIBLE double
 pratt_lbp_get (pratt_tables_t data, string_t token_kind)
 {
-  const void *p = gl_omap_get (data->lbp, token_kind);
+  const void *p = string_t_map_search (data->lbp, token_kind);
   return (p == NULL) ? -HUGE_VAL : *((const double *) p);
 }
 

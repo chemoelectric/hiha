@@ -39,7 +39,6 @@
 #  --macro-prefix=gl \
 #  assert \
 #  assert-h \
-#  avltree-omap \
 #  base64 \
 #  byteswap \
 #  dirent-h \
@@ -69,7 +68,6 @@
 #  unistr/u32-cmp2 \
 #  version-etc \
 #  xalloc \
-#  xomap \
 #  xstrerror
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
@@ -77,7 +75,6 @@ gl_LOCAL_DIR([])
 gl_MODULES([
   assert
   assert-h
-  avltree-omap
   base64
   byteswap
   dirent-h
@@ -107,7 +104,6 @@ gl_MODULES([
   unistr/u32-cmp2
   version-etc
   xalloc
-  xomap
   xstrerror
 ])
 gl_AVOID([])

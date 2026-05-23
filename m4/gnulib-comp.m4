@@ -49,7 +49,6 @@ AC_DEFUN([gl_EARLY],
   # Code from module assert:
   # Code from module assert-h:
   # Code from module attribute:
-  # Code from module avltree-omap:
   # Code from module base64:
   # Code from module basename-lgpl:
   # Code from module bool:
@@ -160,7 +159,6 @@ AC_DEFUN([gl_EARLY],
   # Code from module msvc-nothrow:
   # Code from module multiarch:
   # Code from module nocrash:
-  # Code from module omap:
   # Code from module once:
   # Code from module open:
   # Code from module opendir:
@@ -303,7 +301,6 @@ AC_DEFUN([gl_EARLY],
   # Code from module xalloc:
   # Code from module xalloc-die:
   # Code from module xalloc-oversized:
-  # Code from module xomap:
   # Code from module xsize:
   # Code from module xstrerror:
   # Code from module xvasprintf:
@@ -1347,14 +1344,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/getprogname.h
   lib/getrandom.c
   lib/gettext.h
-  lib/gl_anytree_omap.h
-  lib/gl_avltree_omap.c
-  lib/gl_avltree_omap.h
-  lib/gl_avltree_ordered.h
-  lib/gl_omap.c
-  lib/gl_omap.h
-  lib/gl_xomap.c
-  lib/gl_xomap.h
   lib/glthread/lock.c
   lib/glthread/lock.h
   lib/glthread/once.c

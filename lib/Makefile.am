@@ -34,7 +34,6 @@
 #  --macro-prefix=gl \
 #  assert \
 #  assert-h \
-#  avltree-omap \
 #  base64 \
 #  byteswap \
 #  dirent-h \
@@ -64,7 +63,6 @@
 #  unistr/u32-cmp2 \
 #  version-etc \
 #  xalloc \
-#  xomap \
 #  xstrerror
 
 AUTOMAKE_OPTIONS = 1.14 gnits subdir-objects
@@ -193,12 +191,6 @@ EXTRA_DIST += assert.in.h verify.h
 EXTRA_DIST += attribute.h
 
 ## end   gnulib module attribute
-
-## begin gnulib module avltree-omap
-
-libgnu_la_SOURCES += gl_avltree_omap.h gl_avltree_omap.c gl_avltree_ordered.h gl_anytree_omap.h
-
-## end   gnulib module avltree-omap
 
 ## begin gnulib module base64
 
@@ -1294,12 +1286,6 @@ endif
 EXTRA_DIST += msvc-nothrow.h
 
 ## end   gnulib module msvc-nothrow
-
-## begin gnulib module omap
-
-libgnu_la_SOURCES += gl_omap.h gl_omap.c
-
-## end   gnulib module omap
 
 ## begin gnulib module once
 
@@ -4064,12 +4050,6 @@ EXTRA_DIST += xalloc.h
 EXTRA_DIST += xalloc-oversized.h
 
 ## end   gnulib module xalloc-oversized
-
-## begin gnulib module xomap
-
-libgnu_la_SOURCES += gl_xomap.h gl_xomap.c
-
-## end   gnulib module xomap
 
 ## begin gnulib module xsize
 

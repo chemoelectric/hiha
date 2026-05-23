@@ -18170,7 +18170,6 @@ esac
   # Code from module assert:
   # Code from module assert-h:
   # Code from module attribute:
-  # Code from module avltree-omap:
   # Code from module base64:
   # Code from module basename-lgpl:
   # Code from module bool:
@@ -18281,7 +18280,6 @@ esac
   # Code from module msvc-nothrow:
   # Code from module multiarch:
   # Code from module nocrash:
-  # Code from module omap:
   # Code from module once:
   # Code from module open:
   # Code from module opendir:
@@ -18446,7 +18444,6 @@ esac
   # Code from module xalloc:
   # Code from module xalloc-die:
   # Code from module xalloc-oversized:
-  # Code from module xomap:
   # Code from module xsize:
   # Code from module xstrerror:
   # Code from module xvasprintf:
@@ -30465,8 +30462,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam \
         LIBS="$saved_LIBS"
         test $gl_pthread_api = yes && break
       done
-      echo "$as_me:30468: gl_pthread_api=$gl_pthread_api" >&5
-      echo "$as_me:30469: LIBPTHREAD=$LIBPTHREAD" >&5
+      echo "$as_me:30465: gl_pthread_api=$gl_pthread_api" >&5
+      echo "$as_me:30466: LIBPTHREAD=$LIBPTHREAD" >&5
 
       gl_pthread_in_glibc=no
       # On Linux with glibc >= 2.34, libc contains the fully functional
@@ -30495,7 +30492,7 @@ rm -rf conftest*
   *) :
      ;;
 esac
-      echo "$as_me:30498: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
+      echo "$as_me:30495: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
 
       # Test for libpthread by looking for pthread_kill.
       if test $gl_pthread_api = yes && test -z "$LIBPTHREAD"
@@ -30747,7 +30744,7 @@ fi
 fi
 
 fi
-      echo "$as_me:30750: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
+      echo "$as_me:30747: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
 
 fi
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether POSIX threads API is available" >&5
@@ -35119,8 +35116,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam \
         LIBS="$saved_LIBS"
         test $gl_pthread_api = yes && break
       done
-      echo "$as_me:35122: gl_pthread_api=$gl_pthread_api" >&5
-      echo "$as_me:35123: LIBPTHREAD=$LIBPTHREAD" >&5
+      echo "$as_me:35119: gl_pthread_api=$gl_pthread_api" >&5
+      echo "$as_me:35120: LIBPTHREAD=$LIBPTHREAD" >&5
 
       gl_pthread_in_glibc=no
       # On Linux with glibc >= 2.34, libc contains the fully functional
@@ -35149,7 +35146,7 @@ rm -rf conftest*
   *) :
      ;;
 esac
-      echo "$as_me:35152: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
+      echo "$as_me:35149: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
 
       # Test for libpthread by looking for pthread_kill.
       if test $gl_pthread_api = yes && test -z "$LIBPTHREAD"
@@ -35401,7 +35398,7 @@ fi
 fi
 
 fi
-      echo "$as_me:35404: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
+      echo "$as_me:35401: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
 
 fi
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether POSIX threads API is available" >&5
@@ -35691,8 +35688,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam \
         LIBS="$saved_LIBS"
         test $gl_pthread_api = yes && break
       done
-      echo "$as_me:35694: gl_pthread_api=$gl_pthread_api" >&5
-      echo "$as_me:35695: LIBPTHREAD=$LIBPTHREAD" >&5
+      echo "$as_me:35691: gl_pthread_api=$gl_pthread_api" >&5
+      echo "$as_me:35692: LIBPTHREAD=$LIBPTHREAD" >&5
 
       gl_pthread_in_glibc=no
       # On Linux with glibc >= 2.34, libc contains the fully functional
@@ -35721,7 +35718,7 @@ rm -rf conftest*
   *) :
      ;;
 esac
-      echo "$as_me:35724: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
+      echo "$as_me:35721: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
 
       # Test for libpthread by looking for pthread_kill.
       if test $gl_pthread_api = yes && test -z "$LIBPTHREAD"
@@ -35973,7 +35970,7 @@ fi
 fi
 
 fi
-      echo "$as_me:35976: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
+      echo "$as_me:35973: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
 
 fi
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether POSIX threads API is available" >&5

@@ -1,7 +1,17 @@
 @  master
-|  2026-05-22 23:41 +0000
+|  2026-05-22 23:51 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
-|  git:
+|  git:       425985ac7963ba5beaa1d5c9816df462dac2f3aa
+|  mercurial: cd4c12ff8f98eeb86a314e8e862ad8cec2ac738c
+|  revision:  176
+|  parents:   175
+|
+|    The code is now free of Gnulib lists (though not yet of omap).
+|
+|
+o  2026-05-22 23:41 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       df52789539e239c2dc8f9a00774bd72644778e09
 |  mercurial: f43f09ff001a742c7d6a1b7f38bed3f33a041c37
 |  revision:  175
 |  parents:   174
@@ -11,7 +21,7 @@
 |
 o  2026-05-22 23:41 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
-|  git:
+|  git:       b3742cc3fda66cf2de30c5ce95c01f7a5d35adcd
 |  mercurial: a7c3c93d1a3d7eaae60e2e5570dc7a0ae50198fc
 |  revision:  174
 |  parents:   173
