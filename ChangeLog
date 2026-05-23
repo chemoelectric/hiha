@@ -1,5 +1,15 @@
 @  master
-|  2026-05-23 00:23 +0000
+|  2026-05-23 11:22 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       5b192dcd07528a2992e5a893dcf6e525a70b2fde
+|  mercurial: df87d64c8d3e4634dd39927c95ec3f79ca3f78e9
+|  revision:  178
+|  parents:   177
+|
+|    Improved efficiency of token serialization.
+|
+|
+o  2026-05-23 00:23 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 |  git:       f4954475c98aa2d6f21ddb27b2f53cfaaa5e66fa
 |  mercurial: 7fcfc8bc3882b082439ec14487857a69d9eb8f40

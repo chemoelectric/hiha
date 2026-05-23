@@ -110,7 +110,8 @@ host_triplet = @host@
 EXTRA_PROGRAMS = SpookyV2-reference$(EXEEXT)
 check_PROGRAMS = check_string_t_hash$(EXEEXT) \
 	check_string_t_map$(EXEEXT) check_string_t_omap$(EXEEXT) \
-	check_token_t_hash$(EXEEXT) check_persistent_avl$(EXEEXT) \
+	check_token_t_hash$(EXEEXT) check_str_nul_hash$(EXEEXT) \
+	check_str_nul_map$(EXEEXT) check_persistent_avl$(EXEEXT) \
 	check_persistent_integer_trie$(EXEEXT) \
 	check_persistent_hash_map$(EXEEXT) \
 	check_indexed_deque$(EXEEXT) check_spookyhash$(EXEEXT)
@@ -276,6 +277,18 @@ check_spookyhash_LDADD = $(LDADD)
 check_spookyhash_DEPENDENCIES = $(top_builddir)/libhiha.la \
 	$(top_builddir)/$(GCVERS)/libhiha-gc.la \
 	$(top_builddir)/lib/libgnu.la $(am__DEPENDENCIES_2)
+check_str_nul_hash_SOURCES = check_str_nul_hash.c
+check_str_nul_hash_OBJECTS = check_str_nul_hash.$(OBJEXT)
+check_str_nul_hash_LDADD = $(LDADD)
+check_str_nul_hash_DEPENDENCIES = $(top_builddir)/libhiha.la \
+	$(top_builddir)/$(GCVERS)/libhiha-gc.la \
+	$(top_builddir)/lib/libgnu.la $(am__DEPENDENCIES_2)
+check_str_nul_map_SOURCES = check_str_nul_map.c
+check_str_nul_map_OBJECTS = check_str_nul_map.$(OBJEXT)
+check_str_nul_map_LDADD = $(LDADD)
+check_str_nul_map_DEPENDENCIES = $(top_builddir)/libhiha.la \
+	$(top_builddir)/$(GCVERS)/libhiha-gc.la \
+	$(top_builddir)/lib/libgnu.la $(am__DEPENDENCIES_2)
 check_string_t_hash_SOURCES = check_string_t_hash.c
 check_string_t_hash_OBJECTS = check_string_t_hash.$(OBJEXT)
 check_string_t_hash_LDADD = $(LDADD)
@@ -323,6 +336,8 @@ am__depfiles_remade =  \
 	./$(DEPDIR)/check_persistent_hash_map.Po \
 	./$(DEPDIR)/check_persistent_integer_trie.Po \
 	./$(DEPDIR)/check_spookyhash.Po \
+	./$(DEPDIR)/check_str_nul_hash.Po \
+	./$(DEPDIR)/check_str_nul_map.Po \
 	./$(DEPDIR)/check_string_t_hash.Po \
 	./$(DEPDIR)/check_string_t_map.Po \
 	./$(DEPDIR)/check_string_t_omap.Po \
@@ -367,13 +382,15 @@ am__v_CXXLD_1 =
 SOURCES = $(SpookyV2_reference_SOURCES) check_indexed_deque.c \
 	check_persistent_avl.c check_persistent_hash_map.c \
 	check_persistent_integer_trie.c $(check_spookyhash_SOURCES) \
-	check_string_t_hash.c check_string_t_map.c \
-	check_string_t_omap.c check_token_t_hash.c
+	check_str_nul_hash.c check_str_nul_map.c check_string_t_hash.c \
+	check_string_t_map.c check_string_t_omap.c \
+	check_token_t_hash.c
 DIST_SOURCES = $(SpookyV2_reference_SOURCES) check_indexed_deque.c \
 	check_persistent_avl.c check_persistent_hash_map.c \
 	check_persistent_integer_trie.c $(check_spookyhash_SOURCES) \
-	check_string_t_hash.c check_string_t_map.c \
-	check_string_t_omap.c check_token_t_hash.c
+	check_str_nul_hash.c check_str_nul_map.c check_string_t_hash.c \
+	check_string_t_map.c check_string_t_omap.c \
+	check_token_t_hash.c
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -424,6 +441,7 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CFLAG_VISIBILITY = @CFLAG_VISIBILITY@
 CLOCK_TIME_LIB = @CLOCK_TIME_LIB@
+CONFIG_STATUS_DEPENDENCIES = @CONFIG_STATUS_DEPENDENCIES@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CSCOPE = @CSCOPE@
@@ -2037,6 +2055,14 @@ check_spookyhash$(EXEEXT): $(check_spookyhash_OBJECTS) $(check_spookyhash_DEPEND
 	@rm -f check_spookyhash$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(check_spookyhash_OBJECTS) $(check_spookyhash_LDADD) $(LIBS)
 
+check_str_nul_hash$(EXEEXT): $(check_str_nul_hash_OBJECTS) $(check_str_nul_hash_DEPENDENCIES) $(EXTRA_check_str_nul_hash_DEPENDENCIES) 
+	@rm -f check_str_nul_hash$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(check_str_nul_hash_OBJECTS) $(check_str_nul_hash_LDADD) $(LIBS)
+
+check_str_nul_map$(EXEEXT): $(check_str_nul_map_OBJECTS) $(check_str_nul_map_DEPENDENCIES) $(EXTRA_check_str_nul_map_DEPENDENCIES) 
+	@rm -f check_str_nul_map$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(check_str_nul_map_OBJECTS) $(check_str_nul_map_LDADD) $(LIBS)
+
 check_string_t_hash$(EXEEXT): $(check_string_t_hash_OBJECTS) $(check_string_t_hash_DEPENDENCIES) $(EXTRA_check_string_t_hash_DEPENDENCIES) 
 	@rm -f check_string_t_hash$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(check_string_t_hash_OBJECTS) $(check_string_t_hash_LDADD) $(LIBS)
@@ -2066,6 +2092,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_persistent_hash_map.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_persistent_integer_trie.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_spookyhash.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_str_nul_hash.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_str_nul_map.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_string_t_hash.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_string_t_map.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_string_t_omap.Po@am__quote@ # am--include-marker
@@ -2293,6 +2321,8 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/check_persistent_hash_map.Po
 	-rm -f ./$(DEPDIR)/check_persistent_integer_trie.Po
 	-rm -f ./$(DEPDIR)/check_spookyhash.Po
+	-rm -f ./$(DEPDIR)/check_str_nul_hash.Po
+	-rm -f ./$(DEPDIR)/check_str_nul_map.Po
 	-rm -f ./$(DEPDIR)/check_string_t_hash.Po
 	-rm -f ./$(DEPDIR)/check_string_t_map.Po
 	-rm -f ./$(DEPDIR)/check_string_t_omap.Po
@@ -2349,6 +2379,8 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/check_persistent_hash_map.Po
 	-rm -f ./$(DEPDIR)/check_persistent_integer_trie.Po
 	-rm -f ./$(DEPDIR)/check_spookyhash.Po
+	-rm -f ./$(DEPDIR)/check_str_nul_hash.Po
+	-rm -f ./$(DEPDIR)/check_str_nul_map.Po
 	-rm -f ./$(DEPDIR)/check_string_t_hash.Po
 	-rm -f ./$(DEPDIR)/check_string_t_map.Po
 	-rm -f ./$(DEPDIR)/check_string_t_omap.Po

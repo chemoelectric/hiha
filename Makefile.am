@@ -217,6 +217,7 @@ libhiha_la_LDFLAGS =
 libhiha_la_CFLAGS =
 EXTRA_libhiha_la_DEPENDENCIES =
 libhiha_la_SOURCES =
+nodist_libhiha_la_SOURCES =
 
 libhiha_la_LIBADD += lib/libgnu.la
 
@@ -240,6 +241,7 @@ libhiha_HDRS += include/libhiha/initialize_once.h
 libhiha_HDRS += include/libhiha/indexed_deque.h
 libhiha_HDRS += include/libhiha/string_t.h
 libhiha_HDRS += include/libhiha/token_t.h
+libhiha_HDRS += include/libhiha/str_nul.h
 libhiha_HDRS += include/libhiha/pratt.h
 libhiha_HDRS += include/libhiha/lexical.h
 libhiha_HDRS += include/libhiha/string_literal.h
@@ -256,16 +258,39 @@ libhiha_la_SOURCES += src/libhiha/spinlock.c
 libhiha_la_SOURCES += src/libhiha/indexed_deque.c
 libhiha_la_SOURCES += src/libhiha/string_t.c
 libhiha_la_SOURCES += src/libhiha/string_t_hash.c
-libhiha_la_SOURCES += src/libhiha/string_t_map.c
 libhiha_la_SOURCES += src/libhiha/string_t_omap.c
 libhiha_la_SOURCES += src/libhiha/string_t_vector.c
 libhiha_la_SOURCES += src/libhiha/token_t.c
 libhiha_la_SOURCES += src/libhiha/token_t_hash.c
+libhiha_la_SOURCES += src/libhiha/str_nul_hash.c
+libhiha_la_SOURCES += src/libhiha/str_nul_vector.c
 libhiha_la_SOURCES += src/libhiha/pratt.c
 libhiha_la_SOURCES += src/libhiha/lexical.c
 libhiha_la_SOURCES += src/libhiha/string_literal.c
 libhiha_la_SOURCES += src/libhiha/gensym.c
 libhiha_la_SOURCES += src/libhiha/load_plugin.c
+nodist_libhiha_la_SOURCES += src/libhiha/string_t_map.c
+nodist_libhiha_la_SOURCES += src/libhiha/str_nul_map.c
+
+CLEANFILES += src/libhiha/string_t_map.c
+src/libhiha/string_t_map.c: src/libhiha/typed_map.c.in Makefile.am
+	$(call v,GEN)mkdir -p $(@D) && \
+	$(SED) -e 's|@INCLUDES@|#include <libhiha/string_t.h>|g' \
+           -e 's|@TYPENAME@|string_t|g' \
+           -e 's|@TYPE@|string_t|g' \
+           -e 's|@EQUALS@|do { return (string_t_cmp (key->key, stored->key) == 0); } while (0)|' \
+           $(<) > $(@).tmp && mv $(@){.tmp,}
+
+CLEANFILES += src/libhiha/str_nul_map.c
+src/libhiha/str_nul_map.c: src/libhiha/typed_map.c.in Makefile.am
+	$(call v,GEN)mkdir -p $(@D) && \
+	$(SED) -e 's|@INCLUDES@|#include <libhiha/str_nul.h>|g' \
+           -e 's|@TYPENAME@|str_nul|g' \
+           -e 's|@TYPE@|const char *|g' \
+           -e 's|@EQUALS@|do { return (strcmp (key->key, stored->key) == 0); } while (0)|' \
+           $(<) > $(@).tmp && mv $(@){.tmp,}
+
+EXTRA_DIST += src/libhiha/typed_map.c.in
 
 #---------------------------------------------------------------------
 

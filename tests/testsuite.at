@@ -44,6 +44,16 @@ AT_KEYWORDS([token_t_hash token_t hash])
 AT_CHECK_UNQUOTED([check_token_t_hash])
 AT_CLEANUP
 
+AT_SETUP([str_nul_hash])
+AT_KEYWORDS([str_nul_hash str_nul string char nul NUL hash])
+AT_CHECK_UNQUOTED([check_str_nul_hash])
+AT_CLEANUP
+
+AT_SETUP([str_nul unordered map])
+AT_KEYWORDS([str_nul_map str_nul map char string nul NUL])
+AT_CHECK_UNQUOTED([check_str_nul_map])
+AT_CLEANUP
+
 AT_SETUP([persistent AVL tree])
 AT_KEYWORDS([persistent AVL avl tree])
 AT_CHECK_UNQUOTED([check_persistent_avl])

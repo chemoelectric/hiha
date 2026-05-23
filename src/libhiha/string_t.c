@@ -45,7 +45,7 @@ _initialize_string_constants (void)
   _string_t_formfeed = make_string_t ("\014");
 }
 
-HIHA_VISIBLE HIHA_PURE const string_t
+HIHA_VISIBLE HIHA_PURE string_t
 string_t_EOF (void)
 {
   INITIALIZE_ONCE (_string_constants_init1t,
@@ -53,7 +53,7 @@ string_t_EOF (void)
   return _string_t_EOF;
 }
 
-HIHA_VISIBLE HIHA_PURE const string_t
+HIHA_VISIBLE HIHA_PURE string_t
 string_t_CP (void)
 {
   INITIALIZE_ONCE (_string_constants_init1t,
@@ -61,7 +61,7 @@ string_t_CP (void)
   return _string_t_CP;
 }
 
-HIHA_VISIBLE HIHA_PURE const string_t
+HIHA_VISIBLE HIHA_PURE string_t
 string_t_formfeed (void)
 {
   INITIALIZE_ONCE (_string_constants_init1t,
@@ -170,7 +170,7 @@ string_t_from_str_len (const char *src, size_t srclen,
 }
 
 HIHA_VISIBLE string_t
-string_t_canonicalize (const string_t src, text_location_t loc)
+string_t_canonicalize (string_t src, text_location_t loc)
 {
   size_t n;
   uint32_t *u32 = u32_normalize (UNINORM_NFC, src->s, src->n,
@@ -198,7 +198,7 @@ string_t_canonical_from_str_len (const char *src, size_t srclen,
 }
 
 HIHA_VISIBLE void
-str_len_from_string_t (const string_t src, char **s, size_t *n)
+str_len_from_string_t (string_t src, char **s, size_t *n)
 {
   *s = u32_conv_to_encoding (locale_charset (),
                              iconveh_replacement_character, src->s,
@@ -236,7 +236,7 @@ text_location_string (text_location_t loc)
 }
 
 HIHA_VISIBLE void
-print_string_t (const string_t str, FILE *f)
+print_string_t (string_t str, FILE *f)
 {
   char *s;
   size_t n;

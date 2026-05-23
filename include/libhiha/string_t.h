@@ -54,9 +54,9 @@ struct text_location
 typedef const struct text_location *text_location_t;
 
 /* Some string constants. */
-HIHA_PURE const string_t string_t_EOF (void);   /* “EOF” */
-HIHA_PURE const string_t string_t_CP (void);    /* “CP” (code point) */
-HIHA_PURE const string_t string_t_formfeed (void);      /* "\014" */
+HIHA_PURE string_t string_t_EOF (void); /* “EOF” */
+HIHA_PURE string_t string_t_CP (void);  /* “CP” (code point) */
+HIHA_PURE string_t string_t_formfeed (void);    /* "\014" */
 
 int string_t_cmp (string_t str1, string_t str2);
 
@@ -67,17 +67,16 @@ char *make_str_nul (string_t str);
 
 string_t string_t_from_str_len (const char *src, size_t srclen,
                                 text_location_t loc);
-string_t string_t_canonicalize (const string_t src,
-                                text_location_t loc);
+string_t string_t_canonicalize (string_t src, text_location_t loc);
 string_t string_t_canonical_from_str_len (const char *src,
                                           size_t srclen,
                                           text_location_t loc);
 
-void str_len_from_string_t (const string_t src, char **s, size_t *n);
+void str_len_from_string_t (string_t src, char **s, size_t *n);
 
 char *text_location_string (text_location_t);
 
-void print_string_t (const string_t str, FILE *f);
+void print_string_t (string_t str, FILE *f);
 
 /*--------------------------------------------------------------------*/
 

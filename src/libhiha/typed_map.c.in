@@ -1,0 +1,229 @@
+/*
+
+  The hiha programming language
+
+  Copyright © 2026 Barry Schwartz
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+*/
+
+#include <config.h>
+#include <string.h>
+#include <xalloc.h>
+#include <libhiha/persistent_hash_map.h>
+@INCLUDES@
+
+#define _(msgid) HIHA_GETTEXT (msgid)
+
+@TYPENAME@_hash_context_t
+@TYPENAME@_map_hash_init (const struct @TYPENAME@_keyval *element)
+{
+  return @TYPENAME@_hash_init (element->key);
+}
+
+static bool
+@TYPENAME@_map_hash_bit (@TYPENAME@_hash_context_t context, unsigned int i)
+{
+  const unsigned int j = i / 64;
+  const unsigned int k = i % 64;
+  const uint64_t hash = @TYPENAME@_hash (context, j);
+  const uint64_t mask = ((uint64_t) 1) << k;
+  return ((hash & mask) != 0);
+}
+
+static bool
+@TYPENAME@_keyval_equals (const struct @TYPENAME@_keyval *key,
+                          const struct @TYPENAME@_keyval *stored)
+{
+  @EQUALS@;
+}
+
+HIHA_HASH_MAP_NODES_DECL (@TYPENAME@_map_node, struct @TYPENAME@_keyval);
+HIHA_HASH_MAP_SEARCH_DEFN (@TYPENAME@_map_node_search, @TYPENAME@_map_node,
+                           struct @TYPENAME@_keyval,
+                           @TYPENAME@_map_hash_init,
+                           @TYPENAME@_map_hash_bit, @TYPENAME@_keyval_equals);
+HIHA_HASH_MAP_INSERT_DEFN (@TYPENAME@_map_node_insert, @TYPENAME@_map_node,
+                           struct @TYPENAME@_keyval,
+                           @TYPENAME@_map_hash_init,
+                           @TYPENAME@_map_hash_bit, @TYPENAME@_keyval_equals);
+HIHA_HASH_MAP_DELETE_DEFN (@TYPENAME@_map_node_delete, @TYPENAME@_map_node,
+                           struct @TYPENAME@_keyval,
+                           @TYPENAME@_map_hash_init,
+                           @TYPENAME@_map_hash_bit, @TYPENAME@_keyval_equals);
+HIHA_HASH_MAP_WALK_DEFN (@TYPENAME@_map_node_walk, @TYPENAME@_map_node,
+                         struct @TYPENAME@_keyval);
+
+struct @TYPENAME@_map
+{
+  @TYPENAME@_map_node_t _trie;
+  size_t _size;
+};
+
+HIHA_VISIBLE size_t
+@TYPENAME@_map_size (@TYPENAME@_map_t map)
+{
+  return (map == NULL) ? 0 : map->_size;
+}
+
+HIHA_VISIBLE const void *
+@TYPENAME@_map_search (@TYPENAME@_map_t map, @TYPE@ key)
+{
+  const void *result = NULL;
+  if (map != NULL)
+    {
+      struct @TYPENAME@_keyval element = {
+        .key = key
+      };
+      const struct @TYPENAME@_keyval *contents =
+        @TYPENAME@_map_node_search (map->_trie, &element);
+      if (contents != NULL)
+        result = contents->value;
+    }
+  return result;
+}
+
+static @TYPENAME@_map_t
+@TYPENAME@_map_insert (@TYPENAME@_map_t map, @TYPE@ key,
+                       const void *value, hiha_hash_map_mode_t mode)
+{
+  struct @TYPENAME@_map *result = XZALLOC (struct @TYPENAME@_map);
+  if (map != NULL)
+    {
+      result->_trie = map->_trie;
+      result->_size = map->_size;
+    }
+  struct @TYPENAME@_keyval element = {
+    .key = key,
+    .value = value
+  };
+  ssize_t size_change;
+  @TYPENAME@_map_node_insert (result->_trie, &element, mode,
+                              &result->_trie, &size_change);
+  result->_size += size_change;
+  return result;
+}
+
+HIHA_VISIBLE @TYPENAME@_map_t
+@TYPENAME@_map_insert_or_replace (@TYPENAME@_map_t map, @TYPE@ key,
+                                  const void *value)
+{
+  return @TYPENAME@_map_insert (map, key, value,
+                                hiha_hash_map_insert_or_replace);
+}
+
+HIHA_VISIBLE @TYPENAME@_map_t
+@TYPENAME@_map_insert_only (@TYPENAME@_map_t map, @TYPE@ key,
+                            const void *value)
+{
+  return @TYPENAME@_map_insert (map, key, value,
+                                hiha_hash_map_insert_only);
+}
+
+HIHA_VISIBLE @TYPENAME@_map_t
+@TYPENAME@_map_replace_only (@TYPENAME@_map_t map, @TYPE@ key,
+                             const void *value)
+{
+  @TYPENAME@_map_t result = map;
+  if (result != NULL)
+    result = @TYPENAME@_map_insert (result, key, value,
+                                    hiha_hash_map_replace_only);
+  return result;
+}
+
+HIHA_VISIBLE @TYPENAME@_map_t
+@TYPENAME@_map_delete (@TYPENAME@_map_t map, @TYPE@ key)
+{
+  struct @TYPENAME@_map *result = NULL;
+  if (map != NULL)
+    {
+      assert (map->_size != 0);
+      struct @TYPENAME@_keyval element = {
+        .key = key
+      };
+      @TYPENAME@_map_node_t trie = map->_trie;
+      size_t size = map->_size;
+      ssize_t size_change;
+      @TYPENAME@_map_node_delete (trie, &element, &trie, &size_change);
+      size += size_change;
+      assert ((trie == NULL) == (size == 0));
+      if (size != 0)
+        {
+          result = XZALLOC (struct @TYPENAME@_map);
+          result->_trie = trie;
+          result->_size = size;
+        }
+    }
+  return result;
+}
+
+static void
+list_another_key (const struct @TYPENAME@_keyval *element, void *data)
+{
+  @TYPENAME@_vector_t vec = *((@TYPENAME@_vector_t *) data);
+  *((@TYPENAME@_vector_t *) data) =
+    @TYPENAME@_vector_push (vec, element->key);
+}
+
+static void
+list_another_value (const struct @TYPENAME@_keyval *element, void *data)
+{
+  voidp_vector_t vec = *((voidp_vector_t *) data);
+  *((voidp_vector_t *) data) = voidp_vector_push (vec, element->value);
+}
+
+static void
+list_another_association (const struct @TYPENAME@_keyval *element,
+                          void *data)
+{
+  @TYPENAME@_keyval_vector_t vec = *((@TYPENAME@_keyval_vector_t *) data);
+  *((@TYPENAME@_keyval_vector_t *) data) =
+    @TYPENAME@_keyval_vector_push (vec, element);
+}
+
+HIHA_VISIBLE @TYPENAME@_vector_t
+@TYPENAME@_map_keys (@TYPENAME@_map_t map)
+{
+  @TYPENAME@_vector_t result = NULL;
+  if (map != NULL)
+    @TYPENAME@_map_node_walk (map->_trie, list_another_key, &result);
+  return result;
+}
+
+HIHA_VISIBLE voidp_vector_t
+@TYPENAME@_map_values (@TYPENAME@_map_t map)
+{
+  voidp_vector_t result = NULL;
+  if (map != NULL)
+    @TYPENAME@_map_node_walk (map->_trie, list_another_value, &result);
+  return result;
+}
+
+HIHA_VISIBLE @TYPENAME@_keyval_vector_t
+@TYPENAME@_map_associations (@TYPENAME@_map_t map)
+{
+  @TYPENAME@_keyval_vector_t result = NULL;
+  if (map != NULL)
+    @TYPENAME@_map_node_walk (map->_trie, list_another_association,
+                              &result);
+  return result;
+}
+
+/*
+  local variables:
+  mode: c
+  coding: utf-8
+  end:
+*/

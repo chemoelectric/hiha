@@ -146,6 +146,8 @@ fi
 # more straightforward.)
 AC_SUBST([GNU],[])
 
+AC_SUBST([CONFIG_STATUS_DEPENDENCIES],['$(top_srcdir)/src/libhiha/typed_map.c.in'])
+
 CHEM_REQUIRE_GNU_MAKE_IN_PATH
 CHEM_CONFIG_MAKEFILES
 CHEM_CONFIG_MAKEFILES([lib/Makefile],[lib/GNUmakefile])
