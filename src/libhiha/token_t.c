@@ -287,7 +287,6 @@ serialize_token_t (const token_t tok, serialized_strings_t strings,
 
   size_t i = str_nul_retrieve_index (strings->filename_to_index,
                                      tok->loc->filename);
-  //  size_t i = filename_to_index (strings->filenames, tok->loc->filename);
   if (i == (size_t) (-1))
     {
       i = strings->filenames_index;
@@ -295,9 +294,6 @@ serialize_token_t (const token_t tok, serialized_strings_t strings,
       strings->filename_to_index =
         str_nul_insert_index (strings->filename_to_index,
                               xstrdup (tok->loc->filename), i);
-      //      strings->filenames =
-      //        voidp_vector_push (strings->filenames, tok->loc->filename);
-      //      i = voidp_vector_length (strings->filenames) - 1;
 
       /* Write the filename in BASE64-encoding of the locale-encoded
          string, after a number that will be used to represent the
