@@ -1,5 +1,25 @@
-@  master
-|  2026-05-23 17:57 +0000
+@  master string-literals-work
+|  2026-05-24 14:55 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       ffb518a047ed3aa32f3229fe2481e1ebabdde38c
+|  mercurial: b802f66a14f3f82279e874bfa8f2ddfe9f318c80
+|  revision:  185
+|  parents:   184
+|
+|    Now that it is easy, I extended the data structures to token_t.
+|
+|
+o  2026-05-23 18:10 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       25fe1eb9a499e7458ef9047a89dcf636f8c5f4c5
+|  mercurial: f9dc5c090ed02f26368fb854b4a48a1af3ee1375
+|  revision:  184
+|  parents:   183
+|
+|    Modify token_t hashing.
+|
+|
+o  2026-05-23 17:57 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 |  git:       9cff095a99752ff230020e25172f33dbac9e647a
 |  mercurial: 35937a21864e6a2e0252d8b389449a87631ec841

@@ -53,7 +53,9 @@
 #  uniconv/u32-conv-to-enc \
 #  unictype/category-Pc \
 #  unictype/category-Sm \
+#  unictype/category-Zs \
 #  unictype/category-test \
+#  unictype/property-ascii-hex-digit \
 #  unictype/property-id-continue \
 #  unictype/property-id-start \
 #  unictype/property-test \
@@ -3073,6 +3075,16 @@ EXTRA_DIST += unictype/categ_Sm.h
 
 ## end   gnulib module unictype/category-Sm
 
+## begin gnulib module unictype/category-Zs
+
+if LIBUNISTRING_COMPILE_UNICTYPE_CATEGORY_ZS
+libgnu_la_SOURCES += unictype/categ_Zs.c
+endif
+
+EXTRA_DIST += unictype/categ_Zs.h
+
+## end   gnulib module unictype/category-Zs
+
 ## begin gnulib module unictype/category-test
 
 if LIBUNISTRING_COMPILE_UNICTYPE_CATEGORY_TEST
@@ -3212,6 +3224,16 @@ endif
 EXTRA_DIST += unictype/bitmap.h unictype/ctype_xdigit.h
 
 ## end   gnulib module unictype/ctype-xdigit
+
+## begin gnulib module unictype/property-ascii-hex-digit
+
+if LIBUNISTRING_COMPILE_UNICTYPE_PROPERTY_ASCII_HEX_DIGIT
+libgnu_la_SOURCES += unictype/pr_ascii_hex_digit.c
+endif
+
+EXTRA_DIST += unictype/bitmap.h unictype/pr_ascii_hex_digit.h
+
+## end   gnulib module unictype/property-ascii-hex-digit
 
 ## begin gnulib module unictype/property-id-continue
 

@@ -33,16 +33,32 @@
 
 static initialize_once_t _string_constants_init1t =
   INITIALIZE_ONCE_T_INIT;
+static string_t _empty_string_t;
 static string_t _string_t_EOF;
 static string_t _string_t_CP;
+static string_t _string_t_space;
+static string_t _string_t_tab;
+static string_t _string_t_newline;
 static string_t _string_t_formfeed;
 
 static void
 _initialize_string_constants (void)
 {
+  _empty_string_t = make_string_t ("");
   _string_t_EOF = make_string_t ("EOF");
   _string_t_CP = make_string_t ("CP");
+  _string_t_space = make_string_t (" ");
+  _string_t_tab = make_string_t ("\t");
+  _string_t_newline = make_string_t ("\n");
   _string_t_formfeed = make_string_t ("\014");
+}
+
+HIHA_VISIBLE HIHA_PURE string_t
+empty_string_t (void)
+{
+  INITIALIZE_ONCE (_string_constants_init1t,
+                   _initialize_string_constants);
+  return _empty_string_t;
 }
 
 HIHA_VISIBLE HIHA_PURE string_t
@@ -59,6 +75,30 @@ string_t_CP (void)
   INITIALIZE_ONCE (_string_constants_init1t,
                    _initialize_string_constants);
   return _string_t_CP;
+}
+
+HIHA_VISIBLE HIHA_PURE string_t
+string_t_space (void)
+{
+  INITIALIZE_ONCE (_string_constants_init1t,
+                   _initialize_string_constants);
+  return _string_t_space;
+}
+
+HIHA_VISIBLE HIHA_PURE string_t
+string_t_tab (void)
+{
+  INITIALIZE_ONCE (_string_constants_init1t,
+                   _initialize_string_constants);
+  return _string_t_tab;
+}
+
+HIHA_VISIBLE HIHA_PURE string_t
+string_t_newline (void)
+{
+  INITIALIZE_ONCE (_string_constants_init1t,
+                   _initialize_string_constants);
+  return _string_t_newline;
 }
 
 HIHA_VISIBLE HIHA_PURE string_t
