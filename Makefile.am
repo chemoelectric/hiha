@@ -261,6 +261,7 @@ libhiha_la_SOURCES += src/libhiha/string_t_hash.c
 libhiha_la_SOURCES += src/libhiha/string_t_vector.c
 libhiha_la_SOURCES += src/libhiha/token_t.c
 libhiha_la_SOURCES += src/libhiha/token_t_hash.c
+libhiha_la_SOURCES += src/libhiha/token_t_vector.c
 libhiha_la_SOURCES += src/libhiha/str_nul.c
 libhiha_la_SOURCES += src/libhiha/str_nul_hash.c
 libhiha_la_SOURCES += src/libhiha/str_nul_vector.c
@@ -271,6 +272,8 @@ libhiha_la_SOURCES += src/libhiha/gensym.c
 libhiha_la_SOURCES += src/libhiha/load_plugin.c
 nodist_libhiha_la_SOURCES += src/libhiha/string_t_map.c
 nodist_libhiha_la_SOURCES += src/libhiha/string_t_omap.c
+nodist_libhiha_la_SOURCES += src/libhiha/token_t_map.c
+nodist_libhiha_la_SOURCES += src/libhiha/token_t_omap.c
 nodist_libhiha_la_SOURCES += src/libhiha/str_nul_map.c
 nodist_libhiha_la_SOURCES += src/libhiha/str_nul_omap.c
 
@@ -292,6 +295,26 @@ src/libhiha/string_t_omap.c: src/libhiha/typed_omap.c.in Makefile.am
            -e 's|@TYPENAME@|string_t|g' \
            -e 's|@TYPE@|string_t|g' \
            -e 's|@COMPARE@|do { return string_t_cmp (kv1->key, kv2->key); } while (0)|' \
+           $(<) > $(@).tmp && mv $(@){.tmp,}
+
+BUILT_SOURCES += src/libhiha/token_t_map.c
+DISTCLEANFILES += src/libhiha/token_t_map.c
+src/libhiha/token_t_map.c: src/libhiha/typed_map.c.in Makefile.am
+	$(call v,GEN)mkdir -p $(@D) && \
+	$(SED) -e 's|@INCLUDES@|#include <libhiha/token_t.h>|g' \
+           -e 's|@TYPENAME@|token_t|g' \
+           -e 's|@TYPE@|token_t|g' \
+           -e 's|@EQUALS@|do { return (token_t_cmp (key->key, stored->key) == 0); } while (0)|' \
+           $(<) > $(@).tmp && mv $(@){.tmp,}
+
+BUILT_SOURCES += src/libhiha/token_t_omap.c
+DISTCLEANFILES += src/libhiha/token_t_omap.c
+src/libhiha/token_t_omap.c: src/libhiha/typed_omap.c.in Makefile.am
+	$(call v,GEN)mkdir -p $(@D) && \
+	$(SED) -e 's|@INCLUDES@|#include <libhiha/token_t.h>|g' \
+           -e 's|@TYPENAME@|token_t|g' \
+           -e 's|@TYPE@|token_t|g' \
+           -e 's|@COMPARE@|do { return token_t_cmp (kv1->key, kv2->key); } while (0)|' \
            $(<) > $(@).tmp && mv $(@){.tmp,}
 
 BUILT_SOURCES += src/libhiha/str_nul_map.c
@@ -341,7 +364,19 @@ indent:
 		-Tstring_t \
 		-Tstring_t_hash_context_t \
 		-Tstring_t_map_t \
+		-Tstring_t_omap_t \
+		-Tstring_t_vector_t \
+		-Tstring_t_keyval_vector_t \
+		-Tvoidp_vector_t \
+		-Tstr_nul_vector_t \
+		-Tstr_nul_keyval_vector_t \
+		-Tstr_nul_map_t \
+		-Tstr_nul_omap_t \
 		-Ttoken_t \
+		-Ttoken_t_map_t \
+		-Ttoken_t_omap_t \
+		-Ttoken_t_vector_t \
+		-Ttoken_t_keyval_vector_t \
 		-Ttext_location_t \
 		-Ttoken_getter_t \
 		-Ttoken_getter_from_source_file_t \

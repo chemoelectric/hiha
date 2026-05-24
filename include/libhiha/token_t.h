@@ -109,6 +109,23 @@ token_putter_t make_token_putter_with_mismatch_check
   (token_putter_t input_putter, buffered_token_getter_t output_getter,
    bool (*check_for_mismatch) (buffered_token_getter_t, token_t));
 
+/*--------------------------------------------------------------------*/
+/* string_t_cmp first by token_kind, then by token_value. */
+
+int token_t_cmp (token_t tok1, token_t tok2);
+
+/*--------------------------------------------------------------------*/
+
+struct token_t_keyval
+{
+  token_t key;
+  const void *value;
+};
+typedef const struct token_t_keyval *token_t_keyval_t;
+
+DECLARE_HIHA_PERSISTENT_VECTOR_DATATYPE (, token_t_vector, token_t, 5);
+DECLARE_HIHA_PERSISTENT_VECTOR_DATATYPE (, token_t_keyval_vector,
+                                         token_t_keyval_t, 5);
 
 /*--------------------------------------------------------------------*/
 
@@ -117,6 +134,64 @@ typedef struct token_t_hash_context *token_t_hash_context_t;
 
 token_t_hash_context_t token_t_hash_init (token_t str);
 uint64_t token_t_hash (token_t_hash_context_t context, unsigned int i);
+
+/*--------------------------------------------------------------------*/
+/* Persistent unordered maps. */
+
+struct token_t_map;
+typedef const struct token_t_map *token_t_map_t;
+
+size_t token_t_map_size (token_t_map_t map);
+
+const void *token_t_map_search (token_t_map_t map, token_t key);
+
+token_t_map_t token_t_map_insert_or_replace (token_t_map_t map,
+                                             token_t key,
+                                             const void *value);
+token_t_map_t token_t_map_insert_only (token_t_map_t map,
+                                       token_t key, const void *value);
+token_t_map_t token_t_map_replace_only (token_t_map_t map,
+                                        token_t key, const void *value);
+
+token_t_map_t token_t_map_delete (token_t_map_t map, token_t key);
+
+token_t_vector_t token_t_map_keys (token_t_map_t map);
+voidp_vector_t token_t_map_values (token_t_map_t map);
+token_t_keyval_vector_t token_t_map_associations (token_t_map_t map);
+
+/*--------------------------------------------------------------------*/
+/* Persistent ordered maps. */
+
+struct token_t_omap;
+typedef const struct token_t_omap *token_t_omap_t;
+
+size_t token_t_omap_size (token_t_omap_t omap);
+
+const void *token_t_omap_search (token_t_omap_t omap, token_t key);
+
+/* token_t_omap_init creates a new empty map with a custom order.
+   (The default order, which is token_t_cmp applied to the keys, is
+   obtained by using NULL as the empty map.) */
+token_t_omap_t token_t_omap_init (int (*compare) (token_t_keyval_t,
+                                                  token_t_keyval_t));
+
+token_t_omap_t token_t_omap_insert_or_replace (token_t_omap_t omap,
+                                               token_t key,
+                                               const void *value);
+token_t_omap_t token_t_omap_insert_only (token_t_omap_t omap,
+                                         token_t key,
+                                         const void *value);
+token_t_omap_t token_t_omap_replace_only (token_t_omap_t omap,
+                                          token_t key,
+                                          const void *value);
+
+token_t_omap_t token_t_omap_delete (token_t_omap_t omap, token_t key);
+
+/* direction = 1 forwards, -1 backwards */
+token_t_vector_t token_t_omap_keys (token_t_omap_t omap, int direction);
+voidp_vector_t token_t_omap_values (token_t_omap_t omap, int direction);
+token_t_keyval_vector_t token_t_omap_associations (token_t_omap_t omap,
+                                                   int direction);
 
 /*--------------------------------------------------------------------*/
 

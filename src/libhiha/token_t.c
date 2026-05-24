@@ -891,6 +891,15 @@ print_token_t (const token_t tok, FILE *f)
            make_str_nul (tok->token_value));
 }
 
+HIHA_VISIBLE int
+token_t_cmp (token_t tok1, token_t tok2)
+{
+  int result = string_t_cmp (tok1->token_kind, tok2->token_kind);
+  if (result == 0)
+    result = string_t_cmp (tok1->token_value, tok2->token_value);
+  return result;
+}
+
 /*
   local variables:
   mode: c
