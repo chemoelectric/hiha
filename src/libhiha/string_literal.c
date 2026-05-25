@@ -136,11 +136,12 @@ token_is_ascii_hex_digit (token_t tok)
 }
 
 static void
-skip_blanks (buffered_token_getter_t getter, token_t_vector_t *toks,
+skip_blanks (buffered_token_getter_t getter, string_t *tokval,
              const char **error_message)
 {
   if (*error_message == NULL)
     {
+      *tokval = empty_string_t ();
       token_t t;
       look_at_token (getter, 0, &t, error_message);
       while (*error_message == NULL && token_is_space_separator (t))
@@ -148,7 +149,7 @@ skip_blanks (buffered_token_getter_t getter, token_t_vector_t *toks,
           getter->get_token (getter, &t, error_message);
           if (*error_message == NULL)
             {
-              *toks = token_t_vector_push (*toks, t);
+              *tokval = concat_string_t (*tokval, t->token_value, NULL);
               look_at_token (getter, 0, &t, error_message);
             }
         }
@@ -159,14 +160,14 @@ skip_blanks (buffered_token_getter_t getter, token_t_vector_t *toks,
 
 static void
 skip_blanks_newline_blanks (buffered_token_getter_t getter,
-                            token_t_vector_t *toks,
+                            string_t *tokval,
                             const char **error_message)
 {
   /* Skip blanks until a newline, and then skip more blanks. This is
      how backslash at the end of a line is handled is handled in
      R⁷RS Scheme, and is how we will handle it here. */
 
-  skip_blanks (getter, toks, error_message);
+  skip_blanks (getter, tokval, error_message);
   if (*error_message == NULL)
     {
       token_t t;
@@ -178,8 +179,10 @@ skip_blanks_newline_blanks (buffered_token_getter_t getter,
           getter->get_token (getter, &t, error_message);
           if (*error_message == NULL)
             {
-              *toks = token_t_vector_push (*toks, t);
-              skip_blanks (getter, toks, error_message);
+              *tokval = concat_string_t (*tokval, t->token_value, NULL);
+              string_t tokval2;
+              skip_blanks (getter, &tokval2, error_message);
+              *tokval = concat_string_t (*tokval, tokval2, NULL);
             }
         }
     }
@@ -210,12 +213,12 @@ scan_the_hex (token_t tok, string_t_vector_t v, uint32_t *code_point,
 }
 
 static void
-hex_until_semicolon (buffered_token_getter_t getter,
-                     token_t_vector_t *toks,
+hex_until_semicolon (buffered_token_getter_t getter, string_t *tokval,
                      uint32_t *code_point, const char **error_message)
 {
   if (*error_message == NULL)
     {
+      *tokval = empty_string_t ();
       *code_point = 0xFFFD;     /* U+FFFD REPLACEMENT CHARACTER */
       string_t_vector_t v = NULL;
       token_t t;
@@ -225,7 +228,7 @@ hex_until_semicolon (buffered_token_getter_t getter,
           getter->get_token (getter, &t, error_message);
           if (*error_message == NULL)
             {
-              *toks = token_t_vector_push (*toks, t);
+              *tokval = concat_string_t (*tokval, t->token_value, NULL);
               v = string_t_vector_push (v, t->token_value);
               look_at_token (getter, 0, &t, error_message);
             }
@@ -247,15 +250,14 @@ hex_until_semicolon (buffered_token_getter_t getter,
 
 static void
 simple_escape (buffered_token_getter_t getter,
-               token_t_vector_t *toks,
-               string_t *substring,
+               string_t *tokval, string_t *substring,
                const char **error_message, int new_char)
 {
   token_t t;
   getter->get_token (getter, &t, error_message);
   if (*error_message == NULL)
     {
-      *toks = token_t_vector_push (*toks, t);
+      *tokval = t->token_value;
       char buf[2];
       buf[0] = (char) new_char;
       buf[1] = '\0';
@@ -264,49 +266,53 @@ simple_escape (buffered_token_getter_t getter,
 }
 
 static void
-escape_newline (buffered_token_getter_t getter,
-                token_t_vector_t *toks,
+escape_newline (buffered_token_getter_t getter, string_t *tokval,
                 string_t *substring, const char **error_message)
 {
   token_t t;
   getter->get_token (getter, &t, error_message);
   if (*error_message == NULL)
     {
-      *toks = token_t_vector_push (*toks, t);
-      skip_blanks (getter, toks, error_message);
+      *tokval = t->token_value;
+      string_t tokval2;
+      skip_blanks (getter, &tokval2, error_message);
+      *tokval = concat_string_t (*tokval, tokval2, NULL);
       if (*error_message == NULL)
         *substring = empty_string_t ();
     }
 }
 
 static void
-escape_blank (buffered_token_getter_t getter,
-              token_t_vector_t *toks,
+escape_blank (buffered_token_getter_t getter, string_t *tokval,
               string_t *substring, const char **error_message)
 {
   token_t t;
   getter->get_token (getter, &t, error_message);
   if (*error_message == NULL)
     {
-      *toks = token_t_vector_push (*toks, t);
-      skip_blanks_newline_blanks (getter, toks, error_message);
+      *tokval = t->token_value;
+      string_t tokval2;
+      skip_blanks_newline_blanks (getter, &tokval2, error_message);
+      *tokval = concat_string_t (*tokval, tokval2, NULL);
       if (*error_message == NULL)
         *substring = empty_string_t ();
     }
 }
 
 static void
-escape_x (buffered_token_getter_t getter,
-          token_t_vector_t *toks,
+escape_x (buffered_token_getter_t getter, string_t *tokval,
           string_t *substring, const char **error_message)
 {
   token_t t;
   getter->get_token (getter, &t, error_message);
   if (*error_message == NULL)
     {
-      *toks = token_t_vector_push (*toks, t);
+      *tokval = t->token_value;
+      string_t tokval2;
       uint32_t code_point;
-      hex_until_semicolon (getter, toks, &code_point, error_message);
+      hex_until_semicolon (getter, &tokval2, &code_point,
+                           error_message);
+      *tokval = concat_string_t (*tokval, tokval2, NULL);
       if (*error_message == NULL)
         {
           struct string *str = XMALLOC (struct string);
@@ -319,96 +325,106 @@ escape_x (buffered_token_getter_t getter,
 }
 
 static void
-scan_escape (buffered_token_getter_t getter,
-             token_t_vector_t *toks,
+scan_escape (buffered_token_getter_t getter, string_t *tokval,
              string_t *substring, const char **error_message)
 {
   token_t t;
+  string_t tokval2;
   getter->get_token (getter, &t, error_message);
   if (*error_message == NULL)
     {
-      *toks = token_t_vector_push (*toks, t);
+      *tokval = t->token_value;
       look_at_token (getter, 0, &t, error_message);
       if (token_is_EOF (t))
         *error_message = eof_in_open_string (t->loc);
       else if (token_is_space_separator (t))
-        escape_blank (getter, toks, substring, error_message);
+        {
+          escape_blank (getter, &tokval2, substring, error_message);
+          *tokval = concat_string_t (*tokval, tokval2, NULL);
+        }
       else
-        switch (t->token_value->s[0])
-          {
-          case 'x':
-            escape_x (getter, toks, substring, error_message);
-            break;
-          case '\n':
-            escape_newline (getter, toks, substring, error_message);
-            break;
-          case '"':
-            simple_escape (getter, toks, substring, error_message, '"');
-            break;
-          case '\\':
-            simple_escape (getter, toks, substring, error_message,
-                           '\\');
-            break;
-          case '|':
-            simple_escape (getter, toks, substring, error_message, '|');
-            break;
-          case 'a':
-            simple_escape (getter, toks, substring, error_message,
-                           '\a');
-            break;
-          case 'b':
-            simple_escape (getter, toks, substring, error_message,
-                           '\b');
-            break;
-          case 't':
-            simple_escape (getter, toks, substring, error_message,
-                           '\t');
-            break;
-          case 'n':
-            simple_escape (getter, toks, substring, error_message,
-                           '\n');
-            break;
-          case 'r':
-            simple_escape (getter, toks, substring, error_message,
-                           '\r');
-            break;
-          case 'v':
-            simple_escape (getter, toks, substring, error_message,
-                           '\013');
-            break;
-          case 'f':
-            simple_escape (getter, toks, substring, error_message,
-                           '\014');
-            break;
-          default:
-            *error_message = unrecognized_escape (t->loc);
-            break;
-          }
+        {
+          switch (t->token_value->s[0])
+            {
+            case 'x':
+              escape_x (getter, &tokval2, substring, error_message);
+              break;
+            case '\n':
+              escape_newline (getter, &tokval2, substring,
+                              error_message);
+              break;
+            case '"':
+              simple_escape (getter, &tokval2, substring, error_message,
+                             '"');
+              break;
+            case '\\':
+              simple_escape (getter, &tokval2, substring, error_message,
+                             '\\');
+              break;
+            case '|':
+              simple_escape (getter, &tokval2, substring, error_message,
+                             '|');
+              break;
+            case 'a':
+              simple_escape (getter, &tokval2, substring, error_message,
+                             '\a');
+              break;
+            case 'b':
+              simple_escape (getter, &tokval2, substring, error_message,
+                             '\b');
+              break;
+            case 't':
+              simple_escape (getter, &tokval2, substring, error_message,
+                             '\t');
+              break;
+            case 'n':
+              simple_escape (getter, &tokval2, substring, error_message,
+                             '\n');
+              break;
+            case 'r':
+              simple_escape (getter, &tokval2, substring, error_message,
+                             '\r');
+              break;
+            case 'v':
+              simple_escape (getter, &tokval2, substring, error_message,
+                             '\013');
+              break;
+            case 'f':
+              simple_escape (getter, &tokval2, substring, error_message,
+                             '\014');
+              break;
+            default:
+              *error_message = unrecognized_escape (t->loc);
+              break;
+            }
+          *tokval = concat_string_t (*tokval, tokval2, NULL);
+        }
     }
 }
 
 static void
-scan_string_portion (buffered_token_getter_t getter,
-                     token_t_vector_t *toks,
-                     string_t *substring, const char **error_message)
+scan_string_portion (buffered_token_getter_t getter, bool *done,
+                     string_t *tokval, string_t *substring,
+                     const char **error_message)
 {
+  *done = false;
   if (*error_message == NULL)
     {
       token_t t;
+      *tokval = empty_string_t ();
       look_at_token (getter, 0, &t, error_message);
       if (token_is_EOF (t))
         *error_message = eof_in_open_string (t->loc);
       else if (token_is_char (t, '\\'))
-        scan_escape (getter, toks, substring, error_message);
+        scan_escape (getter, tokval, substring, error_message);
       else if (token_is_char (t, '"'))
         {
           getter->get_token (getter, &t, error_message);
           if (*error_message == NULL)
             {
-              *toks = token_t_vector_push (*toks, t);
-              /* Setting (*substring == NULL) indicates the string is
-                 complete. */
-              *substring = NULL;
+              *tokval = t->token_value;
+              *substring = empty_string_t ();
+              *done = true;
             }
         }
       else
@@ -416,11 +432,12 @@ scan_string_portion (buffered_token_getter_t getter,
           getter->get_token (getter, &t, error_message);
           if (*error_message == NULL)
             {
-              *toks = token_t_vector_push (*toks, t);
+              *tokval = t->token_value;
               *substring = t->token_value;
             }
         }
     }
+  *done = (*done || *error_message != NULL);
 }
 
 HIHA_VISIBLE void
@@ -434,25 +451,65 @@ scan_string_literal (buffered_token_getter_t getter, token_t *tok,
   if (*error_message == NULL)
     {
       assert (token_is_char (t, '"'));
-      token_t_vector_t toks = token_t_vector_push (NULL, t);
+      string_t tokval = t->token_value;
+      bool done;
+      string_t subtokval;
       string_t substring;
-      scan_string_portion (getter, &toks, &substring, error_message);
-      while (*error_message == NULL && substring != NULL)
+      scan_string_portion (getter, &done, &subtokval, &substring,
+                           error_message);
+      while (!done)
         {
+          tokval = concat_string_t (tokval, subtokval, NULL);
           *string = concat_string_t (*string, substring, NULL);
-          scan_string_portion (getter, &toks, &substring,
+          scan_string_portion (getter, &done, &subtokval, &substring,
                                error_message);
         }
       if (*error_message == NULL)
         {
-          string_t tokval = empty_string_t ();
-          size_t n = token_t_vector_length (toks);
-          for (size_t i = 0; i != n; i += 1)
-            tokval =
-              concat_string_t (tokval, token_t_vector_ref (toks, i),
-                               NULL);
+          tokval = concat_string_t (tokval, subtokval, NULL);
           *tok = make_token_t (make_string_t ("STR"), tokval, t->loc);
         }
+    }
+}
+
+static const char *
+string_literal_badly_quoted (string_t str)
+{
+  char buf[1000];
+  snprintf (buf, 1000, _("string literal improperly quoted: %-100s"),
+            make_str_nul (str));
+  return xstrdup (buf);
+}
+
+static void
+check_quoting (string_t literal, const char **error_message)
+{
+  if (*error_message == NULL)
+    {
+      if (literal->n < 2 || literal->s[0] != '"'
+          || literal->s[literal->n - 1] != '"')
+        *error_message = string_literal_badly_quoted (literal);
+      else
+        for (size_t i = 1; i != literal->n - 1; i += 1)
+          if (literal->s[i] == '"' && literal->s[i - 1] != '\\')
+            *error_message = string_literal_badly_quoted (literal);
+    }
+}
+
+HIHA_VISIBLE void
+dequote_string_literal (string_t literal, string_t *result,
+                        const char **error_message)
+{
+  *error_message = NULL;
+  check_quoting (literal, error_message);
+  if (*error_message == NULL)
+    {
+      token_getter_t string_getter =
+        make_token_getter_from_string (literal);
+      buffered_token_getter_t getter =
+        make_buffered_token_getter_t (string_getter);
+      token_t tok;
+      scan_string_literal (getter, &tok, result, error_message);
     }
 }
 

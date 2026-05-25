@@ -22,6 +22,10 @@
 #ifndef __LIBHAHA__STRING_LITERAL_H__INCLUDED__
 #define __LIBHAHA__STRING_LITERAL_H__INCLUDED__
 
+void scan_string_literal (buffered_token_getter_t getter, token_t *tok,
+                          string_t *string, const char **error_message);
+void dequote_string_literal (string_t literal, string_t *result,
+                             const char **error_message);
 
 #endif /* __LIBHAHA__STRING_LITERAL_H__INCLUDED__ */
 

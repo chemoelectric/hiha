@@ -21,72 +21,77 @@ AT_COPYRIGHT([Copyright © 2026 Barry Schwartz])
 
 AT_SETUP([SpookyHash])
 AT_KEYWORDS([spookyhash SpookyHash hash])
-AT_CHECK_UNQUOTED([check_spookyhash])
+AT_CHECK([check_spookyhash])
 AT_CLEANUP
 
 AT_SETUP([string_t_hash])
 AT_KEYWORDS([string_t_hash string_t hash])
-AT_CHECK_UNQUOTED([check_string_t_hash])
+AT_CHECK([check_string_t_hash])
 AT_CLEANUP
 
 AT_SETUP([string_t unordered map])
 AT_KEYWORDS([string_t_map string_t map])
-AT_CHECK_UNQUOTED([check_string_t_map])
+AT_CHECK([check_string_t_map])
 AT_CLEANUP
 
 AT_SETUP([string_t ordered map])
 AT_KEYWORDS([string_t_omap string_t map omap ordered])
-AT_CHECK_UNQUOTED([check_string_t_omap])
+AT_CHECK([check_string_t_omap])
 AT_CLEANUP
 
 AT_SETUP([token_t_hash])
 AT_KEYWORDS([token_t_hash token_t hash])
-AT_CHECK_UNQUOTED([check_token_t_hash])
+AT_CHECK([check_token_t_hash])
 AT_CLEANUP
 
 AT_SETUP([token_t unordered map])
 AT_KEYWORDS([token_t_map token_t map])
-AT_CHECK_UNQUOTED([check_token_t_map])
+AT_CHECK([check_token_t_map])
 AT_CLEANUP
 
 AT_SETUP([token_t ordered map])
 AT_KEYWORDS([token_t_omap token_t map omap ordered])
-AT_CHECK_UNQUOTED([check_token_t_omap])
+AT_CHECK([check_token_t_omap])
 AT_CLEANUP
 
 AT_SETUP([str_nul_hash])
 AT_KEYWORDS([str_nul_hash str_nul string char nul NUL hash])
-AT_CHECK_UNQUOTED([check_str_nul_hash])
+AT_CHECK([check_str_nul_hash])
 AT_CLEANUP
 
 AT_SETUP([str_nul unordered map])
 AT_KEYWORDS([str_nul_map str_nul map char string nul NUL])
-AT_CHECK_UNQUOTED([check_str_nul_map])
+AT_CHECK([check_str_nul_map])
 AT_CLEANUP
 
 AT_SETUP([str_nul ordered map])
 AT_KEYWORDS([str_nul_omap str_nul map omap char string nul NUL])
-AT_CHECK_UNQUOTED([check_str_nul_omap])
+AT_CHECK([check_str_nul_omap])
 AT_CLEANUP
 
 AT_SETUP([persistent AVL tree])
 AT_KEYWORDS([persistent AVL avl tree])
-AT_CHECK_UNQUOTED([check_persistent_avl])
+AT_CHECK([check_persistent_avl])
 AT_CLEANUP
 
 AT_SETUP([persistent integer trie])
 AT_KEYWORDS([trie persistent radix tree])
-AT_CHECK_UNQUOTED([check_persistent_integer_trie])
+AT_CHECK([check_persistent_integer_trie])
 AT_CLEANUP
 
 AT_SETUP([persistent hash map])
 AT_KEYWORDS([persistent hash map hashmap])
-AT_CHECK_UNQUOTED([check_persistent_hash_map])
+AT_CHECK([check_persistent_hash_map])
 AT_CLEANUP
 
 AT_SETUP([indexed deque])
 AT_KEYWORDS([indexed deque queue stack])
-AT_CHECK_UNQUOTED([check_indexed_deque])
+AT_CHECK([check_indexed_deque])
+AT_CLEANUP
+
+AT_SETUP([string literal])
+AT_KEYWORDS([string_literal string literal])
+AT_CHECK([check_string_literal])
 AT_CLEANUP
 
 # local variables:

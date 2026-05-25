@@ -54,6 +54,8 @@ struct token_getter
                      token_t *tok, const char **error_message);
 };
 
+token_getter_t make_token_getter_from_string (string_t);
+
 token_getter_t make_token_getter_from_source_file_t
   (const char *filename, FILE *f);
 

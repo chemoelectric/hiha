@@ -34,6 +34,24 @@
 
 #define _(msgid) HIHA_GETTEXT (msgid)
 
+struct token_getter_from_string
+{
+  /* This struct must be castable to a struct token_getter. */
+
+  void (*get_token) (token_getter_t this_struct,
+                     token_t *tok, const char **error_message);
+
+  const char *filename;         /* Will equal NULL. */
+  string_t str;
+  size_t i;                     /* Index into str. */
+  size_t line_no;               /* Starting at one, increasing with '\n'. */
+  size_t i_code_point;          /* Zero-based, per line. */
+  bool eof_reached;
+};
+typedef struct token_getter_from_string *token_getter_from_string_t;
+static void get_token_from_string (token_getter_t, token_t *,
+                                   const char **);
+
 struct serialized_strings
 {
   size_t filenames_index;
@@ -150,6 +168,61 @@ token_t_is_eof_eof (token_t tok)
 {
   return (0 == string_t_cmp (string_t_EOF (), tok->token_kind)
           && 0 == string_t_cmp (string_t_EOF (), tok->token_value));
+}
+
+static void
+get_token_from_string (token_getter_t getter, token_t *tok,
+                       const char **error_message)
+{
+  token_getter_from_string_t g = (token_getter_from_string_t) getter;
+
+  *error_message = NULL;
+
+  struct text_location *loc = XMALLOC (struct text_location);
+  loc->filename = g->filename;
+  loc->line_no = g->line_no;
+  loc->code_point_no = g->i_code_point + 1;
+
+  struct string *tokval;
+  g->eof_reached = (g->eof_reached || g->i == g->str->n);
+  if (!g->eof_reached)
+    {
+      tokval = XMALLOC (struct string);
+      tokval->n = 1;
+      tokval->s = XNMALLOC (1, uint32_t);
+      tokval->s[0] = g->str->s[g->i];
+      g->i += 1;
+      if (tokval->s[0] == '\n')
+        {
+          g->line_no += 1;
+          g->i_code_point = 0;
+        }
+      else
+        g->i_code_point += 1;
+    }
+
+  *tok =
+    (g->eof_reached)
+    ? make_token_t_eof_eof (loc)
+    : make_token_t (string_t_CP (), tokval, loc);
+}
+
+HIHA_VISIBLE token_getter_t
+make_token_getter_from_string (string_t str)
+{
+  token_getter_from_string_t getter =
+    XMALLOC (struct token_getter_from_string);
+
+  getter->get_token = &get_token_from_string;
+
+  getter->filename = NULL;
+  getter->str = str;
+  getter->i = 0;
+  getter->line_no = 1;
+  getter->i_code_point = 0;
+  getter->eof_reached = (getter->str->n == 0);
+
+  return (token_getter_t) getter;
 }
 
 HIHA_VISIBLE token_getter_t
