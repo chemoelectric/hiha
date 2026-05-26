@@ -58,7 +58,9 @@
 #  uniconv/u32-conv-to-enc \
 #  unictype/category-Pc \
 #  unictype/category-Sm \
+#  unictype/category-Zs \
 #  unictype/category-test \
+#  unictype/property-ascii-hex-digit \
 #  unictype/property-id-continue \
 #  unictype/property-id-start \
 #  unictype/property-test \
@@ -94,7 +96,9 @@ gl_MODULES([
   uniconv/u32-conv-to-enc
   unictype/category-Pc
   unictype/category-Sm
+  unictype/category-Zs
   unictype/category-test
+  unictype/property-ascii-hex-digit
   unictype/property-id-continue
   unictype/property-id-start
   unictype/property-test

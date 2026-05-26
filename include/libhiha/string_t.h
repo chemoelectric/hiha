@@ -54,9 +54,14 @@ struct text_location
 typedef const struct text_location *text_location_t;
 
 /* Some string constants. */
-HIHA_PURE string_t string_t_EOF (void); /* “EOF” */
-HIHA_PURE string_t string_t_CP (void);  /* “CP” (code point) */
-HIHA_PURE string_t string_t_formfeed (void);    /* "\014" */
+HIHA_PURE string_t empty_string_t (void);       //  “”
+HIHA_PURE string_t string_t_EOF (void); //////////  “EOF”
+HIHA_PURE string_t string_t_CP (void);  //////////  “CP”
+HIHA_PURE string_t string_t_space (void);       //  " "
+HIHA_PURE string_t string_t_tab (void); //////////  "\t"
+HIHA_PURE string_t string_t_newline (void);     //  "\n"
+HIHA_PURE string_t string_t_formfeed (void);    //  "\014"
+HIHA_PURE string_t string_t_zerowidth (void);   //  "\342\200\213"
 
 int string_t_cmp (string_t str1, string_t str2);
 

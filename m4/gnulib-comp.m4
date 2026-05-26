@@ -238,6 +238,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module unictype/base:
   # Code from module unictype/category-Pc:
   # Code from module unictype/category-Sm:
+  # Code from module unictype/category-Zs:
   # Code from module unictype/category-test:
   # Code from module unictype/combining-class:
   # Code from module unictype/ctype-alnum:
@@ -252,6 +253,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module unictype/ctype-space:
   # Code from module unictype/ctype-upper:
   # Code from module unictype/ctype-xdigit:
+  # Code from module unictype/property-ascii-hex-digit:
   # Code from module unictype/property-id-continue:
   # Code from module unictype/property-id-start:
   # Code from module unictype/property-soft-dotted:
@@ -944,6 +946,8 @@ AC_DEFUN([gl_INIT],
   gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Pc])
   gl_UNICTYPE_H_REQUIRE_DEFAULTS
   gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Sm])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/category-Zs])
   AC_REQUIRE([AC_C_INLINE])
   gl_LIBUNISTRING_MODULE([1.4], [unictype/category-test])
   gl_LIBUNISTRING_MODULE([1.4], [unictype/combining-class])
@@ -971,6 +975,9 @@ AC_DEFUN([gl_INIT],
   gl_LIBUNISTRING_MODULE([1.4], [unictype/ctype-upper])
   AC_REQUIRE([AC_C_INLINE])
   gl_LIBUNISTRING_MODULE([1.4], [unictype/ctype-xdigit])
+  AC_REQUIRE([AC_C_INLINE])
+  gl_UNICTYPE_H_REQUIRE_DEFAULTS
+  gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/property-ascii-hex-digit])
   AC_REQUIRE([AC_C_INLINE])
   gl_UNICTYPE_H_REQUIRE_DEFAULTS
   gl_LIBUNISTRING_MODULE_WITH_VARIABLE([1.4], [unictype/property-id-continue])
@@ -1513,6 +1520,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/unictype/categ_Pc.h
   lib/unictype/categ_Sm.c
   lib/unictype/categ_Sm.h
+  lib/unictype/categ_Zs.c
+  lib/unictype/categ_Zs.h
   lib/unictype/categ_test.c
   lib/unictype/combiningclass.c
   lib/unictype/combiningclass.h
@@ -1540,6 +1549,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/unictype/ctype_upper.h
   lib/unictype/ctype_xdigit.c
   lib/unictype/ctype_xdigit.h
+  lib/unictype/pr_ascii_hex_digit.c
+  lib/unictype/pr_ascii_hex_digit.h
   lib/unictype/pr_id_continue.c
   lib/unictype/pr_id_continue.h
   lib/unictype/pr_id_start.c

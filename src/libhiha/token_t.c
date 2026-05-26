@@ -34,6 +34,24 @@
 
 #define _(msgid) HIHA_GETTEXT (msgid)
 
+struct token_getter_from_string
+{
+  /* This struct must be castable to a struct token_getter. */
+
+  void (*get_token) (token_getter_t this_struct,
+                     token_t *tok, const char **error_message);
+
+  const char *filename;         /* Will equal NULL. */
+  string_t str;
+  size_t i;                     /* Index into str. */
+  size_t line_no;               /* Starting at one, increasing with '\n'. */
+  size_t i_code_point;          /* Zero-based, per line. */
+  bool eof_reached;
+};
+typedef struct token_getter_from_string *token_getter_from_string_t;
+static void get_token_from_string (token_getter_t, token_t *,
+                                   const char **);
+
 struct serialized_strings
 {
   size_t filenames_index;
@@ -150,6 +168,61 @@ token_t_is_eof_eof (token_t tok)
 {
   return (0 == string_t_cmp (string_t_EOF (), tok->token_kind)
           && 0 == string_t_cmp (string_t_EOF (), tok->token_value));
+}
+
+static void
+get_token_from_string (token_getter_t getter, token_t *tok,
+                       const char **error_message)
+{
+  token_getter_from_string_t g = (token_getter_from_string_t) getter;
+
+  *error_message = NULL;
+
+  struct text_location *loc = XMALLOC (struct text_location);
+  loc->filename = g->filename;
+  loc->line_no = g->line_no;
+  loc->code_point_no = g->i_code_point + 1;
+
+  struct string *tokval;
+  g->eof_reached = (g->eof_reached || g->i == g->str->n);
+  if (!g->eof_reached)
+    {
+      tokval = XMALLOC (struct string);
+      tokval->n = 1;
+      tokval->s = XNMALLOC (1, uint32_t);
+      tokval->s[0] = g->str->s[g->i];
+      g->i += 1;
+      if (tokval->s[0] == '\n')
+        {
+          g->line_no += 1;
+          g->i_code_point = 0;
+        }
+      else
+        g->i_code_point += 1;
+    }
+
+  *tok =
+    (g->eof_reached)
+    ? make_token_t_eof_eof (loc)
+    : make_token_t (string_t_CP (), tokval, loc);
+}
+
+HIHA_VISIBLE token_getter_t
+make_token_getter_from_string (string_t str)
+{
+  token_getter_from_string_t getter =
+    XMALLOC (struct token_getter_from_string);
+
+  getter->get_token = &get_token_from_string;
+
+  getter->filename = NULL;
+  getter->str = str;
+  getter->i = 0;
+  getter->line_no = 1;
+  getter->i_code_point = 0;
+  getter->eof_reached = (getter->str->n == 0);
+
+  return (token_getter_t) getter;
 }
 
 HIHA_VISIBLE token_getter_t
@@ -556,6 +629,10 @@ struct _buffered_token_getter
                      token_t *tok, const char **error_message);
   void (*look_at_token) (buffered_token_getter_t this_struct, size_t,
                          token_t *tok, const char **error_message);
+  void (*push_back_token) (buffered_token_getter_t this_struct,
+                           token_t tok);
+  void (*push_back_string) (buffered_token_getter_t this_struct,
+                            string_t str, text_location_t loc);
   token_getter_t getter;
   indexed_deque_t buffer;
 };
@@ -597,6 +674,31 @@ look_at_buffered_token (buffered_token_getter_t getter, size_t i,
     *tok = (token_t) indexed_deque_get (g->buffer, i);
 }
 
+static void
+push_back_token_into_buffered_getter (buffered_token_getter_t getter,
+                                      token_t tok)
+{
+  _buffered_token_getter_t g = (_buffered_token_getter_t) getter;
+  g->buffer = indexed_deque_put_before_first (g->buffer, tok);
+}
+
+static void
+push_back_string_into_buffered_getter (buffered_token_getter_t getter,
+                                       string_t str,
+                                       text_location_t loc)
+{
+  _buffered_token_getter_t g = (_buffered_token_getter_t) getter;
+  for (size_t i = 0; i != str->n; i += 1)
+    {
+      struct string *cstr = XMALLOC (struct string);
+      cstr->n = 1;
+      cstr->s = XNMALLOC (1, uint32_t);
+      cstr->s[0] = str->s[str->n - 1 - i];
+      token_t tok = make_token_t (string_t_CP (), cstr, loc);
+      push_back_token_into_buffered_getter (getter, tok);
+    }
+}
+
 HIHA_VISIBLE buffered_token_getter_t
 make_buffered_token_getter_t (token_getter_t unbuffered_getter)
 {
@@ -605,6 +707,8 @@ make_buffered_token_getter_t (token_getter_t unbuffered_getter)
   g->buffer = NULL;
   g->get_token = &get_token_from_buffered_getter;
   g->look_at_token = &look_at_buffered_token;
+  g->push_back_token = &push_back_token_into_buffered_getter;
+  g->push_back_string = &push_back_string_into_buffered_getter;
   return (buffered_token_getter_t) g;
 }
 
@@ -773,6 +877,10 @@ struct _getter_with_mismatch_check
                      token_t *tok, const char **error_message);
   void (*look_at_token) (buffered_token_getter_t this_struct, size_t,
                          token_t *tok, const char **error_message);
+  void (*push_back_token) (buffered_token_getter_t this_struct,
+                           token_t tok);
+  void (*push_back_string) (buffered_token_getter_t this_struct,
+                            string_t str, text_location_t loc);
 
   buffered_token_getter_t getter;
   indexed_deque_t queue;
@@ -800,6 +908,25 @@ peek_for_mismatch_check (buffered_token_getter_t this_struct,
   _getter_with_mismatch_check_t g =
     (_getter_with_mismatch_check_t) this_struct;
   g->getter->look_at_token (g->getter, i, tok, error_message);
+}
+
+static void
+push_back_token_for_mismatch_check (buffered_token_getter_t this_struct,
+                                    token_t tok)
+{
+  _getter_with_mismatch_check_t g =
+    (_getter_with_mismatch_check_t) this_struct;
+  g->getter->push_back_token (g->getter, tok);
+}
+
+static void
+push_back_string_for_mismatch_check (buffered_token_getter_t
+                                     this_struct, string_t str,
+                                     text_location_t loc)
+{
+  _getter_with_mismatch_check_t g =
+    (_getter_with_mismatch_check_t) this_struct;
+  g->getter->push_back_string (g->getter, str, loc);
 }
 
 static bool
@@ -838,6 +965,8 @@ MAKE_TOKEN_GETTER__ (buffered_token_getter_t input_getter,
 
   p->get_token = &get_for_mismatch_check;
   p->look_at_token = &peek_for_mismatch_check;
+  p->push_back_token = &push_back_token_for_mismatch_check;
+  p->push_back_string = &push_back_string_for_mismatch_check;
 
   *output_getter = (buffered_token_getter_t) p;
   *check_for_mismatch = &mismatch_check;
