@@ -35,31 +35,80 @@ main (void)
   setlocale (LC_ALL, "C.utf8");
 
   const char *error_message;
+  token_t tok;
   string_t str;
 
   /* ‘eĥoŝanĝo ĉiuĵaŭde’ with decomposed combining accents. */
   dequote_string_literal (make_string_t
                           ("\"eh\314\202os\314\202ang\314\202o "
                            "c\314\202iuj\314\202au\314\206de\""),
-                          &str, &error_message);
+                          &tok, &str, &error_message);
   assert (error_message == NULL);
+  assert (string_t_cmp (tok->token_kind, make_string_t ("STR")) == 0);
+  /* The token_value will have composed accents. */
+  assert (string_t_cmp
+          (tok->token_value,
+           make_string_t ("\"eĥoŝanĝo ĉiuĵaŭde\"")) == 0);
   assert (string_t_cmp (str, make_string_t ("eĥoŝanĝo ĉiuĵaŭde"))
           == 0);
 
   /* ‘eĥoŝanĝo ĉiuĵaŭde’ with composed accents. */
   dequote_string_literal (make_string_t ("\"eĥoŝanĝo ĉiuĵaŭde\""),
-                          &str, &error_message);
+                          &tok, &str, &error_message);
   assert (error_message == NULL);
+  assert (string_t_cmp (tok->token_kind, make_string_t ("STR")) == 0);
+  assert (string_t_cmp
+          (tok->token_value,
+           make_string_t ("\"eĥoŝanĝo ĉiuĵaŭde\"")) == 0);
   assert (string_t_cmp (str, make_string_t ("eĥoŝanĝo ĉiuĵaŭde"))
           == 0);
 
   /* A string of sparkles. */
   dequote_string_literal (make_string_t
                           ("\"\\x2728;\\x2728;\\x2728;\""),
-                          &str, &error_message);
+                          &tok, &str, &error_message);
   assert (error_message == NULL);
-  //printf ("%s\n", make_str_nul (str));
+  assert (string_t_cmp (tok->token_kind, make_string_t ("STR")) == 0);
+  assert (string_t_cmp
+          (tok->token_value,
+           make_string_t ("\"\\x2728;\\x2728;\\x2728;\"")) == 0);
   assert (string_t_cmp (str, make_string_t ("✨✨✨")) == 0);
+
+  /* Simple escapes. */
+  dequote_string_literal (make_string_t
+                          ("\"\\\"\\\\\\|\\a\\b\\t\\n\\r\\v\\f\""),
+                          &tok, &str, &error_message);
+  assert (error_message == NULL);
+  assert (string_t_cmp (tok->token_kind, make_string_t ("STR")) == 0);
+  assert (string_t_cmp
+          (tok->token_value,
+           make_string_t ("\"\\\"\\\\\\|\\a\\b\\t\\n\\r\\v\\f\""))
+          == 0);
+  assert (string_t_cmp (str, make_string_t ("\"\\|\a\b\t\n\r\v\f"))
+          == 0);
+
+  /* Backslash-newline */
+  dequote_string_literal (make_string_t
+                          ("\"interr\\\n  \t \302\240 uption\""),
+                          &tok, &str, &error_message);
+  assert (error_message == NULL);
+  assert (string_t_cmp (tok->token_kind, make_string_t ("STR")) == 0);
+  assert (string_t_cmp
+          (tok->token_value,
+           make_string_t ("\"interr\\\n  \t \302\240 uption\"")) == 0);
+  assert (string_t_cmp (str, make_string_t ("interruption")) == 0);
+
+  /* Backslash-spaces-and-tabs-then-newline */
+  dequote_string_literal
+    (make_string_t ("\"interr\\ \302\240\t\n  \t \302\240 uption\""),
+     &tok, &str, &error_message);
+  assert (error_message == NULL);
+  assert (string_t_cmp (tok->token_kind, make_string_t ("STR")) == 0);
+  assert (string_t_cmp
+          (tok->token_value,
+           make_string_t
+           ("\"interr\\ \302\240\t\n  \t \302\240 uption\"")) == 0);
+  assert (string_t_cmp (str, make_string_t ("interruption")) == 0);
 
   return EXIT_SUCCESS;
 }

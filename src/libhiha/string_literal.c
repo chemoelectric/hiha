@@ -31,6 +31,14 @@
 
 #define _(msgid) HIHA_GETTEXT (msgid)
 
+#define STORE_IF_NOT_NULL(dest, src)            \
+  do                                            \
+    {                                           \
+      if ((dest) != NULL)                       \
+        *(dest) = (src);                        \
+    }                                           \
+  while (0)
+
 static const char *
 multiple_code_points (text_location_t loc)
 {
@@ -120,11 +128,13 @@ token_is_char (token_t tok, int ch)
 }
 
 static bool
-token_is_space_separator (token_t tok)
+token_is_space_separator_or_tab (token_t tok)
 {
   return (tok->token_value->n == 1
-          && uc_is_general_category (tok->token_value->s[0],
-                                     UC_CATEGORY_Zs));
+          && (uc_is_general_category (tok->token_value->s[0],
+                                      UC_CATEGORY_Zs)
+              || tok->token_value->s[0] == '\t'));
+
 }
 
 static bool
@@ -137,14 +147,16 @@ token_is_ascii_hex_digit (token_t tok)
 
 static void
 skip_blanks (buffered_token_getter_t getter, string_t *tokval,
-             const char **error_message)
+             string_t *substring, const char **error_message)
 {
   if (*error_message == NULL)
     {
+      *substring = empty_string_t ();
       *tokval = empty_string_t ();
       token_t t;
       look_at_token (getter, 0, &t, error_message);
-      while (*error_message == NULL && token_is_space_separator (t))
+      while (*error_message == NULL
+             && token_is_space_separator_or_tab (t))
         {
           getter->get_token (getter, &t, error_message);
           if (*error_message == NULL)
@@ -160,14 +172,14 @@ skip_blanks (buffered_token_getter_t getter, string_t *tokval,
 
 static void
 skip_blanks_newline_blanks (buffered_token_getter_t getter,
-                            string_t *tokval,
+                            string_t *tokval, string_t *substring,
                             const char **error_message)
 {
   /* Skip blanks until a newline, and then skip more blanks. This is
      how backslash at the end of a line is handled is handled in
      R⁷RS Scheme, and is how we will handle it here. */
 
-  skip_blanks (getter, tokval, error_message);
+  skip_blanks (getter, tokval, substring, error_message);
   if (*error_message == NULL)
     {
       token_t t;
@@ -181,7 +193,8 @@ skip_blanks_newline_blanks (buffered_token_getter_t getter,
             {
               *tokval = concat_string_t (*tokval, t->token_value, NULL);
               string_t tokval2;
-              skip_blanks (getter, &tokval2, error_message);
+              string_t s;
+              skip_blanks (getter, &tokval2, &s, error_message);
               *tokval = concat_string_t (*tokval, tokval2, NULL);
             }
         }
@@ -292,10 +305,8 @@ escape_newline (buffered_token_getter_t getter, string_t *tokval,
     {
       *tokval = t->token_value;
       string_t tokval2;
-      skip_blanks (getter, &tokval2, error_message);
+      skip_blanks (getter, &tokval2, substring, error_message);
       *tokval = concat_string_t (*tokval, tokval2, NULL);
-      if (*error_message == NULL)
-        *substring = empty_string_t ();
     }
 }
 
@@ -309,10 +320,9 @@ escape_blank (buffered_token_getter_t getter, string_t *tokval,
     {
       *tokval = t->token_value;
       string_t tokval2;
-      skip_blanks_newline_blanks (getter, &tokval2, error_message);
+      skip_blanks_newline_blanks (getter, &tokval2, substring,
+                                  error_message);
       *tokval = concat_string_t (*tokval, tokval2, NULL);
-      if (*error_message == NULL)
-        *substring = empty_string_t ();
     }
 }
 
@@ -354,7 +364,7 @@ scan_escape (buffered_token_getter_t getter, string_t *tokval,
       look_at_token (getter, 0, &t, error_message);
       if (token_is_EOF (t))
         *error_message = eof_in_open_string (t->loc);
-      else if (token_is_space_separator (t))
+      else if (token_is_space_separator_or_tab (t))
         {
           escape_blank (getter, &tokval2, substring, error_message);
           *tokval = concat_string_t (*tokval, tokval2, NULL);
@@ -461,8 +471,8 @@ HIHA_VISIBLE void
 scan_string_literal (buffered_token_getter_t getter, token_t *tok,
                      string_t *string, const char **error_message)
 {
-  *string = empty_string_t ();
-  *tok = NULL;
+  string_t str = empty_string_t ();
+  token_t token = NULL;
   token_t t;
   getter->get_token (getter, &t, error_message);
   if (*error_message == NULL)
@@ -477,17 +487,19 @@ scan_string_literal (buffered_token_getter_t getter, token_t *tok,
       while (!done)
         {
           tokval = concat_string_t (tokval, subtokval, NULL);
-          *string = concat_string_t (*string, substring, NULL);
+          str = concat_string_t (str, substring, NULL);
           scan_string_portion (getter, &done, &subtokval, &substring,
                                error_message);
         }
       if (*error_message == NULL)
         {
           tokval = concat_string_t (tokval, subtokval, NULL);
-          *tok = make_token_t (make_string_t ("STR"), tokval, t->loc);
-          *string = concat_string_t (*string, substring, NULL);
+          token = make_token_t (make_string_t ("STR"), tokval, t->loc);
+          str = concat_string_t (str, substring, NULL);
         }
     }
+  STORE_IF_NOT_NULL (tok, token);
+  STORE_IF_NOT_NULL (string, str);
 }
 
 static const char *
@@ -515,8 +527,8 @@ check_quoting (string_t literal, const char **error_message)
 }
 
 HIHA_VISIBLE void
-dequote_string_literal (string_t literal, string_t *result,
-                        const char **error_message)
+dequote_string_literal (string_t literal, token_t *tok,
+                        string_t *result, const char **error_message)
 {
   *result = empty_string_t ();
   *error_message = NULL;
@@ -527,8 +539,7 @@ dequote_string_literal (string_t literal, string_t *result,
         make_token_getter_from_string (literal);
       buffered_token_getter_t getter =
         make_buffered_token_getter_t (string_getter);
-      token_t tok;
-      scan_string_literal (getter, &tok, result, error_message);
+      scan_string_literal (getter, tok, result, error_message);
     }
 }
 
