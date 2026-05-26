@@ -28,6 +28,59 @@
 HIHA_VISIBLE const char version_etc_copyright[] =
   "Copyright %s %d Barry Schwartz";
 
+static void
+check_pushed_back_token (void)
+{
+  const char *error_message = NULL;
+  token_t tok;
+  string_t str;
+
+  token_getter_t string_getter =
+    make_token_getter_from_string (make_string_t (""));
+  buffered_token_getter_t getter =
+    make_buffered_token_getter_t (string_getter);
+
+  getter->push_back_token (getter,
+                           make_token_t (string_t_CP (),
+                                         make_string_t ("\""), NULL));
+  getter->push_back_token (getter,
+                           make_token_t (make_string_t ("ID"),
+                                         make_string_t ("identifier"),
+                                         NULL));
+  getter->push_back_token (getter,
+                           make_token_t (string_t_CP (),
+                                         make_string_t ("\""), NULL));
+
+  scan_string_literal (getter, &tok, &str, &error_message);
+  assert (error_message == NULL);
+  assert (string_t_cmp (tok->token_kind, make_string_t ("STR")) == 0);
+  assert (string_t_cmp
+          (tok->token_value, make_string_t ("\"identifier\"")) == 0);
+  assert (string_t_cmp (str, make_string_t ("identifier")) == 0);
+}
+
+static void
+check_pushed_back_string (void)
+{
+  const char *error_message = NULL;
+  token_t tok;
+  string_t str;
+
+  token_getter_t string_getter =
+    make_token_getter_from_string (make_string_t (""));
+  buffered_token_getter_t getter =
+    make_buffered_token_getter_t (string_getter);
+
+  getter->push_back_string (getter, make_string_t ("\"string\""), NULL);
+
+  scan_string_literal (getter, &tok, &str, &error_message);
+  assert (error_message == NULL);
+  assert (string_t_cmp (tok->token_kind, make_string_t ("STR")) == 0);
+  assert (string_t_cmp (tok->token_value, make_string_t ("\"string\""))
+          == 0);
+  assert (string_t_cmp (str, make_string_t ("string")) == 0);
+}
+
 int
 main (void)
 {
@@ -129,6 +182,9 @@ main (void)
   dequote_string_literal (make_string_t ("\"ab\"c"), &tok, &str,
                           &error_message);
   assert (error_message != NULL);
+
+  check_pushed_back_token ();
+  check_pushed_back_string ();
 
   return EXIT_SUCCESS;
 }

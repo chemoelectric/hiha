@@ -1,5 +1,15 @@
 @  string-literals-work
-|  2026-05-26 15:00 +0000
+|  2026-05-26 16:32 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       0d07e82b5a9d96f8b0a2d335a03d5781417219ed
+|  mercurial: c8499b49144128e2e7aa14021216fb34c713dbb9
+|  revision:  195
+|  parents:   194
+|
+|    Support for token pushbacks. Not tested yet.
+|
+|
+o  2026-05-26 15:00 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 |  git:       dd7df44a896e9776fa7c4a27a72228442c49f553
 |  mercurial: 837ff32449eaa0f0b47e330681b4611a8893a896
