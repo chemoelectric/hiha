@@ -119,6 +119,33 @@ illegal_char_in_hex_escape (text_location_t loc)
 }
 
 static const char *
+illegal_u_escape (text_location_t loc)
+{
+  char buf[1000];
+  snprintf (buf, 1000, _("%s: malformed \\u escape"),
+            text_location_string (loc));
+  return xstrdup (buf);
+}
+
+static const char *
+expected_a_low_surrogate (text_location_t loc)
+{
+  char buf[1000];
+  snprintf (buf, 1000, _("%s: expected a low surrogate"),
+            text_location_string (loc));
+  return xstrdup (buf);
+}
+
+static const char *
+an_unexpected_low_surrogate (text_location_t loc)
+{
+  char buf[1000];
+  snprintf (buf, 1000, _("%s: an unexpected low surrogate"),
+            text_location_string (loc));
+  return xstrdup (buf);
+}
+
+static const char *
 not_a_code_point (text_location_t loc, const char *hex)
 {
   char buf[1000];
@@ -291,6 +318,176 @@ hex_until_semicolon (buffered_token_getter_t getter, string_t *tokval,
 }
 
 static void
+check_json_utf16_hex (token_t tok, const char **error_message)
+{
+  if (*error_message == NULL)
+    if (token_is_EOF (tok) || !token_is_ascii_hex_digit (tok))
+      *error_message = illegal_u_escape (tok->loc);
+}
+
+static void
+check_surrogates (bool low_surrogate_situation, uint32_t code_unit,
+                  text_location_t loc, const char **error_message)
+{
+  if (*error_message == NULL)
+    {
+      if (low_surrogate_situation)
+        {
+          if (code_unit < 0xDC00 || 0xDFFF < code_unit)
+            *error_message = expected_a_low_surrogate (loc);
+        }
+      else
+        {
+          if (0xDC00 <= code_unit && code_unit <= 0xDFFF)
+            *error_message = an_unexpected_low_surrogate (loc);
+        }
+    }
+}
+
+static void
+four_digit_hex (buffered_token_getter_t getter,
+                bool low_surrogate_situation, string_t *tokval,
+                uint32_t *code_unit, const char **error_message)
+{
+  char buf[5];
+  token_t t;
+  text_location_t loc[4];
+
+  *tokval = empty_string_t ();
+  *code_unit = 0xFFFD;          /* U+FFFD REPLACEMENT CHARACTER */
+
+  for (size_t i = 0; i != 4; i += 1)
+    {
+      look_at_token (getter, 0, &t, error_message);
+      if (*error_message == NULL)
+        {
+          loc[i] = t->loc;
+          check_json_utf16_hex (t, error_message);
+          getter->get_token (getter, &t, error_message);
+          if (*error_message == NULL)
+            {
+              *tokval = concat_string_t (*tokval, t->token_value, NULL);
+              buf[i] = t->token_value->s[0];
+              look_at_token (getter, 0, &t, error_message);
+            }
+        }
+    }
+  buf[4] = '\0';
+
+  if (*error_message == NULL)
+    sscanf (buf, "%" SCNx32, code_unit);
+
+  check_surrogates (low_surrogate_situation, *code_unit, loc[0],
+                    error_message);
+}
+
+static void
+the_u_of_backslash_u (buffered_token_getter_t getter, string_t *tokval,
+                      const char **error_message)
+{
+  if (*error_message == NULL)
+    {
+      token_t t;
+      look_at_token (getter, 0, &t, error_message);
+      if (*error_message == NULL)
+        {
+          if (token_is_EOF (t))
+            *error_message = eof_in_open_string (t->loc);
+          else if (!token_is_char (t, 'u'))
+            *error_message = expected_a_low_surrogate (t->loc);
+          else
+            {
+              getter->get_token (getter, &t, error_message);
+              if (*error_message == NULL)
+                *tokval = t->token_value;
+            }
+        }
+    }
+}
+
+static void
+backslash_u (buffered_token_getter_t getter, string_t *tokval,
+             const char **error_message)
+{
+  if (*error_message == NULL)
+    {
+      token_t t;
+      look_at_token (getter, 0, &t, error_message);
+      if (*error_message == NULL)
+        {
+          if (token_is_EOF (t))
+            *error_message = eof_in_open_string (t->loc);
+          else if (!token_is_char (t, '\\'))
+            *error_message = expected_a_low_surrogate (t->loc);
+          else
+            {
+              getter->get_token (getter, &t, error_message);
+              if (*error_message == NULL)
+                {
+                  *tokval = t->token_value;
+                  string_t tokval2;
+                  the_u_of_backslash_u (getter, &tokval2,
+                                        error_message);
+                  if (*error_message == NULL)
+                    *tokval = concat_string_t (*tokval, tokval2, NULL);
+                }
+            }
+        }
+    }
+}
+
+static uint32_t
+surrogate_pair_to_code_point (uint32_t pair1, uint32_t pair2)
+{
+  return (((uint32_t) 0x10000) +
+          (((uint32_t) 0x400) * (pair1 - ((uint32_t) 0xD800))) +
+          (pair2 - ((uint32_t) 0xDC00)));
+}
+
+static void
+json_utf16 (buffered_token_getter_t getter, string_t *tokval,
+            uint32_t *code_point, const char **error_message)
+{
+  if (*error_message == NULL)
+    {
+      uint32_t pair1;
+      uint32_t pair2;
+      string_t tokval1;
+      string_t tokval2a;
+      string_t tokval2b;
+
+      *tokval = empty_string_t ();
+      *code_point = 0xFFFD;     /* U+FFFD REPLACEMENT CHARACTER */
+
+      four_digit_hex (getter, false, &tokval1, &pair1, error_message);
+      if (*error_message == NULL)
+        {
+          if (pair1 <= 0xD7FF || 0xE000 <= pair1)
+            {
+              /* There is no surrogate pair, and ‘pair1’ is the actual
+                 code point. */
+              *tokval = tokval1;
+              *code_point = pair1;
+            }
+          else
+            {
+              /* Look for the second part of a surrogate pair. */
+              backslash_u (getter, &tokval2a, error_message);
+              four_digit_hex (getter, true, &tokval2b, &pair2,
+                              error_message);
+              if (*error_message == NULL)
+                {
+                  *tokval =
+                    concat_string_t (tokval1, tokval2a, tokval2b, NULL);
+                  *code_point =
+                    surrogate_pair_to_code_point (pair1, pair2);
+                }
+            }
+        }
+    }
+}
+
+static void
 simple_escape (buffered_token_getter_t getter,
                string_t *tokval, string_t *substring,
                const char **error_message, int new_char)
@@ -364,6 +561,33 @@ escape_x (buffered_token_getter_t getter, string_t *tokval,
 }
 
 static void
+escape_u (buffered_token_getter_t getter, string_t *tokval,
+          string_t *substring, const char **error_message)
+{
+  /* JSON-style UTF-16. */
+
+  token_t t;
+  getter->get_token (getter, &t, error_message);
+  if (*error_message == NULL)
+    {
+      assert (t->token_value->s[0] == 'u');
+      *tokval = t->token_value;
+      string_t tokval2;
+      uint32_t code_point;
+      json_utf16 (getter, &tokval2, &code_point, error_message);
+      *tokval = concat_string_t (*tokval, tokval2, NULL);
+      if (*error_message == NULL)
+        {
+          struct string *str = XMALLOC (struct string);
+          str->n = 1;
+          str->s = XNMALLOC (1, uint32_t);
+          str->s[0] = code_point;
+          *substring = str;
+        }
+    }
+}
+
+static void
 scan_escape (buffered_token_getter_t getter, string_t *tokval,
              string_t *substring, const char **error_message)
 {
@@ -387,6 +611,9 @@ scan_escape (buffered_token_getter_t getter, string_t *tokval,
             {
             case 'x':
               escape_x (getter, &tokval2, substring, error_message);
+              break;
+            case 'u':
+              escape_u (getter, &tokval2, substring, error_message);
               break;
             case '\n':
               escape_newline (getter, &tokval2, substring,

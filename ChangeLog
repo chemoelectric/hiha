@@ -1,56 +1,76 @@
-@  string-literals-work
-|  2026-05-26 16:32 +0000
-|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
-|  git:       0d07e82b5a9d96f8b0a2d335a03d5781417219ed
-|  mercurial: c8499b49144128e2e7aa14021216fb34c713dbb9
-|  revision:  195
-|  parents:   194
-|
-|    Support for token pushbacks. Not tested yet.
-|
-|
-o  2026-05-26 15:00 +0000
-|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
-|  git:       dd7df44a896e9776fa7c4a27a72228442c49f553
-|  mercurial: 837ff32449eaa0f0b47e330681b4611a8893a896
-|  revision:  194
-|  parents:   193
-|
-|    Some tests for bad quoting.
-|
-|
-o  2026-05-26 14:40 +0000
-|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
-|  git:       7fe1f47c41be6d2702a25629870dfdd6b8917366
-|  mercurial: 3ccddaa37e8fe2e700ac4bf02be540d3c47cfe0c
-|  revision:  193
-|  parents:   192
-|
-|    Fixes for the backslash-newline code.
-|
-|
-o  2026-05-25 21:50 +0000
-|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
-|  git:       47e626fa707e04a85a937c091452c093e6c50b6b
-|  mercurial: ffb24d4261b37639895280f076b96ca9742d06a1
-|  revision:  192
-|  parents:   191
-|
-|    A bug fix in hex escapes.
-|
-|
-o  2026-05-25 21:09 +0000
-|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
-|  git:       768b2be3716bfa6f714d2143f3c3d6bb6048b03c
-|  mercurial: 573a531d4919715b635e71df7d67204e1dfca5bd
-|  revision:  191
-|  parents:   187
-|
-|    Getting tokens from strings. Using that to unquote strings.
-|
-|
-| o  master
-| |  2026-05-25 18:50 +0000
+@    master
+|\   2026-05-26 17:07 +0000
+| |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+| |  git:       17527f8d964e13f8d6427e3a9c40856cfa306e03
+| |  mercurial: 59ebcce95bc7dd8f914ba9769ac959087a392aec
+| |  revision:  197
+| |  parents:   190 196
+| |
+| |    Merge with string-literals work.
+| |
+| |
+| o  string-literals-work
+| |  2026-05-26 17:05 +0000
+| |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+| |  git:       d2d561711d97cf1275c0bdc1e2c82aa9ffaf3b0f
+| |  mercurial: 25855fd38f2f344966afda563f384c7b081a844a
+| |  revision:  196
+| |  parents:   195
+| |
+| |    Testing for token-getter pushback.
+| |
+| |
+| o  2026-05-26 16:32 +0000
+| |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+| |  git:       0d07e82b5a9d96f8b0a2d335a03d5781417219ed
+| |  mercurial: c8499b49144128e2e7aa14021216fb34c713dbb9
+| |  revision:  195
+| |  parents:   194
+| |
+| |    Support for token pushbacks. Not tested yet.
+| |
+| |
+| o  2026-05-26 15:00 +0000
+| |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+| |  git:       dd7df44a896e9776fa7c4a27a72228442c49f553
+| |  mercurial: 837ff32449eaa0f0b47e330681b4611a8893a896
+| |  revision:  194
+| |  parents:   193
+| |
+| |    Some tests for bad quoting.
+| |
+| |
+| o  2026-05-26 14:40 +0000
+| |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+| |  git:       7fe1f47c41be6d2702a25629870dfdd6b8917366
+| |  mercurial: 3ccddaa37e8fe2e700ac4bf02be540d3c47cfe0c
+| |  revision:  193
+| |  parents:   192
+| |
+| |    Fixes for the backslash-newline code.
+| |
+| |
+| o  2026-05-25 21:50 +0000
+| |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+| |  git:       47e626fa707e04a85a937c091452c093e6c50b6b
+| |  mercurial: ffb24d4261b37639895280f076b96ca9742d06a1
+| |  revision:  192
+| |  parents:   191
+| |
+| |    A bug fix in hex escapes.
+| |
+| |
+| o  2026-05-25 21:09 +0000
+| |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+| |  git:       768b2be3716bfa6f714d2143f3c3d6bb6048b03c
+| |  mercurial: 573a531d4919715b635e71df7d67204e1dfca5bd
+| |  revision:  191
+| |  parents:   187
+| |
+| |    Getting tokens from strings. Using that to unquote strings.
+| |
+| |
+o |  2026-05-25 18:50 +0000
 | |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 | |  git:       61df98fd94e3b4b673c6dabf226bae2b94e0e317
 | |  mercurial: 994ba17e746906d06d21ad181afff17a5cc608d3
@@ -60,7 +80,7 @@ o  2026-05-25 21:09 +0000
 | |    Autoupdate the garbage collector autotooling.
 | |
 | |
-| o  2026-05-25 18:37 +0000
+o |  2026-05-25 18:37 +0000
 | |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 | |  git:       0c2f313e15bf0b739866f113cbbfc11315b50ff6
 | |  mercurial: 5dbdb0ad8b2fc0493dcf940f47fddbdcc9d0d2ef
@@ -70,7 +90,7 @@ o  2026-05-25 21:09 +0000
 | |    Allocate storage even for an empty string.
 | |
 | |
-| o  2026-05-25 18:36 +0000
+o |  2026-05-25 18:36 +0000
 | |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 | |  git:       e2923d977f50f8cb8d14d9a888864430114e8d49
 | |  mercurial: 50f15e4d6e89006f5643dfa38afa18658f1e8414
@@ -80,7 +100,7 @@ o  2026-05-25 21:09 +0000
 | |    Replace AC_TRY_COMPILE.
 | |
 | |
-o |  2026-05-25 18:15 +0000
+| o  2026-05-25 18:15 +0000
 | |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 | |  git:       3f39213c7d196c6ba2a768bf27587bd262d77af1
 | |  mercurial: fddf973990b1ff8863876f8fdb204f39a309d4bc
@@ -90,7 +110,7 @@ o |  2026-05-25 18:15 +0000
 | |    Allocate storage even for an empty string.
 | |
 | |
-o |  2026-05-24 22:08 +0000
+| o  2026-05-24 22:08 +0000
 |/   Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 |    git:       5c85a0ba3e76f8974a21c1f72be8dab6b312a554
 |    mercurial: a18eafb88cdb67bbcf6e7e4302b04569cac35da4

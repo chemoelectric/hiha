@@ -116,7 +116,7 @@ main (void)
   assert (string_t_cmp (str, make_string_t ("eĥoŝanĝo ĉiuĵaŭde"))
           == 0);
 
-  /* A string of sparkles. */
+  /* A string of sparkles by Scheme notation. */
   dequote_string_literal (make_string_t
                           ("\"\\x2728;\\x2728;\\x2728;\""),
                           &tok, &str, &error_message);
@@ -126,6 +126,42 @@ main (void)
           (tok->token_value,
            make_string_t ("\"\\x2728;\\x2728;\\x2728;\"")) == 0);
   assert (string_t_cmp (str, make_string_t ("✨✨✨")) == 0);
+
+  /* A string of sparkles by JSON notation. */
+  dequote_string_literal (make_string_t
+                          ("\"\\u2728\\u2728\\u2728\""),
+                          &tok, &str, &error_message);
+  assert (error_message == NULL);
+  assert (string_t_cmp (tok->token_kind, make_string_t ("STR")) == 0);
+  assert (string_t_cmp
+          (tok->token_value,
+           make_string_t ("\"\\u2728\\u2728\\u2728\"")) == 0);
+  assert (string_t_cmp (str, make_string_t ("✨✨✨")) == 0);
+
+  /* A string of ancient Roman money symbols, by Scheme notation. */
+  dequote_string_literal (make_string_t
+                          ("\"\\x10196;\\x10197;\\x10198;\""),
+                          &tok, &str, &error_message);
+  assert (error_message == NULL);
+  assert (string_t_cmp (tok->token_kind, make_string_t ("STR")) == 0);
+  assert (string_t_cmp
+          (tok->token_value,
+           make_string_t ("\"\\x10196;\\x10197;\\x10198;\"")) == 0);
+  assert (string_t_cmp (str, make_string_t ("𐆖𐆗𐆘")) == 0);
+
+  /* A string of ancient Roman money symbols, by JSON notation (using
+     surrogate pairs). */
+  dequote_string_literal
+    (make_string_t
+     ("\"\\uD800\\uDD96\\uD800\\uDD97\\uD800\\uDD98\""),
+     &tok, &str, &error_message);
+  assert (error_message == NULL);
+  assert (string_t_cmp (tok->token_kind, make_string_t ("STR")) == 0);
+  assert (string_t_cmp
+          (tok->token_value,
+           make_string_t
+           ("\"\\uD800\\uDD96\\uD800\\uDD97\\uD800\\uDD98\"")) == 0);
+  assert (string_t_cmp (str, make_string_t ("𐆖𐆗𐆘")) == 0);
 
   /* Simple escapes. */
   dequote_string_literal (make_string_t
