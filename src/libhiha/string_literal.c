@@ -356,7 +356,8 @@ four_digit_hex (buffered_token_getter_t getter,
   *tokval = empty_string_t ();
   *code_unit = 0xFFFD;          /* U+FFFD REPLACEMENT CHARACTER */
 
-  for (size_t i = 0; i != 4; i += 1)
+  size_t i = 0;
+  while (*error_message == NULL && i != 4)
     {
       look_at_token (getter, 0, &t, error_message);
       if (*error_message == NULL)
@@ -371,6 +372,7 @@ four_digit_hex (buffered_token_getter_t getter,
               look_at_token (getter, 0, &t, error_message);
             }
         }
+      i += 1;
     }
   buf[4] = '\0';
 
@@ -759,9 +761,15 @@ check_quoting (string_t literal, const char **error_message)
           || literal->s[literal->n - 1] != '"')
         *error_message = string_literal_badly_quoted (literal);
       else
-        for (size_t i = 1; i != literal->n - 1; i += 1)
-          if (literal->s[i] == '"' && literal->s[i - 1] != '\\')
-            *error_message = string_literal_badly_quoted (literal);
+        {
+          size_t i = 1;
+          while (*error_message == NULL && i != literal->n - 1)
+            {
+              if (literal->s[i] == '"' && literal->s[i - 1] != '\\')
+                *error_message = string_literal_badly_quoted (literal);
+              i += 1;
+            }
+        }
     }
 }
 

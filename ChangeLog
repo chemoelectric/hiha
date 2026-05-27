@@ -1,6 +1,16 @@
-@    master
-|\   2026-05-26 17:07 +0000
-| |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+@  master
+|  2026-05-26 23:34 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       11a398ea21e75e7f05de00f04a4250c4547c7f5e
+|  mercurial: 76ed1c0276fc392477851ec745b60ea289ad3ffb
+|  revision:  198
+|  parents:   197
+|
+|    Added support for JSON-style UTF-16 in string literals.
+|
+|
+o    2026-05-26 17:07 +0000
+|\   Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 | |  git:       17527f8d964e13f8d6427e3a9c40856cfa306e03
 | |  mercurial: 59ebcce95bc7dd8f914ba9769ac959087a392aec
 | |  revision:  197
