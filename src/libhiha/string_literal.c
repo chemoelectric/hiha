@@ -364,12 +364,16 @@ four_digit_hex (buffered_token_getter_t getter,
         {
           loc[i] = t->loc;
           check_json_utf16_hex (t, error_message);
-          getter->get_token (getter, &t, error_message);
           if (*error_message == NULL)
             {
-              *tokval = concat_string_t (*tokval, t->token_value, NULL);
-              buf[i] = t->token_value->s[0];
-              look_at_token (getter, 0, &t, error_message);
+              getter->get_token (getter, &t, error_message);
+              if (*error_message == NULL)
+                {
+                  *tokval =
+                    concat_string_t (*tokval, t->token_value, NULL);
+                  buf[i] = t->token_value->s[0];
+                  look_at_token (getter, 0, &t, error_message);
+                }
             }
         }
       i += 1;
