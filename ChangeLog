@@ -1,5 +1,36 @@
 @  master
-|  2026-05-26 23:34 +0000
+|  2026-05-27 09:40 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       24c984157e0d988b66ebee509f47773d3f8868e7
+|  mercurial: 2bf59ea298f161b63de102d90e0e783fd482c6ea
+|  revision:  201
+|  parents:   200
+|
+|    More tests. Which is good, because I caught a bug.
+|
+|
+o  2026-05-27 09:39 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       9cfdcd32cf836a9e79b2f89302d8400b4e94919e
+|  mercurial: cd7568fd4dcfeef0cec0a4848d748eef96a948d0
+|  revision:  200
+|  parents:   199
+|
+|    Bug fix.
+|
+|
+o  2026-05-27 09:25 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       8258067a330bb92ee402bc390235b939911fae0d
+|  mercurial: 3162a9d54c7654669c3b29c286810e9c296a467b
+|  revision:  199
+|  parents:   198
+|
+|    Fixes to a couple of places where error indicators were being
+|    neglected.
+|
+|
+o  2026-05-26 23:34 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 |  git:       11a398ea21e75e7f05de00f04a4250c4547c7f5e
 |  mercurial: 76ed1c0276fc392477851ec745b60ea289ad3ffb

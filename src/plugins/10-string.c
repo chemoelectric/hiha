@@ -28,19 +28,13 @@
 #define _(msgid) HIHA_GETTEXT (msgid)
 
 static void
-check_code_point_token (token_t tok)
-{
-  if (tok->token_value->n != 1)
-    error (exit_failure, 0,
-           "CP token with a value of length other than 1: “%s”",
-           make_str_nul (tok->token_value));
-}
-
-static void
 scan_string (buffered_token_getter_t getter, token_t tok, void **lhs,
              const char **error_message)
 {
-  // FIXME // FIXME // FIXME // FIXME // FIXME // FIXME // FIXME // FIXME // FIXME // FIXME // FIXME // FIXME // FIXME // FIXME
+  token_t t;
+  getter->push_back_token (getter, tok);
+  scan_string_literal (getter, &t, NULL, error_message);
+  *lhs = (*error_message == NULL) ? ((void *) t) : ((void *) NULL);
 }
 
 nud_handler_t next_cp_handler;
@@ -52,11 +46,11 @@ code_point_handler (void *state, buffered_token_getter_t getter,
 {
   if (*error_message == NULL)
     {
-      check_code_point_token (tok);
-      /*if (tok->token_value->s[0] == '"')
-         scan_string (getter, tok, lhs, error_message);
-         else */
-      next_cp_handler (state, getter, tables, tok, lhs, error_message);
+      if (tok->token_value->n == 1 && tok->token_value->s[0] == '"')
+        scan_string (getter, tok, lhs, error_message);
+      else
+        next_cp_handler (state, getter, tables, tok, lhs,
+                         error_message);
     }
 }
 
