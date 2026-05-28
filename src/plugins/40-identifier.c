@@ -50,19 +50,17 @@
 
 #define _(msgid) HIHA_GETTEXT (msgid)
 
-static void
-check_code_point_token (token_t tok)
-{
-  if (tok->token_value->n != 1)
-    error (exit_failure, 0,
-           "CP token with a value of length other than 1: “%s”",
-           make_str_nul (tok->token_value));
-}
-
 static bool
 is_identifier_start (uint32_t cp)
 {
   return uc_is_property (cp, UC_PROPERTY_ID_START);
+}
+
+static bool
+token_is_identifier_start (token_t tok)
+{
+  return (tok->token_value->n == 1
+          && is_identifier_start (tok->token_value->s[0]));
 }
 
 static bool
@@ -72,10 +70,24 @@ is_connector (uint32_t cp)
 }
 
 static bool
+token_is_connector (token_t tok)
+{
+  return (tok->token_value->n == 1
+          && is_connector (tok->token_value->s[0]));
+}
+
+static bool
 is_identifier_continue (uint32_t cp)
 {
   return (uc_is_property (cp, UC_PROPERTY_ID_CONTINUE)
           && !is_connector (cp));
+}
+
+static bool
+token_is_identifier_continue (token_t tok)
+{
+  return (tok->token_value->n == 1
+          && is_identifier_continue (tok->token_value->s[0]));
 }
 
 static void
@@ -102,29 +114,23 @@ get_next_character (buffered_token_getter_t getter,
 
   token_t t;
   getter->look_at_token (getter, 0, &t, error_message);
-  if (*error_message == NULL
-      && string_t_cmp (t->token_kind, string_t_CP ()) == 0)
+  if (*error_message == NULL)
     {
-      check_code_point_token (t);
-      if (is_identifier_continue (t->token_value->s[0]))
+      if (token_is_identifier_continue (t))
         {
           *character = t->token_value->s[0];
           num_to_consume = 1;
         }
-      else if (is_connector (t->token_value->s[0]))
+      else if (token_is_connector (t))
         {
           token_t u;
           getter->look_at_token (getter, 1, &u, error_message);
           if (*error_message == NULL
-              && string_t_cmp (u->token_kind, string_t_CP ()) == 0)
+              && token_is_identifier_continue (u))
             {
-              check_code_point_token (u);
-              if (is_identifier_continue (u->token_value->s[0]))
-                {
-                  *separator = t->token_value->s[0];
-                  *character = u->token_value->s[0];
-                  num_to_consume = 2;
-                }
+              *separator = t->token_value->s[0];
+              *character = u->token_value->s[0];
+              num_to_consume = 2;
             }
         }
     }
@@ -190,8 +196,7 @@ code_point_handler (void *state, buffered_token_getter_t getter,
 {
   if (*error_message == NULL)
     {
-      check_code_point_token (tok);
-      if (is_identifier_start (tok->token_value->s[0]))
+      if (token_is_identifier_start (tok))
         scan_identifier (state, getter, tables, tok, lhs,
                          error_message);
       else

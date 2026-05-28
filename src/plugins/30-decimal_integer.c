@@ -41,19 +41,25 @@
 
 #define _(msgid) HIHA_GETTEXT (msgid)
 
-static void
-check_code_point_token (token_t tok)
-{
-  if (tok->token_value->n != 1)
-    error (exit_failure, 0,
-           "CP token with a value of length other than 1: “%s”",
-           make_str_nul (tok->token_value));
-}
-
 static bool
 is_ascii_digit (uint32_t cp)
 {
   return ('0' <= cp && cp <= '9');
+}
+
+static bool
+token_is_ascii_digit (token_t tok)
+{
+  return (tok->token_value->n == 1
+          && is_ascii_digit (tok->token_value->s[0]));
+}
+
+static bool
+token_is_connecting_punctuation (token_t tok)
+{
+  return (tok->token_value->n == 1
+          && uc_is_general_category (tok->token_value->s[0],
+                                     UC_CATEGORY_Pc));
 }
 
 static bool
@@ -85,31 +91,22 @@ get_next_digit (buffered_token_getter_t getter, uint32_t *separator,
 
   token_t t;
   getter->look_at_token (getter, 0, &t, error_message);
-  if (*error_message == NULL
-      && string_t_cmp (t->token_kind, string_t_CP ()) == 0)
+  if (*error_message == NULL)
     {
-      check_code_point_token (t);
-      if (is_ascii_digit (t->token_value->s[0]))
+      if (token_is_ascii_digit (t))
         {
           *digit = t->token_value->s[0];
           num_to_consume = 1;
         }
-      else
-        if (uc_is_general_category
-            (t->token_value->s[0], UC_CATEGORY_Pc))
+      else if (token_is_connecting_punctuation (t))
         {
           token_t u;
           getter->look_at_token (getter, 1, &u, error_message);
-          if (*error_message == NULL
-              && string_t_cmp (u->token_kind, string_t_CP ()) == 0)
+          if (*error_message == NULL && token_is_ascii_digit (u))
             {
-              check_code_point_token (u);
-              if (is_ascii_digit (u->token_value->s[0]))
-                {
-                  *separator = t->token_value->s[0];
-                  *digit = u->token_value->s[0];
-                  num_to_consume = 2;
-                }
+              *separator = t->token_value->s[0];
+              *digit = u->token_value->s[0];
+              num_to_consume = 2;
             }
         }
     }
@@ -172,7 +169,6 @@ code_point_handler (void *state, buffered_token_getter_t getter,
   bool done = (*error_message != NULL);
   if (!done)
     {
-      check_code_point_token (tok);
       if (is_ascii_digit (tok->token_value->s[0]))
         {
           scan_decimal_integer (state, getter, tables, tok, lhs,

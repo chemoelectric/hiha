@@ -629,6 +629,10 @@ struct _buffered_token_getter
                      token_t *tok, const char **error_message);
   void (*look_at_token) (buffered_token_getter_t this_struct, size_t,
                          token_t *tok, const char **error_message);
+  void (*look_at_and_get_token) (buffered_token_getter_t this_struct,
+                                 size_t, bool (*)(token_t),
+                                 token_t *tok,
+                                 const char **error_message);
   void (*push_back_token) (buffered_token_getter_t this_struct,
                            token_t tok, const char **error_message);
   void (*push_back_string) (buffered_token_getter_t this_struct,
@@ -676,6 +680,17 @@ look_at_buffered_token (buffered_token_getter_t getter, size_t i,
 }
 
 static void
+look_at_and_get_from_buffered_token (buffered_token_getter_t getter,
+                                     size_t i, bool (*pred) (token_t),
+                                     token_t *tok,
+                                     const char **error_message)
+{
+  getter->look_at_token (getter, i, tok, error_message);
+  if (*error_message == NULL && pred (*tok))
+    getter->get_token (getter, tok, error_message);
+}
+
+static void
 push_back_token_into_buffered_getter (buffered_token_getter_t getter,
                                       token_t tok,
                                       const char **error_message)
@@ -712,6 +727,7 @@ make_buffered_token_getter_t (token_getter_t unbuffered_getter)
   g->buffer = NULL;
   g->get_token = &get_token_from_buffered_getter;
   g->look_at_token = &look_at_buffered_token;
+  g->look_at_and_get_token = &look_at_and_get_from_buffered_token;
   g->push_back_token = &push_back_token_into_buffered_getter;
   g->push_back_string = &push_back_string_into_buffered_getter;
   return (buffered_token_getter_t) g;
@@ -882,6 +898,10 @@ struct _getter_with_mismatch_check
                      token_t *tok, const char **error_message);
   void (*look_at_token) (buffered_token_getter_t this_struct, size_t,
                          token_t *tok, const char **error_message);
+  void (*look_at_and_get_token) (buffered_token_getter_t this_struct,
+                                 size_t, bool (*)(token_t),
+                                 token_t *tok,
+                                 const char **error_message);
   void (*push_back_token) (buffered_token_getter_t this_struct,
                            token_t tok, const char **error_message);
   void (*push_back_string) (buffered_token_getter_t this_struct,
@@ -914,6 +934,18 @@ peek_for_mismatch_check (buffered_token_getter_t this_struct,
   _getter_with_mismatch_check_t g =
     (_getter_with_mismatch_check_t) this_struct;
   g->getter->look_at_token (g->getter, i, tok, error_message);
+}
+
+static void
+peek_and_get_for_mismatch_check (buffered_token_getter_t this_struct,
+                                 size_t i, bool (*pred) (token_t),
+                                 token_t *tok,
+                                 const char **error_message)
+{
+  _getter_with_mismatch_check_t g =
+    (_getter_with_mismatch_check_t) this_struct;
+  g->getter->look_at_and_get_token (g->getter, i, pred, tok,
+                                    error_message);
 }
 
 static void
@@ -973,6 +1005,7 @@ MAKE_TOKEN_GETTER__ (buffered_token_getter_t input_getter,
 
   p->get_token = &get_for_mismatch_check;
   p->look_at_token = &peek_for_mismatch_check;
+  p->look_at_and_get_token = &peek_and_get_for_mismatch_check;
   p->push_back_token = &push_back_token_for_mismatch_check;
   p->push_back_string = &push_back_string_for_mismatch_check;
 

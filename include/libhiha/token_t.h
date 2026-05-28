@@ -72,6 +72,11 @@ struct buffered_token_getter
   void (*look_at_token) (buffered_token_getter_t this_struct, size_t,
                          token_t *tok, const char **error_message);
 
+  void (*look_at_and_get_token) (buffered_token_getter_t this_struct,
+                                 size_t, bool (*)(token_t),
+                                 token_t *tok,
+                                 const char **error_message);
+
   void (*push_back_token) (buffered_token_getter_t this_struct,
                            token_t tok, const char **error_message);
 
