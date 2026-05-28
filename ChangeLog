@@ -1,5 +1,25 @@
 @  master
-|  2026-05-27 14:52 +0000
+|  2026-05-27 19:58 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       fd95b7d4a75a9d12604b04f120ce9044fb60edab
+|  mercurial: 4cc1868a59702f5b09c6420740ef64d537c246a1
+|  revision:  205
+|  parents:   204
+|
+|    Add some keywords.
+|
+|
+o  2026-05-27 15:43 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       08ae0501a9e33b4c0e7cc514b1d91543e687211c
+|  mercurial: 623756a227191a423518d9accd144143c99d1bfb
+|  revision:  204
+|  parents:   203
+|
+|    Expanded what characters can be parts of symbols.
+|
+|
+o  2026-05-27 14:52 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 |  git:       81789c0092c63d31cea3c04e6191764e7625ee07
 |  mercurial: a35c993949e65079dbf98cf190aedd95e1b97864

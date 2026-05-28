@@ -42,14 +42,19 @@ check_pushed_back_token (void)
 
   getter->push_back_token (getter,
                            make_token_t (string_t_CP (),
-                                         make_string_t ("\""), NULL));
+                                         make_string_t ("\""), NULL),
+                           &error_message);
+  assert (error_message == NULL);
   getter->push_back_token (getter,
                            make_token_t (make_string_t ("ID"),
                                          make_string_t ("identifier"),
-                                         NULL));
+                                         NULL), &error_message);
+  assert (error_message == NULL);
   getter->push_back_token (getter,
                            make_token_t (string_t_CP (),
-                                         make_string_t ("\""), NULL));
+                                         make_string_t ("\""), NULL),
+                           &error_message);
+  assert (error_message == NULL);
 
   scan_string_literal (getter, &tok, &str, &error_message);
   assert (error_message == NULL);
@@ -71,7 +76,9 @@ check_pushed_back_string (void)
   buffered_token_getter_t getter =
     make_buffered_token_getter_t (string_getter);
 
-  getter->push_back_string (getter, make_string_t ("\"string\""), NULL);
+  getter->push_back_string (getter, make_string_t ("\"string\""), NULL,
+                            &error_message);
+  assert (error_message == NULL);
 
   scan_string_literal (getter, &tok, &str, &error_message);
   assert (error_message == NULL);

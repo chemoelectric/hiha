@@ -32,8 +32,9 @@ scan_string (buffered_token_getter_t getter, token_t tok, void **lhs,
              const char **error_message)
 {
   token_t t;
-  getter->push_back_token (getter, tok);
-  scan_string_literal (getter, &t, NULL, error_message);
+  getter->push_back_token (getter, tok, error_message);
+  if (*error_message == NULL)
+    scan_string_literal (getter, &t, NULL, error_message);
   *lhs = (*error_message == NULL) ? ((void *) t) : ((void *) NULL);
 }
 

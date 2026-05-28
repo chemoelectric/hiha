@@ -73,11 +73,12 @@ struct buffered_token_getter
                          token_t *tok, const char **error_message);
 
   void (*push_back_token) (buffered_token_getter_t this_struct,
-                           token_t tok);
+                           token_t tok, const char **error_message);
 
   /* Push back the code points of a string as "CP" tokens. */
   void (*push_back_string) (buffered_token_getter_t this_struct,
-                            string_t str, text_location_t loc);
+                            string_t str, text_location_t loc,
+                            const char **error_message);
 };
 
 buffered_token_getter_t make_buffered_token_getter_t

@@ -630,9 +630,10 @@ struct _buffered_token_getter
   void (*look_at_token) (buffered_token_getter_t this_struct, size_t,
                          token_t *tok, const char **error_message);
   void (*push_back_token) (buffered_token_getter_t this_struct,
-                           token_t tok);
+                           token_t tok, const char **error_message);
   void (*push_back_string) (buffered_token_getter_t this_struct,
-                            string_t str, text_location_t loc);
+                            string_t str, text_location_t loc,
+                            const char **error_message);
   token_getter_t getter;
   indexed_deque_t buffer;
 };
@@ -676,8 +677,10 @@ look_at_buffered_token (buffered_token_getter_t getter, size_t i,
 
 static void
 push_back_token_into_buffered_getter (buffered_token_getter_t getter,
-                                      token_t tok)
+                                      token_t tok,
+                                      const char **error_message)
 {
+  *error_message = NULL;
   _buffered_token_getter_t g = (_buffered_token_getter_t) getter;
   g->buffer = indexed_deque_put_before_first (g->buffer, tok);
 }
@@ -685,8 +688,10 @@ push_back_token_into_buffered_getter (buffered_token_getter_t getter,
 static void
 push_back_string_into_buffered_getter (buffered_token_getter_t getter,
                                        string_t str,
-                                       text_location_t loc)
+                                       text_location_t loc,
+                                       const char **error_message)
 {
+  *error_message = NULL;
   _buffered_token_getter_t g = (_buffered_token_getter_t) getter;
   for (size_t i = 0; i != str->n; i += 1)
     {
@@ -695,7 +700,7 @@ push_back_string_into_buffered_getter (buffered_token_getter_t getter,
       cstr->s = XNMALLOC (1, uint32_t);
       cstr->s[0] = str->s[str->n - 1 - i];
       token_t tok = make_token_t (string_t_CP (), cstr, loc);
-      push_back_token_into_buffered_getter (getter, tok);
+      getter->push_back_token (getter, tok, error_message);
     }
 }
 
@@ -748,7 +753,7 @@ get_token_from_multiple_files_getter (token_getter_t getter,
 {
   //
   // Play the files in sequence, converting all the EOF but the last
-  // to formfeed.
+  // to "FSEP" token with a form feed value.
   //
 
   _multiple_files_getter_t g = (_multiple_files_getter_t) getter;
@@ -782,9 +787,9 @@ get_token_from_multiple_files_getter (token_getter_t getter,
               if (g->i != g->n)
                 {
                   // There is at least one more file to go through.
-                  // Replace the EOF token with a formfeed.
+                  // Replace the EOF token with a form feed.
                   *tok =
-                    make_token_t ((string_t_CP ()),
+                    make_token_t ((make_string_t ("FSEP")),
                                   (string_t_formfeed ()), (*tok)->loc);
 
                   open_one_of_multiple_files (g);
@@ -878,9 +883,10 @@ struct _getter_with_mismatch_check
   void (*look_at_token) (buffered_token_getter_t this_struct, size_t,
                          token_t *tok, const char **error_message);
   void (*push_back_token) (buffered_token_getter_t this_struct,
-                           token_t tok);
+                           token_t tok, const char **error_message);
   void (*push_back_string) (buffered_token_getter_t this_struct,
-                            string_t str, text_location_t loc);
+                            string_t str, text_location_t loc,
+                            const char **error_message);
 
   buffered_token_getter_t getter;
   indexed_deque_t queue;
@@ -912,21 +918,23 @@ peek_for_mismatch_check (buffered_token_getter_t this_struct,
 
 static void
 push_back_token_for_mismatch_check (buffered_token_getter_t this_struct,
-                                    token_t tok)
+                                    token_t tok,
+                                    const char **error_message)
 {
   _getter_with_mismatch_check_t g =
     (_getter_with_mismatch_check_t) this_struct;
-  g->getter->push_back_token (g->getter, tok);
+  g->getter->push_back_token (g->getter, tok, error_message);
 }
 
 static void
 push_back_string_for_mismatch_check (buffered_token_getter_t
                                      this_struct, string_t str,
-                                     text_location_t loc)
+                                     text_location_t loc,
+                                     const char **error_message)
 {
   _getter_with_mismatch_check_t g =
     (_getter_with_mismatch_check_t) this_struct;
-  g->getter->push_back_string (g->getter, str, loc);
+  g->getter->push_back_string (g->getter, str, loc, error_message);
 }
 
 static bool

@@ -51,7 +51,7 @@ scan_comment (buffered_token_getter_t getter, token_t tok, void **lhs,
   while (*error_message == NULL
          && 0 != string_t_cmp (t->token_value, make_string_t ("\n")));
   if (*error_message == NULL)
-    *lhs = (void *) make_token_t (make_string_t ("SP"), str, tok->loc);
+    *lhs = (void *) make_token_t (make_string_t ("CO"), str, tok->loc);
 }
 
 nud_handler_t next_handler;

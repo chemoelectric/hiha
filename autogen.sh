@@ -257,6 +257,8 @@ EOF
     lexical_end_cap_automake 0.1000 eof   # end of file
     lexical_end_cap_automake 0.1000 cp    # code points
     lexical_end_cap_automake 0.1000 sp    # white space
+    lexical_end_cap_automake 0.1000 co    # comments
+    lexical_end_cap_automake 0.1000 fsep  # source file separators
     lexical_end_cap_automake 0.1000 str   # strings
     lexical_end_cap_automake 0.1000 i10   # decimal integers
     lexical_end_cap_automake 0.1000 id    # identifiers

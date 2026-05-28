@@ -56,7 +56,7 @@ look_at_token (buffered_token_getter_t getter, size_t i,
             getter->get_token (getter, &t, error_message);
             if (*error_message == NULL)
               getter->push_back_string (getter, string_t_zerowidth (),
-                                        t->loc);
+                                        t->loc, error_message);
           }
           break;
         case 1:
@@ -67,7 +67,8 @@ look_at_token (buffered_token_getter_t getter, size_t i,
             token_t t;
             getter->get_token (getter, &t, error_message);
             if (*error_message == NULL)
-              getter->push_back_string (getter, t->token_value, t->loc);
+              getter->push_back_string (getter, t->token_value, t->loc,
+                                        error_message);
           }
           break;
         }
