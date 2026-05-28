@@ -253,6 +253,7 @@ libhiha_HDRS += include/libhiha/lexical.h
 libhiha_HDRS += include/libhiha/string_literal.h
 libhiha_HDRS += include/libhiha/gensym.h
 libhiha_HDRS += include/libhiha/load_plugin.h
+libhiha_HDRS += include/libhiha/indexed_data_file.h
 
 pkg_libhiha_include_HEADERS += $(libhiha_HDRS)
 
@@ -276,6 +277,7 @@ libhiha_la_SOURCES += src/libhiha/lexical.c
 libhiha_la_SOURCES += src/libhiha/string_literal.c
 libhiha_la_SOURCES += src/libhiha/gensym.c
 libhiha_la_SOURCES += src/libhiha/load_plugin.c
+libhiha_la_SOURCES += src/libhiha/indexed_data_file.c
 nodist_libhiha_la_SOURCES += src/libhiha/string_t_map.c
 nodist_libhiha_la_SOURCES += src/libhiha/string_t_omap.c
 nodist_libhiha_la_SOURCES += src/libhiha/token_t_map.c
