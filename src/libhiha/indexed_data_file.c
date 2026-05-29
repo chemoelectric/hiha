@@ -157,7 +157,7 @@ reopen_indexed_data_file (indexed_data_file_t df)
   assert ((df->f_data == NULL) == (df->f_index == NULL));
 
   if (df->f_data == NULL)
-    _open_indexed_data_file (df, "ab+");
+    _open_indexed_data_file (df, "rb+");
 }
 
 HIHA_VISIBLE void

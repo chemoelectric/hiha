@@ -1,5 +1,15 @@
 @  master
-|  2026-05-28 16:52 +0000
+|  2026-05-28 22:12 +0000
+|  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
+|  git:       45a4ce2057381ae0efc0edf66eeab98a257944cc
+|  mercurial: 1ca6d1ce88e33d5a93d068d8b1ae58362ba2b045
+|  revision:  210
+|  parents:   209
+|
+|    Tests and fixes for indexed data file.
+|
+|
+o  2026-05-28 16:52 +0000
 |  Barry Schwartz <150643+chemoelectric@users.noreply.github.com>
 |  git:       c9211fe1256cb5d11dbd74531f7bf409c88c51d6
 |  mercurial: b011d00bb6165a5866f769f46b9029915f1f56ad
