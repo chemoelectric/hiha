@@ -140,7 +140,7 @@ get_next_character (buffered_token_getter_t getter,
 
 static void
 scan_identifier (void *state, buffered_token_getter_t getter,
-                 pratt_tables_t tables, token_t tok, void **lhs,
+                 pratt_tables_t tables, token_t tok, token_t *lhs,
                  const char **error_message)
 {
   *lhs = NULL;
@@ -182,8 +182,7 @@ scan_identifier (void *state, buffered_token_getter_t getter,
         str->s[i] =
           *((const uint32_t *) voidp_vector_ref (characters, i));
 
-      *lhs =
-        (void *) make_token_t (make_string_t ("ID"), str, tok->loc);
+      *lhs = make_token_t (make_string_t ("ID"), str, tok->loc);
     }
 }
 
@@ -191,7 +190,7 @@ nud_handler_t next_handler;
 
 static void
 code_point_handler (void *state, buffered_token_getter_t getter,
-                    pratt_tables_t tables, token_t tok, void **lhs,
+                    pratt_tables_t tables, token_t tok, token_t *lhs,
                     const char **error_message)
 {
   if (*error_message == NULL)

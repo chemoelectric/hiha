@@ -73,14 +73,13 @@ nud_handler_t next_sy_handler;
 #define DEFINE_HANDLER(XX)                                      \
   static void                                                   \
   XX##_handler (void *state, buffered_token_getter_t getter,    \
-                pratt_tables_t tables, token_t tok, void **lhs, \
-                const char **error_message)                     \
+                pratt_tables_t tables, token_t tok,             \
+                token_t *lhs, const char **error_message)       \
   {                                                             \
     if (*error_message == NULL)                                 \
       {                                                         \
         if (is_keyword (tok))                                   \
           *lhs =                                                \
-            (void *)                                            \
             make_token_t (str_KW, tok->token_value, tok->loc);  \
         else                                                    \
           next_##XX##_handler (state, getter, tables, tok, lhs, \

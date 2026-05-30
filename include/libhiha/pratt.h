@@ -44,21 +44,19 @@ pratt_tables_t get_pratt_tables_for_pass (unsigned int pass_number);
 void set_pratt_tables_for_pass (unsigned int pass_number,
                                 pratt_tables_t tables);
 
-/* The ‘state’ argument is for whatever use the programmer wishes. The
-   ‘*lhs’ argument would typically represent token_t for lexical
-   analysis and a parse tree for syntactic analysis. */
+/* The ‘state’ argument is for whatever use the programmer wishes. */
 void pratt_parse (void *state, buffered_token_getter_t getter,
                   pratt_tables_t tables, double min_power,
-                  void **lhs, const char **error_message);
+                  token_t *lhs, const char **error_message);
 
 typedef void nud_handler (void *state, buffered_token_getter_t getter,
                           pratt_tables_t tables, token_t tok,
-                          void **lhs, const char **error_message);
+                          token_t *lhs, const char **error_message);
 typedef nud_handler *nud_handler_t;
 
 typedef void led_handler (void *state, buffered_token_getter_t getter,
                           pratt_tables_t tables, token_t tok,
-                          void **lhs, const char **error_message);
+                          token_t *lhs, const char **error_message);
 typedef led_handler *led_handler_t;
 
 /* Add a null denotation handler, or replace an existing one. */

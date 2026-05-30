@@ -131,6 +131,7 @@ make_token_t (string_t token_kind, string_t token_value,
   tok->token_kind = token_kind;
   tok->token_value = token_value;
   tok->loc = loc;
+  tok->extension = NULL;
   return tok;
 }
 

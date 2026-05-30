@@ -56,7 +56,7 @@ is_symbol_part (token_t tok)
 
 static void
 scan_symbol (void *state, buffered_token_getter_t getter,
-             pratt_tables_t tables, token_t tok, void **lhs,
+             pratt_tables_t tables, token_t tok, token_t *lhs,
              const char **error_message)
 {
   string_t tokval = tok->token_value;
@@ -70,15 +70,14 @@ scan_symbol (void *state, buffered_token_getter_t getter,
                                      error_message);
     }
   if (*error_message == NULL)
-    *lhs =
-      (void *) make_token_t (make_string_t ("SY"), tokval, tok->loc);
+    *lhs = make_token_t (make_string_t ("SY"), tokval, tok->loc);
 }
 
 nud_handler_t next_cp_handler;
 
 static void
 code_point_handler (void *state, buffered_token_getter_t getter,
-                    pratt_tables_t tables, token_t tok, void **lhs,
+                    pratt_tables_t tables, token_t tok, token_t *lhs,
                     const char **error_message)
 {
   if (*error_message == NULL)

@@ -30,6 +30,7 @@
 */
 
 #include <config.h>
+#include <assert.h>
 #include <math.h>
 #include <inttypes.h>
 #include <libhiha/string_t.h>
@@ -165,17 +166,18 @@ pratt_lbp_put (pratt_tables_t data, string_t token_kind,
 
 static void
 passthrough_nud_handler (void *state, buffered_token_getter_t getter,
-                         pratt_tables_t tables, token_t tok, void **lhs,
-                         const char **error_message)
+                         pratt_tables_t tables, token_t tok,
+                         token_t *lhs, const char **error_message)
 {
   if (*error_message == NULL)
-    *lhs = (void *) tok;
+    *lhs = tok;
 }
 
 HIHA_VISIBLE nud_handler_t
 pratt_nud_get (pratt_tables_t data, string_t token_kind)
 {
-  nud_handler_t handler = (nud_handler_t) string_t_map_search (data->nud, token_kind);
+  nud_handler_t handler =
+    (nud_handler_t) string_t_map_search (data->nud, token_kind);
   if (handler == NULL)
     handler = &passthrough_nud_handler;
   return handler;
@@ -196,7 +198,7 @@ pratt_lbp_get (pratt_tables_t data, string_t token_kind)
 
 static void
 execute_null_denotation (void *state, buffered_token_getter_t getter,
-                         pratt_tables_t tables, void **lhs,
+                         pratt_tables_t tables, token_t *lhs,
                          const char **error_message)
 {
   token_t tok;
@@ -209,6 +211,7 @@ execute_null_denotation (void *state, buffered_token_getter_t getter,
   if (*error_message == NULL)
     {
       nud_handler_t handler = pratt_nud_get (tables, tok->token_kind);
+      assert (handler != NULL);
       handler (state, getter, tables, tok, lhs, error_message);
     }
 }
@@ -233,7 +236,7 @@ peek_at_next_token (void *state, buffered_token_getter_t getter,
 
 static void
 execute_left_denotation (void *state, buffered_token_getter_t getter,
-                         pratt_tables_t tables, void **lhs,
+                         pratt_tables_t tables, token_t *lhs,
                          const char **error_message)
 {
   token_t tok;
@@ -268,7 +271,7 @@ execute_left_denotation (void *state, buffered_token_getter_t getter,
 HIHA_VISIBLE void
 pratt_parse (void *state, buffered_token_getter_t getter,
              pratt_tables_t tables, double min_power,
-             void **lhs, const char **error_message)
+             token_t *lhs, const char **error_message)
 {
   double binding_power;
 

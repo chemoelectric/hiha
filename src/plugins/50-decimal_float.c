@@ -178,7 +178,7 @@ nud_handler_t next_i_i10_handler;
 
 static void
 i10_handler (void *state, buffered_token_getter_t getter,
-             pratt_tables_t tables, token_t tok, void **lhs,
+             pratt_tables_t tables, token_t tok, token_t *lhs,
              const char **error_message)
 {
   bool done = (*error_message != NULL);
@@ -198,8 +198,7 @@ i10_handler (void *state, buffered_token_getter_t getter,
                 concat_string_t (tok->token_value, t->token_value,
                                  u->token_value, NULL);
               *lhs =
-                (void *) make_token_t (make_string_t ("I.I10"), str,
-                                       tok->loc);
+                make_token_t (make_string_t ("I.I10"), str, tok->loc);
               (void) getter->get_token (getter, &u, error_message);
               if (*error_message == NULL)
                 (void) getter->get_token (getter, &u, error_message);
@@ -213,7 +212,7 @@ i10_handler (void *state, buffered_token_getter_t getter,
 
 static void
 i_i10_handler (void *state, buffered_token_getter_t getter,
-               pratt_tables_t tables, token_t tok, void **lhs,
+               pratt_tables_t tables, token_t tok, token_t *lhs,
                const char **error_message)
 {
   /* Convert notations such as 123_456.789E+30 to "F10" tokens. */
@@ -233,9 +232,7 @@ i_i10_handler (void *state, buffered_token_getter_t getter,
                                           tok_expstart->token_value,
                                           tok_exponent->token_value,
                                           NULL);
-          *lhs =
-            (void *) make_token_t (make_string_t ("F10"), str,
-                                   tok->loc);
+          *lhs = make_token_t (make_string_t ("F10"), str, tok->loc);
           done = true;
         }
     }

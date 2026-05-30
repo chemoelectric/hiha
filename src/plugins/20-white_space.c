@@ -37,7 +37,7 @@ check_code_point_token (token_t tok)
 }
 
 static void
-scan_comment (buffered_token_getter_t getter, token_t tok, void **lhs,
+scan_comment (buffered_token_getter_t getter, token_t tok, token_t *lhs,
               const char **error_message)
 {
   string_t str = tok->token_value;
@@ -51,14 +51,14 @@ scan_comment (buffered_token_getter_t getter, token_t tok, void **lhs,
   while (*error_message == NULL
          && 0 != string_t_cmp (t->token_value, make_string_t ("\n")));
   if (*error_message == NULL)
-    *lhs = (void *) make_token_t (make_string_t ("CO"), str, tok->loc);
+    *lhs = make_token_t (make_string_t ("CO"), str, tok->loc);
 }
 
 nud_handler_t next_handler;
 
 static void
 code_point_handler (void *state, buffered_token_getter_t getter,
-                    pratt_tables_t tables, token_t tok, void **lhs,
+                    pratt_tables_t tables, token_t tok, token_t *lhs,
                     const char **error_message)
 {
   if (*error_message == NULL)
@@ -67,8 +67,8 @@ code_point_handler (void *state, buffered_token_getter_t getter,
       if (uc_is_property
           (tok->token_value->s[0], UC_PROPERTY_WHITE_SPACE))
         *lhs =
-          (void *) make_token_t (make_string_t ("SP"), tok->token_value,
-                                 tok->loc);
+          make_token_t (make_string_t ("SP"), tok->token_value,
+                        tok->loc);
       else if (tok->token_value->s[0] == '%')
         scan_comment (getter, tok, lhs, error_message);
       else

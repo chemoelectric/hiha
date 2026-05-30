@@ -32,6 +32,7 @@ struct token
   string_t token_kind;
   string_t token_value;
   text_location_t loc;
+  void *extension;              /* NULL for simple lexical tokens. */
 };
 typedef const struct token *token_t;
 

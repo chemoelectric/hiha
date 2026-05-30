@@ -28,21 +28,21 @@
 #define _(msgid) HIHA_GETTEXT (msgid)
 
 static void
-scan_string (buffered_token_getter_t getter, token_t tok, void **lhs,
+scan_string (buffered_token_getter_t getter, token_t tok, token_t *lhs,
              const char **error_message)
 {
   token_t t;
   getter->push_back_token (getter, tok, error_message);
   if (*error_message == NULL)
     scan_string_literal (getter, &t, NULL, error_message);
-  *lhs = (*error_message == NULL) ? ((void *) t) : ((void *) NULL);
+  *lhs = (*error_message == NULL) ? t : NULL;
 }
 
 nud_handler_t next_cp_handler;
 
 static void
 code_point_handler (void *state, buffered_token_getter_t getter,
-                    pratt_tables_t tables, token_t tok, void **lhs,
+                    pratt_tables_t tables, token_t tok, token_t *lhs,
                     const char **error_message)
 {
   if (*error_message == NULL)

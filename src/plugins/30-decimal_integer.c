@@ -116,7 +116,7 @@ get_next_digit (buffered_token_getter_t getter, uint32_t *separator,
 
 static void
 scan_decimal_integer (void *state, buffered_token_getter_t getter,
-                      pratt_tables_t tables, token_t tok, void **lhs,
+                      pratt_tables_t tables, token_t tok, token_t *lhs,
                       const char **error_message)
 {
   *lhs = NULL;
@@ -154,8 +154,7 @@ scan_decimal_integer (void *state, buffered_token_getter_t getter,
       for (size_t i = 0; i != str->n; i += 1)
         str->s[i] = *((const uint32_t *) voidp_vector_ref (digits, i));
 
-      *lhs =
-        (void *) make_token_t (make_string_t ("I10"), str, tok->loc);
+      *lhs = make_token_t (make_string_t ("I10"), str, tok->loc);
     }
 }
 
@@ -163,7 +162,7 @@ nud_handler_t next_cp_handler;
 
 static void
 code_point_handler (void *state, buffered_token_getter_t getter,
-                    pratt_tables_t tables, token_t tok, void **lhs,
+                    pratt_tables_t tables, token_t tok, token_t *lhs,
                     const char **error_message)
 {
   bool done = (*error_message != NULL);

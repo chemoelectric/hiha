@@ -64,7 +64,7 @@ lexical_pratt_tables (void)
 }
 
 static token_t
-lhs_to_token_t (void *lhs, const char *error_message)
+lhs_to_token_t (token_t lhs, const char *error_message)
 {
   return (error_message == NULL) ? (token_t) lhs : NULL;
 }
@@ -74,7 +74,7 @@ scan_tokens (void *state, buffered_token_getter_t getter,
              token_putter_t putter, const char **error_message)
 {
   token_t tok;
-  void *lhs = NULL;
+  token_t lhs = NULL;
   pratt_tables_t tables = lexical_pratt_tables ();
 
   *error_message = NULL;
