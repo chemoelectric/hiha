@@ -50,7 +50,7 @@ needed, and the program itself can perhaps add parsing rules. Thus,
 for instance, new infix operators might be introduced, with given
 precedences and left or right associativity.footnote:[Associativity
 can be controlled in a Pratt parser by manipulation of left binding
-power (precedence values).]
+power (precedence value).]
 
 ***
 
@@ -62,9 +62,11 @@ How long has it been since Edsger W. Dijkstra’s _A Discipline of
 Programming_, with its nondeterministic constructs, has been in print?
 We intend to make branching in hiha nondeterministic. There will, most
 likely, be two constructs, *do* and *while*. The *do* construct will
-not be written “*do*...*od*” but “(*do*...)” and the *while* construct
-“(*while*...)”, because hiha seeks to make things simpler than anyone
-before has imagined.
+not be written “*do*...*od*” but “*do*...*end*.” and the *while*
+construct “*while*...*end*.” Guarded expressions will be allowed
+anywhere, including in ordinary sequential constructs
+“*begin*...*end*.” A semicolon will be allowed in place of a period,
+but a period is lot less dark on the page.
 
 What is the advantage of nondeterminism? I had to scan through my
 wife’s copy of _A Discipline of Programming_ to remind myself what it
