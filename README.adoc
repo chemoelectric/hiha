@@ -29,18 +29,11 @@ ligature.]
 
 Then the Unicode code points of the files are individually made into
 lexical tokens, and each end of file is also made into a lexical
-token. However, each end of file token except the last is coverted to
-a code point token for a form feed character. This is done because
-form feeds are a non-line white space character that is very rare, now
-that impact printers are uncommon. Thus, it was thought, no great harm
-would be done by the substitution.
+token. However, each end of file token except the last is converted to
+a “file separator” token whose value is a form feed character.
 
-Thence, the tokens are run through the Pratt parser with a particular
-set of rules, designated for lexical analysis, that is loaded by
-plugins. The tokens that are outputted by the parser are fed back
-through the the parser again and again, until a fixed point is
-reached. It is expected that a fixed point will be reached _very_
-quickly.
+Thence, the tokens are run through the Pratt parser in multiple
+passes, each time outputting tokens.
 
 For example, on one pass, a run of digits may be collected into an
 “integer” token. On the next pass an “integer” token, followed by a
@@ -48,7 +41,16 @@ decimal point, followed by an “integer”, may be collected into another
 kind of token. Then, on a later pass, this token may be collected into
 a “number with exponent” token.
 
-This mechanism already is working.
+At a later stage, reserved words are marked as such. Then actual
+parsing begins. A plugin may construct and perhaps optimize a parse
+tree, but then will flatten the parse tree into tokens. The flattening
+process can do more than just flatten. It can put the code into
+continuation-passing style. The parsing can take as many passes as
+needed, and the program itself can perhaps add parsing rules. Thus,
+for instance, new infix operators might be introduced, with given
+precedences and left or right associativity.footnote:[Associativity
+can be controlled in a Pratt parser by manipulation of left binding
+power (precedence values).]
 
 ***
 
